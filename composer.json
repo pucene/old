@@ -1,0 +1,32 @@
+{
+    "name": "pucene/pucene",
+    "description": "Raw PHP implementation of apache lucene",
+    "authors": [
+        {
+            "name": "Pucene Community",
+            "homepage": "https://github.com/pucene/pucene/contributors"
+        }
+    ],
+    "keywords": [
+        "lucene",
+        "indexing"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "pucene/core": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pucene\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Pucene\\Tests\\": "tests/"
+        }
+    }
+}

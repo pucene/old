@@ -1,0 +1,8 @@
+# Composer
+/vendor/
+composer.lock
+
+# Intellij
+.idea
+*.iml
+
