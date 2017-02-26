@@ -49,7 +49,7 @@ class Index
         ];
 
         foreach ($document['_source'] as $fieldName => $fieldContent) {
-            $this->invertedIndex->save($document, $this->analyzer->analyze($fieldContent));
+            $this->invertedIndex->save($document, $fieldName, $this->analyzer->analyze($fieldContent));
         }
 
         return $document;

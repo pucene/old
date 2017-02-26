@@ -21,12 +21,13 @@ class InvertedIndex
 
     /**
      * @param array $document
+     * @param string $fieldName
      * @param Token[] $tokens
      */
-    public function save(array $document, array $tokens)
+    public function save(array $document, $fieldName, array $tokens)
     {
         foreach ($tokens as $token) {
-            $this->storage->save($token, $document);
+            $this->storage->save($token, $document, $fieldName);
         }
     }
 

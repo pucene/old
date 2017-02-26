@@ -7,27 +7,27 @@ class Token
     /**
      * @var string
      */
-    private $token;
+    protected $token;
 
     /**
      * @var int
      */
-    private $startOffset;
+    protected $startOffset;
 
     /**
      * @var int
      */
-    private $endOffset;
+    protected $endOffset;
 
     /**
      * @var string
      */
-    private $type;
+    protected $type;
 
     /**
      * @var int
      */
-    private $position;
+    protected $position;
 
     /**
      * @param string $token
