@@ -35,7 +35,6 @@ class Index
         $this->name = $name;
     }
 
-
     public function index(array $document, $id = null)
     {
         if ($id) {
