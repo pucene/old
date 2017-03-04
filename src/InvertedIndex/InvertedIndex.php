@@ -3,6 +3,7 @@
 namespace Pucene\InvertedIndex;
 
 use Pucene\Analysis\Token;
+use Pucene\Component\QueryBuilder\Search;
 
 class InvertedIndex
 {
@@ -32,12 +33,12 @@ class InvertedIndex
     }
 
     /**
-     * @param Token $token
+     * @param Search $search
      *
      * @return array[]
      */
-    public function search(Token $token)
+    public function search(Search $search)
     {
-        return $this->storage->getDocuments($token);
+        return $this->storage->search($search);
     }
 }

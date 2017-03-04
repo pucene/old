@@ -3,6 +3,7 @@
 namespace Pucene\Index;
 
 use Pucene\Analysis\AnalyzerInterface;
+use Pucene\Component\QueryBuilder\Search;
 use Pucene\InvertedIndex\InvertedIndex;
 use Ramsey\Uuid\Uuid;
 
@@ -60,15 +61,8 @@ class Index
         // TODO implement deindex($id)
     }
 
-    public function search($query)
+    public function search(Search $search)
     {
-        $result = [];
-        $tokens = $this->analyzer->analyze($query);
-        foreach ($tokens as $token) {
-            $documents = $this->invertedIndex->search($token);
-            $result = array_merge($result, $documents);
-        }
-
-        return $result;
+        return $this->invertedIndex->search($search);
     }
 }
