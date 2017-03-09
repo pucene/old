@@ -7,7 +7,7 @@ class Token
     /**
      * @var string
      */
-    protected $token;
+    protected $term;
 
     /**
      * @var int
@@ -30,15 +30,15 @@ class Token
     protected $position;
 
     /**
-     * @param string $token
+     * @param string $term
      * @param int $startOffset
      * @param int $endOffset
      * @param string $type
      * @param int $position
      */
-    public function __construct($token, $startOffset, $endOffset, $type, $position)
+    public function __construct($term, $startOffset, $endOffset, $type, $position)
     {
-        $this->token = $token;
+        $this->term = $term;
         $this->startOffset = $startOffset;
         $this->endOffset = $endOffset;
         $this->type = $type;
@@ -46,13 +46,13 @@ class Token
     }
 
     /**
-     * Returns token.
+     * Returns term.
      *
      * @return mixed
      */
-    public function getToken()
+    public function getTerm()
     {
-        return $this->token;
+        return $this->term;
     }
 
     /**
