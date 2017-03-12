@@ -2,33 +2,32 @@
 
 namespace Pucene\Analysis;
 
-class StandardAnalyzer implements AnalyzerInterface
+use Pucene\Analysis\CharacterFilter\ChainCharacterFilter;
+use Pucene\Analysis\CharacterFilter\StandardCharacterFilter;
+use Pucene\Analysis\TokenFilter\ChainTokenFilter;
+use Pucene\Analysis\TokenFilter\LowercaseTokenFilter;
+use Pucene\Analysis\TokenFilter\StandardTokenFilter;
+use Pucene\Analysis\TokenFilter\StopTokenFilter;
+use Pucene\Analysis\Tokenizer\StandardTokenizer;
+
+class StandardAnalyzer extends Analyzer
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function analyze($fieldContent)
+    public function __construct()
     {
-        $tokens = [];
-
-        $start = 0;
-        $position = 0;
-        $token = '';
-        for ($i = 0, $length = strlen($fieldContent); $i < $length; ++$i) {
-            if ($fieldContent[$i] === ' ') {
-                $tokens[] = new Token($token, $start, $i - 1, '<ALPHANUM>', $position);
-
-                $start = $i + 1;
-                ++$position;
-                $token = '';
-
-                continue;
-            }
-
-            $token .= $fieldContent[$i];
-        }
-        $tokens[] = new Token($token, $start, $i - 1, '<ALPHANUM>', $position);
-
-        return $tokens;
+        parent::__construct(
+            new ChainCharacterFilter(
+                [
+                    new StandardCharacterFilter(),
+                ]
+            ),
+            $this->tokenizer = new StandardTokenizer(),
+            new ChainTokenFilter(
+                [
+                    new StandardTokenFilter(),
+                    new LowercaseTokenFilter(),
+                    new StopTokenFilter(),
+                ]
+            )
+        );
     }
 }
