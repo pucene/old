@@ -31,7 +31,7 @@ class Index
     public function index(array $document, $id = null)
     {
         if ($id) {
-            $this->deindex($id);
+            $this->remove($id);
         }
 
         $document = [
@@ -46,7 +46,7 @@ class Index
         return $document;
     }
 
-    private function deindex($id)
+    public function remove($id)
     {
         $this->invertedIndex->remove($id);
     }
