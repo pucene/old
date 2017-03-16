@@ -7,7 +7,6 @@ use Pucene\Analysis\CharacterFilter\StandardCharacterFilter;
 use Pucene\Analysis\TokenFilter\ChainTokenFilter;
 use Pucene\Analysis\TokenFilter\LowercaseTokenFilter;
 use Pucene\Analysis\TokenFilter\StandardTokenFilter;
-use Pucene\Analysis\TokenFilter\StopTokenFilter;
 use Pucene\Analysis\Tokenizer\StandardTokenizer;
 
 class StandardAnalyzer extends Analyzer
@@ -25,7 +24,6 @@ class StandardAnalyzer extends Analyzer
                 [
                     new StandardTokenFilter(),
                     new LowercaseTokenFilter(),
-                    new StopTokenFilter(),
                 ]
             )
         );
