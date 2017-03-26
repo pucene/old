@@ -2,7 +2,6 @@
 
 namespace Pucene\Index;
 
-use Pucene\Analysis\AnalyzerInterface;
 use Pucene\Component\QueryBuilder\Search;
 use Pucene\InvertedIndex\InvertedIndex;
 use Ramsey\Uuid\Uuid;
@@ -15,23 +14,16 @@ class Index
     protected $name;
 
     /**
-     * @var AnalyzerInterface
-     */
-    protected $analyzer;
-
-    /**
      * @var InvertedIndex
      */
     protected $invertedIndex;
 
     /**
-     * @param AnalyzerInterface $analyzer
      * @param InvertedIndex $invertedIndex
      * @param string $name
      */
-    public function __construct(AnalyzerInterface $analyzer, InvertedIndex $invertedIndex, $name)
+    public function __construct(InvertedIndex $invertedIndex, $name)
     {
-        $this->analyzer = $analyzer;
         $this->invertedIndex = $invertedIndex;
         $this->name = $name;
     }
@@ -39,7 +31,7 @@ class Index
     public function index(array $document, $id = null)
     {
         if ($id) {
-            $this->deindex($id);
+            $this->remove($id);
         }
 
         $document = [
@@ -49,16 +41,14 @@ class Index
             '_source' => $document,
         ];
 
-        foreach ($document['_source'] as $fieldName => $fieldContent) {
-            $this->invertedIndex->save($document, $fieldName, $this->analyzer->analyze($fieldContent));
-        }
+        $this->invertedIndex->save($document);
 
         return $document;
     }
 
-    private function deindex($id)
+    public function remove($id)
     {
-        // TODO implement deindex($id)
+        $this->invertedIndex->remove($id);
     }
 
     public function search(Search $search)
