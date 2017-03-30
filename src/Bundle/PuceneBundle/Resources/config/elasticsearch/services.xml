@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="pucene_elasticsearch.client" class="Elasticsearch\Client">
+            <factory class="Pucene\Bundle\PuceneBundle\Elasticsearch\ClientFactory" method="create"/>
+
+            <argument>%pucene.adapter_config%</argument>
+        </service>
+
+        <service id="pucene_elasticsearch.search_builder"
+                 class="Pucene\Component\Elasticsearch\QueryBuilder\SearchBuilder">
+            <argument type="service" id="pucene_elasticsearch.query_builder.pool"/>
+        </service>
+
+        <service id="pucene.client" class="Pucene\Component\Elasticsearch\ElasticsearchClient">
+            <argument type="service" id="pucene_elasticsearch.client"/>
+            <argument type="service" id="pucene_elasticsearch.search_builder"/>
+        </service>
+    </services>
+</container>
