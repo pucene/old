@@ -73,6 +73,19 @@ class PuceneIndex implements IndexInterface
      */
     public function search(Search $search, $type)
     {
-        // TODO search(Search $search, $type)
+        if (is_string($type)) {
+            $type = [$type];
+        }
+
+        $documents = $this->storage->search($search, $type, $this->name);
+
+        return [
+            'hits' => array_map(
+                function (Document $document) {
+                    return $document->toArray();
+                },
+                $documents
+            ),
+        ];
     }
 }

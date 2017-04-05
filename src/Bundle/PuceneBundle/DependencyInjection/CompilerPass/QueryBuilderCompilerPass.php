@@ -8,8 +8,8 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class QueryBuilderCompilerPass implements CompilerPassInterface
 {
-    const TAG_NAME = 'pucene_elasticsearch.query_builder';
-    const POOL_SERVICE_ID = 'pucene_elasticsearch.query_builder.pool';
+    const TAG_NAME = 'pucene.query_builder';
+    const POOL_SERVICE_ID = 'pucene.query_builder.pool';
     const QUERY_ATTRIBUTE_NAME = 'query';
 
     /**

@@ -25,17 +25,24 @@ class Document
     private $document;
 
     /**
+     * @var int
+     */
+    private $score;
+
+    /**
      * @param string $id
      * @param string $type
      * @param string $index
      * @param string $document
+     * @param int $score
      */
-    public function __construct($id, $type, $index, $document)
+    public function __construct($id, $type, $index, $document, $score = 1)
     {
         $this->id = $id;
         $this->type = $type;
         $this->index = $index;
         $this->document = $document;
+        $this->score = $score;
     }
 
     /**
@@ -79,6 +86,16 @@ class Document
     }
 
     /**
+     * Returns score.
+     *
+     * @return int
+     */
+    public function getScore()
+    {
+        return $this->score;
+    }
+
+    /**
      * Converts document to array.
      *
      * @return array
@@ -89,6 +106,7 @@ class Document
             '_id' => $this->id,
             '_type' => $this->type,
             '_index' => $this->index,
+            '_score' => $this->score,
             '_source' => $this->document,
         ];
     }

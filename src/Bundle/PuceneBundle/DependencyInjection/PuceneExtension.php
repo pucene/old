@@ -47,7 +47,12 @@ class PuceneExtension extends Extension
         $storages = [];
         foreach ($config['indices'] as $name => $options) {
             $definition = new Definition(
-                DbalStorage::class, [$name, new Reference($config['adapters']['pucene']['doctrine_dbal_connection'])]
+                DbalStorage::class,
+                [
+                    $name,
+                    new Reference($config['adapters']['pucene']['doctrine_dbal_connection']),
+                    new Reference('pucene_pucene.query_builder.search'),
+                ]
             );
 
             $container->setDefinition('pucene_pucene.doctrine_dbal.' . $name, $definition);

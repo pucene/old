@@ -55,8 +55,8 @@ class DocumentPersister
                     $documentTerms[$token->getTerm()] = 0;
                 }
 
-                $fieldTerms[$token->getTerm()]++;
-                $documentTerms[$token->getTerm()]++;
+                ++$fieldTerms[$token->getTerm()];
+                ++$documentTerms[$token->getTerm()];
 
                 $this->insertToken($fieldId, $terms[$token->getTerm()], $token);
             }

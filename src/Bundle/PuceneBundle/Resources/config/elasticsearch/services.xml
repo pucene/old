@@ -11,7 +11,7 @@
 
         <service id="pucene_elasticsearch.search_builder"
                  class="Pucene\Component\Elasticsearch\QueryBuilder\SearchBuilder">
-            <argument type="service" id="pucene_elasticsearch.query_builder.pool"/>
+            <argument type="service" id="pucene.query_builder.pool"/>
         </service>
 
         <service id="pucene.client" class="Pucene\Component\Elasticsearch\ElasticsearchClient">
