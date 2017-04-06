@@ -3,7 +3,6 @@
 namespace Pucene\Component\Pucene\Dbal;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Query\QueryBuilder;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\SearchBuilder;
 use Pucene\Component\Pucene\Model\Analysis;
 use Pucene\Component\Pucene\Model\Document;
@@ -95,20 +94,9 @@ class DbalStorage implements StorageInterface
         $this->connection->delete($this->getSchema()->getDocumentsTableName(), ['id' => $id]);
     }
 
-    public function search(Search $search, $type, $index)
+    public function search(Search $search, $types, $index)
     {
-        $schema = $this->getSchema();
-
-        $queryBuilder = (new QueryBuilder($this->connection))->from($schema->getDocumentsTableName(), 'document')
-            ->select('document.*')
-            ->innerJoin('document', $schema->getFieldsTableName(), 'field', 'field.document_id = document.id')
-            ->innerJoin('field', $schema->getTokensTableName(), 'token', 'token.field_id = field.id')
-            ->innerJoin('token', $schema->getTermsTableName(), 'term', 'token.term_id = term.id')
-            ->where('document.type IN (?)')
-            ->groupBy('document.id')
-            ->setParameter(0, implode(',', $type));
-
-        $this->searchBuilder->build($queryBuilder, $search);
+        $queryBuilder = $this->searchBuilder->build($types, $search, $this->getSchema(), $this->connection);
 
         $result = $this->connection->fetchAll(
             $queryBuilder->getSQL(),
@@ -117,7 +105,7 @@ class DbalStorage implements StorageInterface
 
         return array_map(
             function ($row) use ($index) {
-                return new Document($row['id'], $row['type'], $index, json_decode($row['document'], true));
+                return new Document($row['id'], $row['type'], $index, json_decode($row['document'], true), (float) $row['score']);
             },
             $result
         );

@@ -72,14 +72,14 @@ class PuceneSchema
         $fields = $this->schema->createTable($this->tableNames['tokens']);
         $fields->addColumn('id', 'integer', ['autoincrement' => true]);
         $fields->addColumn('field_id', 'integer');
-        $fields->addColumn('term_id', 'integer', ['length' => 255]);
+        $fields->addColumn('term', 'string', ['length' => 255]);
         $fields->addColumn('start_offset', 'integer');
         $fields->addColumn('end_offset', 'integer');
         $fields->addColumn('position', 'integer');
         $fields->addColumn('type', 'string', ['length' => 255]);
         $fields->setPrimaryKey(['id']);
         $fields->addForeignKeyConstraint($this->tableNames['fields'], ['field_id'], ['id'], ['onDelete' => 'CASCADE']);
-        $fields->addForeignKeyConstraint($this->tableNames['terms'], ['term_id'], ['id']);
+        $fields->addForeignKeyConstraint($this->tableNames['terms'], ['term'], ['term']);
     }
 
     private function createTermsTable()
@@ -87,9 +87,8 @@ class PuceneSchema
         $this->tableNames['terms'] = sprintf('pu_%s_terms', $this->prefix);
 
         $fields = $this->schema->createTable($this->tableNames['terms']);
-        $fields->addColumn('id', 'integer', ['autoincrement' => true]);
-        $fields->addColumn('term', 'string', ['length' => 255, 'unique' => true]);
-        $fields->setPrimaryKey(['id']);
+        $fields->addColumn('term', 'string', ['length' => 255]);
+        $fields->setPrimaryKey(['term']);
     }
 
     private function createDocumentTermsTable()
@@ -99,7 +98,7 @@ class PuceneSchema
         $fields = $this->schema->createTable($this->tableNames['document_terms']);
         $fields->addColumn('id', 'integer', ['autoincrement' => true]);
         $fields->addColumn('document_id', 'string', ['length' => 255]);
-        $fields->addColumn('term_id', 'integer');
+        $fields->addColumn('term', 'string', ['length' => 255]);
         $fields->addColumn('frequency', 'integer');
         $fields->setPrimaryKey(['id']);
         $fields->addForeignKeyConstraint(
@@ -108,7 +107,7 @@ class PuceneSchema
             ['id'],
             ['onDelete' => 'CASCADE']
         );
-        $fields->addForeignKeyConstraint($this->tableNames['terms'], ['term_id'], ['id']);
+        $fields->addForeignKeyConstraint($this->tableNames['terms'], ['term'], ['term']);
     }
 
     private function createFieldTermsTable()
@@ -118,11 +117,11 @@ class PuceneSchema
         $fields = $this->schema->createTable($this->tableNames['field_terms']);
         $fields->addColumn('id', 'integer', ['autoincrement' => true]);
         $fields->addColumn('field_id', 'integer');
-        $fields->addColumn('term_id', 'integer');
+        $fields->addColumn('term', 'string', ['length' => 255]);
         $fields->addColumn('frequency', 'integer');
         $fields->setPrimaryKey(['id']);
         $fields->addForeignKeyConstraint($this->tableNames['fields'], ['field_id'], ['id'], ['onDelete' => 'CASCADE']);
-        $fields->addForeignKeyConstraint($this->tableNames['terms'], ['term_id'], ['id']);
+        $fields->addForeignKeyConstraint($this->tableNames['terms'], ['term'], ['term']);
     }
 
     public function toSql(AbstractPlatform $platform)
