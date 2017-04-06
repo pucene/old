@@ -58,7 +58,7 @@ class DocumentPersister
                 ++$fieldTerms[$token->getTerm()];
                 ++$documentTerms[$token->getTerm()];
 
-                $this->insertToken($fieldId, $terms[$token->getTerm()], $token);
+                $this->insertToken($fieldId, $token->getTerm(), $token);
             }
 
             foreach ($fieldTerms as $term => $frequency) {
@@ -66,7 +66,7 @@ class DocumentPersister
                     $this->schema->getFieldTermsTableName(),
                     [
                         'field_id' => $fieldId,
-                        'term_id' => $terms[$term],
+                        'term' => $term,
                         'frequency' => $frequency,
                     ]
                 );
@@ -78,7 +78,7 @@ class DocumentPersister
                 $this->schema->getDocumentTermsTableName(),
                 [
                     'document_id' => $document->getId(),
-                    'term_id' => $terms[$term],
+                    'term' => $term,
                     'frequency' => $frequency,
                 ]
             );
@@ -129,7 +129,7 @@ class DocumentPersister
     protected function findOrCreateTerm($term)
     {
         $result = $this->connection->fetchArray(
-            'SELECT id FROM ' . $this->schema->getTermsTableName() . ' WHERE term = ?',
+            'SELECT term FROM ' . $this->schema->getTermsTableName() . ' WHERE term = ?',
             [$term]
         );
 
@@ -153,7 +153,7 @@ class DocumentPersister
             $this->schema->getTokensTableName(),
             [
                 'field_id' => $fieldId,
-                'term_id' => $termId,
+                'term' => $termId,
                 'start_offset' => $token->getStartOffset(),
                 'end_offset' => $token->getEndOffset(),
                 'position' => $token->getPosition(),
