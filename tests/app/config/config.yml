@@ -1,0 +1,27 @@
+imports:
+    - { resource: parameters.yml }
+    - { resource: services.yml }
+
+framework:
+    secret:          "%secret%"
+    default_locale:  "%locale%"
+    php_errors:
+        log: true
+
+# Doctrine Configuration
+doctrine:
+    dbal:
+        driver:   pdo_sqlite
+        path:     "%database_path%"
+        charset:  UTF8
+
+test:
+    adapters:
+        pucene: ~
+        elasticsearch: ~
+    indices:
+        my_index:
+            mappings:
+                my_type:
+                    properties:
+                        title: ~

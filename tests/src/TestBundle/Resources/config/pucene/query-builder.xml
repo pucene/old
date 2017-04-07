@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="pucene.pucene.query_builder.term"
+                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermQueryBuilder">
+            <tag name="pucene.pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\TermLevel\Term"/>
+        </service>
+        <service id="pucene.pucene.query_builder.match_all"
+                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\MatchAllQueryBuilder">
+            <tag name="pucene.pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\MatchAll"/>
+        </service>
+        <service id="pucene.pucene.query_builder.match"
+                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\FullText\MatchQueryBuilder">
+            <argument type="service" id="pucene.pucene.analysis.standard"/>
+
+            <tag name="pucene.pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\FullText\Match"/>
+        </service>
+
+        <service id="pucene.pucene.query_builder.pool"
+                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderPool">
+            <argument type="collection"/>
+        </service>
+
+        <service id="pucene.pucene.query_builder.search"
+                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\SearchBuilder">
+            <argument type="service" id="pucene.pucene.query_builder.pool"/>
+        </service>
+    </services>
+</container>

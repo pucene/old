@@ -17,15 +17,21 @@ class ElasticsearchClient implements ClientInterface
      * @var SearchBuilder
      */
     private $searchBuilder;
+    /**
+     * @var array
+     */
+    private $adapterConfig;
 
     /**
      * @param Client $client
      * @param SearchBuilder $searchBuilder
+     * @param array $adapterConfig
      */
-    public function __construct(Client $client, SearchBuilder $searchBuilder)
+    public function __construct(Client $client, SearchBuilder $searchBuilder, array $adapterConfig)
     {
         $this->client = $client;
         $this->searchBuilder = $searchBuilder;
+        $this->adapterConfig = $adapterConfig;
     }
 
     /**
@@ -41,6 +47,7 @@ class ElasticsearchClient implements ClientInterface
      */
     public function create($name, array $parameters)
     {
+        $parameters['settings']['index'] = $this->adapterConfig['settings'];
         $response = $this->client->indices()->create(['index' => $name, 'body' => $parameters]);
 
         if (!$response['acknowledged']) {

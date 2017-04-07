@@ -1,12 +1,12 @@
 <?php
 
-namespace Pucene\Bundle\PuceneBundle\DependencyInjection;
+namespace Pucene\Tests\TestBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
- * Defines configuration for pucene/doctrine-bundle.
+ * TODO add description here.
  */
 class Configuration implements ConfigurationInterface
 {
@@ -18,7 +18,6 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $treeBuilder->root('pucene')
             ->children()
-                ->enumNode('adapter')->isRequired()->values(['elasticsearch', 'pucene'])->end()
                 ->append($this->getAdaptersNode())
                 ->append($this->getIndexNode())
             ->end();

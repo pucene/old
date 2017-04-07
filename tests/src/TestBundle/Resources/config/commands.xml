@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="pucene.pucene.commands.create_indices"
+                 class="Pucene\Bundle\PuceneBundle\Command\CreateIndicesCommand">
+            <argument type="string">pucene:indices:create</argument>
+            <argument>%pucene.indices%</argument>
+            <argument type="service" id="pucene.pucene.client"/>
+
+            <tag name="console.command"/>
+        </service>
+        <service id="pucene.elasticsearch.commands.create_indices"
+                 class="Pucene\Bundle\PuceneBundle\Command\CreateIndicesCommand">
+            <argument type="string">elasticsearch:indices:create</argument>
+            <argument>%pucene.indices%</argument>
+            <argument type="service" id="pucene.elasticsearch.client"/>
+
+            <tag name="console.command"/>
+        </service>
+
+        <service id="pucene.pucene.commands.delete_indices" class="Pucene\Bundle\PuceneBundle\Command\DeleteIndicesCommand">
+            <argument type="string">pucene:indices:delete</argument>
+            <argument>%pucene.indices%</argument>
+            <argument type="service" id="pucene.pucene.client"/>
+
+            <tag name="console.command"/>
+        </service>
+        <service id="pucene.elasticsearch.commands.delete_indices" class="Pucene\Bundle\PuceneBundle\Command\DeleteIndicesCommand">
+            <argument type="string">elasticsearch:indices:delete</argument>
+            <argument>%pucene.indices%</argument>
+            <argument type="service" id="pucene.elasticsearch.client"/>
+
+            <tag name="console.command"/>
+        </service>
+    </services>
+</container>
