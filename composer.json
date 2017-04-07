@@ -16,16 +16,20 @@
     "require": {
         "php": "^7.0",
 
-        "symfony/http-kernel": "^2.8 || ^3.0",
-        "symfony/dependency-injection": "^2.8 || ^3.0",
-        "symfony/config": "^2.8 || ^3.0",
-        "symfony/console": "^2.8 || ^3.0",
+        "symfony/config": "^3.0",
+        "symfony/console": "^3.0",
+        "symfony/http-kernel": "^3.0",
+        "symfony/dependency-injection": "^3.0",
+        "symfony/framework-bundle": "^3.0",
 
         "elasticsearch/elasticsearch": "^2.0",
         "ramsey/uuid": "^3.5",
         "doctrine/dbal": "^2.5"
     },
     "require-dev": {
+        "doctrine/doctrine-bundle": "^1.6",
+        "symfony/yaml": "^3.0",
+        "jeroen/json-dump-reader": "^1.4",
         "phpunit/phpunit": "^6.0"
     },
     "autoload": {
@@ -35,7 +39,10 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Pucene\\Tests\\": "tests/"
-        }
+            "Pucene\\Tests\\": "tests/src/"
+        },
+        "classmap": [
+            "tests/app/AppKernel.php"
+        ]
     }
 }

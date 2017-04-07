@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit colors="true" bootstrap="tests/bootstrap.php">
+    <testsuites>
+        <testsuite name="Pucene">
+            <directory>./tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory>.</directory>
+            <exclude>
+                <directory>tests/</directory>
+                <directory>vendor/</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+
+    <php>
+        <server name="KERNEL_DIR" value="tests/app"/>
+    </php>
+</phpunit>

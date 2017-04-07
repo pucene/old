@@ -6,3 +6,6 @@ composer.lock
 .idea
 *.iml
 
+# testsuite
+tests/app/data/data.*
+tests/var

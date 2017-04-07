@@ -1,0 +1,4 @@
+parameters:
+    locale: en
+    secret: ThisTokenIsNotSoSecretChangeIt
+    database_path: "%kernel.root_dir%/data/data.db"
