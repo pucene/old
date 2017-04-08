@@ -38,12 +38,7 @@ class FieldLengthNorm implements ExpressionInterface
     public function __toString(): string
     {
         return $this->expr->coalesce(
-            $this->expr->devide(
-                $this->expr->value(1),
-                $this->expr->sqrt(
-                    $this->expr->variable($this->queryBuilder->joinField($this->field) . '.number_of_terms')
-                )
-            ),
+            $this->expr->variable($this->queryBuilder->joinField($this->field) . '.field_norm'),
             $this->expr->value(0)
         );
     }

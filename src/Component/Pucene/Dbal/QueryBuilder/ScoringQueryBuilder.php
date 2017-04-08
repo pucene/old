@@ -53,16 +53,20 @@ class ScoringQueryBuilder
             ->setMaxResults(1);
     }
 
-    public function inverseDocumentFrequency($term): float
+    public function inverseDocumentFrequency(string $field, string $term): float
     {
-        return $this->calculateInverseDocumentFrequency($this->getDocCountPerTerm($term));
+        return $this->calculateInverseDocumentFrequency($this->getDocCountPerTerm($field, $term));
     }
 
-    public function queryNorm(array $terms): float
+    public function queryNorm(string $field, array $terms): float
     {
         $sum = 0;
-        foreach ($this->getDocCountPerTerms($terms) as $term => $value) {
+        foreach ($this->getDocCountPerTerms($field, $terms) as $term => $value) {
             $sum += pow($this->calculateInverseDocumentFrequency($value), 2);
+        }
+
+        if ($sum === 0) {
+            return 0;
         }
 
         return 1.0 / sqrt($sum);
@@ -97,7 +101,7 @@ class ScoringQueryBuilder
             'innerDocument',
             $this->schema->getFieldsTableName(),
             $fieldName,
-            sprintf('innerdocument.id = %s.document_id and %s.name = \'%s\'', $fieldName, $fieldName, $field)
+            sprintf('innerDocument.id = %s.document_id and %s.name = \'%s\'', $fieldName, $fieldName, $field)
         );
 
         return $this->joins[] = $fieldName;
@@ -126,7 +130,7 @@ class ScoringQueryBuilder
         return $this->docCount = (int) $queryBuilder->execute()->fetchColumn();
     }
 
-    private function getDocCountPerTerm($term)
+    private function getDocCountPerTerm(string $field, string $term)
     {
         if (array_key_exists($term, $this->docCountPerTerm)) {
             return $this->docCountPerTerm[$term];
@@ -137,33 +141,40 @@ class ScoringQueryBuilder
             ->from($this->schema->getDocumentsTableName(), 'document')
             ->innerJoin(
                 'document',
-                    $this->schema->getDocumentTermsTableName(),
-                    'documentTerm',
-                    'document.id = documentTerm.document_id and documentTerm.term = ?'
-            )
-            ->setParameter(0, $term);
+                $this->schema->getFieldsTableName(),
+                'field',
+                sprintf('document.id = field.document_id and field.name = \'%s\'', $field)
+            )->innerJoin(
+                'field',
+                $this->schema->getFieldTermsTableName(),
+                'term',
+                sprintf('field.id = term.field_id and term.term = \'%s\'', $term)
+            );
 
         return $this->docCountPerTerm[$term] = (int) $queryBuilder->execute()->fetchColumn();
     }
 
-    private function getDocCountPerTerms(array $terms)
+    private function getDocCountPerTerms(string $field, array $terms)
     {
         $inExpression = $this->connection->getExpressionBuilder()->in(
-            'documentTerm.term',
+            'fieldTerm.term',
             "'" . implode("','", $terms) . "'"
         );
 
         $queryBuilder = (new QueryBuilder($this->connection))
-            ->select('count(document.id) as count')
-            ->addSelect('documentTerm.term as term')
+            ->select('count(document.id) as count')->addSelect('fieldTerm.term as term')
             ->from($this->schema->getDocumentsTableName(), 'document')
             ->innerJoin(
                 'document',
-                $this->schema->getDocumentTermsTableName(),
-                'documentTerm',
-                'document.id = documentTerm.document_id and ' . $inExpression
-            )
-            ->groupBy('documentTerm.term');
+                $this->schema->getFieldsTableName(),
+                'field',
+                sprintf('document.id = field.document_id and field.name = \'%s\'', $field)
+            )->innerJoin(
+                'field',
+                $this->schema->getFieldTermsTableName(),
+                'fieldTerm',
+                sprintf('field.id = fieldTerm.field_id and %s', $inExpression)
+            )->groupBy('fieldTerm.term');
 
         $result = [];
         foreach ($queryBuilder->execute() as $item) {

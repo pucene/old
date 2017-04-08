@@ -98,10 +98,7 @@ class DbalStorage implements StorageInterface
     {
         $queryBuilder = $this->searchBuilder->build($types, $search, $this->getSchema(), $this->connection);
 
-        $result = $this->connection->fetchAll(
-            $queryBuilder->getSQL(),
-            $queryBuilder->getParameters()
-        );
+        $result = $queryBuilder->execute()->fetchAll();
 
         return array_map(
             function ($row) use ($index) {

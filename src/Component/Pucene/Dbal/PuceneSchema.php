@@ -41,10 +41,13 @@ class PuceneSchema
 
         $documents = $this->schema->createTable($this->tableNames['documents']);
         $documents->addColumn('id', 'string', ['length' => 255]);
+        $documents->addColumn('number', 'integer', ['autoincrement' => true]);
         $documents->addColumn('type', 'string', ['length' => 255]);
         $documents->addColumn('document', 'json_array');
+        $documents->addColumn('indexed_at', 'datetime');
         $documents->setPrimaryKey(['id']);
         $documents->addIndex(['type']);
+        $documents->addUniqueIndex(['number']);
     }
 
     private function createFieldsTable()
@@ -56,6 +59,7 @@ class PuceneSchema
         $fields->addColumn('document_id', 'string', ['length' => 255]);
         $fields->addColumn('name', 'string', ['length' => 255]);
         $fields->addColumn('number_of_terms', 'integer');
+        $fields->addColumn('field_norm', 'float');
         $fields->setPrimaryKey(['id']);
         $fields->addForeignKeyConstraint(
             $this->tableNames['documents'],

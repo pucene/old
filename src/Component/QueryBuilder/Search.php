@@ -3,6 +3,7 @@
 namespace Pucene\Component\QueryBuilder;
 
 use Pucene\Component\QueryBuilder\Query\QueryInterface;
+use Pucene\Component\QueryBuilder\Sort\SortInterface;
 
 class Search
 {
@@ -28,6 +29,11 @@ class Search
     private $query;
 
     /**
+     * @var SortInterface[]
+     */
+    private $sorts = [];
+
+    /**
      * @param QueryInterface $query
      */
     public function __construct(QueryInterface $query = null)
@@ -35,6 +41,11 @@ class Search
         $this->query = $query;
     }
 
+    /**
+     * Returns from.
+     *
+     * @return int
+     */
     public function getFrom()
     {
         return $this->from;
@@ -54,6 +65,11 @@ class Search
         return $this;
     }
 
+    /**
+     * Returns sizer.
+     *
+     * @return int
+     */
     public function getSize()
     {
         return $this->size;
@@ -73,11 +89,42 @@ class Search
         return $this;
     }
 
+    /**
+     * Set query.
+     *
+     * @param QueryInterface $query
+     *
+     * @return $this
+     */
     public function setQuery(QueryInterface $query)
     {
         $this->query = $query;
 
         return $this;
+    }
+
+    /**
+     * Add sort.
+     *
+     * @param SortInterface $sort
+     *
+     * @return $this
+     */
+    public function addSort(SortInterface $sort)
+    {
+        $this->sorts[] = $sort;
+
+        return $this;
+    }
+
+    /**
+     * Returns sorts.
+     *
+     * @return SortInterface[]
+     */
+    public function getSorts(): array
+    {
+        return $this->sorts;
     }
 
     /**

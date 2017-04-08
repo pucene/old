@@ -4,6 +4,7 @@ namespace Pucene\Component\Pucene\Dbal;
 
 use Doctrine\DBAL\Connection;
 use Pucene\Component\Analysis\Token;
+use Pucene\Component\Pucene\Math\ElasticsearchPrecision;
 use Pucene\Component\Pucene\Model\Document;
 use Pucene\Component\Pucene\Model\Field;
 
@@ -96,6 +97,13 @@ class DocumentPersister
                 'id' => $document->getId(),
                 'type' => $document->getType(),
                 'document' => json_encode($document->getDocument()),
+                'indexed_at' => new \DateTime(),
+            ],
+            [
+                \PDO::PARAM_STR,
+                \PDO::PARAM_STR,
+                \PDO::PARAM_STR,
+                'datetime',
             ]
         );
     }
@@ -114,6 +122,7 @@ class DocumentPersister
                 'document_id' => $document->getId(),
                 'name' => $field->getName(),
                 'number_of_terms' => $field->getNumberOfTerms(),
+                'field_norm' => ElasticsearchPrecision::fieldNorm($field->getNumberOfTerms()),
             ]
         );
         $fieldId = $this->connection->lastInsertId();

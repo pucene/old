@@ -1,4 +1,8 @@
 parameters:
     locale: en
     secret: ThisTokenIsNotSoSecretChangeIt
-    database_path: "%kernel.root_dir%/data/data.db"
+    database_host: 127.0.0.1
+    database_port: null
+    database_name: pucene_test
+    database_user: root
+    database_password: null

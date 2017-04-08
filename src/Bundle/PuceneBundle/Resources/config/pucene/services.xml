@@ -6,7 +6,6 @@
         <service id="pucene.client" class="Pucene\Component\Pucene\PuceneClient">
             <argument type="collection"/>
             <argument type="service" id="pucene_pucene.analysis.standard"/>
-            <argument>%pucene.adapter_config%</argument>
         </service>
     </services>
 </container>

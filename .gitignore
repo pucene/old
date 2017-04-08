@@ -7,5 +7,4 @@ composer.lock
 *.iml
 
 # testsuite
-tests/app/data/data.*
 tests/var
