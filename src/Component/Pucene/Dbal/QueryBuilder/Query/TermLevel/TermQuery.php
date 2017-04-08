@@ -41,12 +41,9 @@ class TermQuery implements QueryInterface
 
     public function build(ExpressionBuilder $expr, ParameterBag $parameter)
     {
-        $parameter->add($this->query->getField());
-        $parameter->add($this->query->getTerm());
-
         return $expr->andX(
-            $expr->eq('field.name', '?'),
-            $expr->eq('token.term', '?')
+            $expr->eq('field.name', "'" . $this->query->getField() . "'"),
+            $expr->eq('token.term', "'" . $this->query->getTerm() . "'")
         );
     }
 
@@ -54,8 +51,8 @@ class TermQuery implements QueryInterface
     {
         return $expr->multiply(
             new TermFrequency($this->getField(), $this->getTerm(), $queryBuilder, $expr),
-            $expr->value($queryBuilder->inverseDocumentFrequency($this->getTerm() . '.id')),
-            new FieldLengthNorm($this->getField(), $queryBuilder, $expr, $expr)
+            $expr->value($queryBuilder->inverseDocumentFrequency($this->getField(), $this->getTerm())),
+            new FieldLengthNorm($this->getField(), $queryBuilder, $expr)
         );
     }
 }

@@ -7,6 +7,7 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use Pucene\Component\Math\MathExpressionBuilder;
 use Pucene\Component\Pucene\Dbal\PuceneSchema;
 use Pucene\Component\QueryBuilder\Search;
+use Pucene\Component\QueryBuilder\Sort\IdSort;
 
 class SearchBuilder
 {
@@ -33,15 +34,13 @@ class SearchBuilder
      */
     public function build(array $types, Search $search, PuceneSchema $schema, Connection $connection)
     {
-        $queryBuilder = (new QueryBuilder($connection))->from($schema->getDocumentsTableName(), 'document')
-            ->select(
+        $queryBuilder = (new QueryBuilder($connection))->from($schema->getDocumentsTableName(), 'document')->select(
                 'document.*'
             )
             ->innerJoin('document', $schema->getFieldsTableName(), 'field', 'field.document_id = document.id')
             ->innerJoin('field', $schema->getTokensTableName(), 'token', 'token.field_id = field.id')
             ->where('document.type IN (?)')
             ->groupBy('document.id')
-            ->orderBy('score', 'desc')
             ->setMaxResults($search->getSize())
             ->setFirstResult($search->getFrom())
             ->setParameter(0, implode(',', $types));
@@ -59,9 +58,17 @@ class SearchBuilder
         $scoringQueryBuilder = $scoringQueryBuilder->getQueryBuilder();
         if ($expression) {
             $scoringQueryBuilder->select($expression);
-            $queryBuilder->addSelect('(' . $scoringQueryBuilder->getSQL() . ') as score');
+            $queryBuilder->addSelect('(' . $scoringQueryBuilder->getSQL() . ') as score')->orderBy('score', 'desc');
         } else {
             $queryBuilder->addSelect('1 as score');
+        }
+
+        if (0 < count($search->getSorts())) {
+            foreach ($search->getSorts() as $sort) {
+                if ($sort instanceof IdSort) {
+                    $queryBuilder->addOrderBy('id', $sort->getOrder());
+                }
+            }
         }
 
         return $queryBuilder;

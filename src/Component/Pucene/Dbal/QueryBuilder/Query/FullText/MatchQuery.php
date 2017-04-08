@@ -51,8 +51,8 @@ class MatchQuery implements QueryInterface
 
         $expression = $expr->add();
         foreach ($this->queries as $query) {
-            $queryNorm = $queryBuilder->queryNorm($terms);
-            $inverseDocumentFrequency = $queryBuilder->inverseDocumentFrequency($query->getTerm());
+            $queryNorm = $queryBuilder->queryNorm($query->getField(), $terms);
+            $inverseDocumentFrequency = $queryBuilder->inverseDocumentFrequency($query->getField(), $query->getTerm());
 
             $expression->add(
                 $expr->multiply(

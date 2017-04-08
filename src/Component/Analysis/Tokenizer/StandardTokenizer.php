@@ -6,6 +6,8 @@ use Pucene\Component\Analysis\Token;
 
 class StandardTokenizer implements TokenizerInterface
 {
+    private static $accentedCharacters = 'àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ';
+
     /**
      * {@inheritdoc}
      */
@@ -17,7 +19,7 @@ class StandardTokenizer implements TokenizerInterface
         $position = 0;
         $term = '';
         for ($i = 0, $length = strlen($input); $i < $length; ++$i) {
-            if (preg_match('/[a-zA-Z0-9\']/', $input[$i])) {
+            if (preg_match('/[a-zA-Z' . self::$accentedCharacters . '0-9\']/', $input[$i])) {
                 $term .= $input[$i];
 
                 continue;

@@ -6,6 +6,7 @@ use Elasticsearch\Client;
 use Pucene\Component\Client\IndexInterface;
 use Pucene\Component\Elasticsearch\QueryBuilder\SearchBuilder;
 use Pucene\Component\QueryBuilder\Search;
+use Pucene\Component\QueryBuilder\Sort\IdSort;
 
 class ElasticsearchIndex implements IndexInterface
 {
@@ -62,15 +63,26 @@ class ElasticsearchIndex implements IndexInterface
      */
     public function search(Search $search, $type)
     {
-        $response = $this->client->search(
-            [
-                'index' => $this->name,
-                'type' => $type,
-                'body' => [
-                    'query' => $this->searchBuilder->build($search)->toArray(),
-                ],
-            ]
-        );
+        $parameter = [
+            'index' => $this->name,
+            'type' => $type,
+            'body' => [
+                'size' => $search->getSize(),
+                'from' => $search->getFrom(),
+                'query' => $this->searchBuilder->build($search)->toArray(),
+            ],
+        ];
+
+        if (0 < count($search->getSorts())) {
+            $parameter['body']['sort'] = [];
+            foreach ($search->getSorts() as $sort) {
+                if ($sort instanceof IdSort) {
+                    $parameter['body']['sort']['_uid'] = $sort->getOrder();
+                }
+            }
+        }
+
+        $response = $this->client->search($parameter);
 
         return $response['hits'];
     }

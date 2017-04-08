@@ -17,7 +17,6 @@ cache:
   directories:
     - "vendor"
     - "$HOME/.composer/cache"
-    - "tests/app/data"
 
 before_install:
   - if [[ -z $CODE_COVERAGE ]]; then phpenv config-rm xdebug.ini ; fi
@@ -27,12 +26,9 @@ install:
   - travis_retry composer update
   - ./tests/bin/console elasticsearch:indices:create -e prod
   - ./tests/bin/console test:import:json my_index ./tests/app/data.json --adapter elasticsearch -e prod
-  - |
-    if [ ! -f tests/app/data/data.db ]; then
-      ./tests/bin/console doctrine:database:create -e prod
-      ./tests/bin/console pucene:indices:create -e prod
-      ./tests/bin/console test:import:json my_index ./tests/app/data.json --adapter pucene -e prod
-    fi
+  - ./tests/bin/console doctrine:database:create -e prod
+  - ./tests/bin/console pucene:indices:create -e prod
+  - ./tests/bin/console test:import:json my_index ./tests/app/data.json --adapter pucene -e prod
 
 script:
   - ./vendor/bin/phpunit $CODE_COVERAGE
