@@ -5,6 +5,8 @@ namespace Pucene\Tests\src\Functional\Comparison;
 use Pucene\Component\Client\IndexInterface;
 use Pucene\Component\QueryBuilder\Query\FullText\Match;
 use Pucene\Component\QueryBuilder\Query\MatchAll;
+use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\MoreLikeThis;
+use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\TextLike;
 use Pucene\Component\QueryBuilder\Query\TermLevel\Term;
 use Pucene\Component\QueryBuilder\Search;
 use Pucene\Component\QueryBuilder\Sort\IdSort;
@@ -63,6 +65,29 @@ class SearchComparisonTest extends KernelTestCase
     {
         $search = new Search(new Match('title', 'museum lyon'));
         $search->setSize(20);
+
+        $elasticsearchResult = $this->elasticsearchIndex->search($search, 'my_type');
+        $puceneResult = $this->puceneIndex->search($search, 'my_type');
+
+        $this->assertEquals(count($elasticsearchResult['hits']), count($puceneResult['hits']));
+
+        $elasticsearchHits = $this->normalize($elasticsearchResult['hits']);
+        $puceneHits = $this->normalize($puceneResult['hits']);
+
+        foreach ($puceneHits as $id => $puceneHit) {
+            $this->assertEquals($elasticsearchHits[$id]['document'], $puceneHit['document']);
+
+            // if position matches: OK
+            // else score has to be equals
+            if ($elasticsearchHits[$id]['position'] !== $puceneHit['position']) {
+                $this->assertEquals($elasticsearchHits[$id]['_score'], $puceneHit['_score'], $id, 0.001);
+            }
+        }
+    }
+
+    public function testSearchMoreLikeThisText()
+    {
+        $search = new Search(new MoreLikeThis([new TextLike('Museum of Fine Arts of Lyon')]));
 
         $elasticsearchResult = $this->elasticsearchIndex->search($search, 'my_type');
         $puceneResult = $this->puceneIndex->search($search, 'my_type');
