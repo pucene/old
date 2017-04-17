@@ -50,12 +50,17 @@ class ScoringQueryBuilder
         $this->queryBuilder = new QueryBuilder($connection);
         $this->queryBuilder->from($schema->getDocumentsTableName(), 'innerDocument')
             ->where('innerDocument.id = document.id')
-            ->setMaxResults(1);
+            ->groupBy('innerDocument.id');
     }
 
     public function inverseDocumentFrequency(string $field, string $term): float
     {
         return $this->calculateInverseDocumentFrequency($this->getDocCountPerTerm($field, $term));
+    }
+
+    public function inverseDocumentFrequencyPerDocument(string $term): float
+    {
+        return $this->calculateInverseDocumentFrequency($this->getDocCountPerTermPerDocument($term));
     }
 
     public function queryNorm(string $field, array $terms): float
@@ -144,6 +149,30 @@ class ScoringQueryBuilder
                 $this->schema->getFieldsTableName(),
                 'field',
                 sprintf('document.id = field.document_id and field.name = \'%s\'', $field)
+            )->innerJoin(
+                'field',
+                $this->schema->getFieldTermsTableName(),
+                'term',
+                sprintf('field.id = term.field_id and term.term = \'%s\'', $term)
+            );
+
+        return $this->docCountPerTerm[$term] = (int) $queryBuilder->execute()->fetchColumn();
+    }
+
+    public function getDocCountPerTermPerDocument(string $term)
+    {
+        if (array_key_exists($term, $this->docCountPerTerm)) {
+            return $this->docCountPerTerm[$term];
+        }
+
+        $queryBuilder = (new QueryBuilder($this->connection))
+            ->select('count(document.id) as count')
+            ->from($this->schema->getDocumentsTableName(), 'document')
+            ->innerJoin(
+                'document',
+                $this->schema->getFieldsTableName(),
+                'field',
+                'document.id = field.document_id'
             )->innerJoin(
                 'field',
                 $this->schema->getFieldTermsTableName(),

@@ -47,10 +47,11 @@ class TestExtension extends Extension
 
     private function loadPucene(array $config, ContainerBuilder $container)
     {
-        $storages = [];
+        $serviceIds = [];
         foreach ($config['indices'] as $name => $options) {
             $definition = new Definition(
-                DbalStorage::class, [
+                DbalStorage::class,
+                [
                     $name,
                     new Reference($config['adapters']['pucene']['doctrine_dbal_connection']),
                     new Reference('pucene.pucene.query_builder.search'),
@@ -58,9 +59,9 @@ class TestExtension extends Extension
             );
 
             $container->setDefinition('pucene.pucene.doctrine_dbal.' . $name, $definition);
-            $storages[$name] = new Reference('pucene.pucene.doctrine_dbal.' . $name);
+            $serviceIds[$name] = 'pucene.pucene.doctrine_dbal.' . $name;
         }
 
-        $container->getDefinition('pucene.pucene.client')->replaceArgument(0, $storages);
+        $container->getDefinition('pucene.pucene.storage_factory')->replaceArgument(1, $serviceIds);
     }
 }

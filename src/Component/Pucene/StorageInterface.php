@@ -16,4 +16,6 @@ interface StorageInterface
     public function deleteDocument($id);
 
     public function search(Search $search, $type, $index);
+
+    public function get($type, $id);
 }

@@ -1,43 +1,21 @@
 <?php
 
-namespace Pucene\Tests\src\Functional\Comparison;
+namespace Pucene\Tests\Functional\Comparison;
 
-use Pucene\Component\Client\IndexInterface;
 use Pucene\Component\QueryBuilder\Query\FullText\Match;
 use Pucene\Component\QueryBuilder\Query\MatchAll;
+use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\DocumentLike;
 use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\MoreLikeThis;
 use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\TextLike;
 use Pucene\Component\QueryBuilder\Query\TermLevel\Term;
 use Pucene\Component\QueryBuilder\Search;
 use Pucene\Component\QueryBuilder\Sort\IdSort;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
  * This testcase compares elasticsearch with pucene results for different queries.
  */
-class SearchComparisonTest extends KernelTestCase
+class SearchComparisonTest extends ComparisonTestCase
 {
-    /**
-     * @var IndexInterface
-     */
-    private $puceneIndex;
-
-    /**
-     * @var IndexInterface
-     */
-    private $elasticsearchIndex;
-
-    protected function setUp()
-    {
-        $this->bootKernel();
-
-        $pucene = $this->get('pucene.pucene.client');
-        $this->puceneIndex = $pucene->get('my_index');
-
-        $elasticsearch = $this->get('pucene.elasticsearch.client');
-        $this->elasticsearchIndex = $elasticsearch->get('my_index');
-    }
-
     public function testSearchTerm()
     {
         $search = new Search(new Term('title', 'museum'));
@@ -56,7 +34,7 @@ class SearchComparisonTest extends KernelTestCase
             // if position matches: OK
             // else score has to be equals
             if ($elasticsearchHits[$id]['position'] !== $puceneHit['position']) {
-                $this->assertEquals($elasticsearchHits[$id]['_score'], $puceneHit['_score'], '', 0.001);
+                $this->assertEquals($elasticsearchHits[$id]['_score'], $puceneHit['_score'], '', 0.002);
             }
         }
     }
@@ -80,14 +58,18 @@ class SearchComparisonTest extends KernelTestCase
             // if position matches: OK
             // else score has to be equals
             if ($elasticsearchHits[$id]['position'] !== $puceneHit['position']) {
-                $this->assertEquals($elasticsearchHits[$id]['_score'], $puceneHit['_score'], $id, 0.001);
+                $this->assertEquals($elasticsearchHits[$id]['_score'], $puceneHit['_score'], $id, 0.002);
             }
         }
     }
 
     public function testSearchMoreLikeThisText()
     {
-        $search = new Search(new MoreLikeThis([new TextLike('Museum of Fine Arts of Lyon')]));
+        $query = new MoreLikeThis([new TextLike('Museum of Arts of Lyon')], ['title']);
+        $query->setMinTermFrequency(1);
+
+        $search = new Search($query);
+        $search->setSize(500);
 
         $elasticsearchResult = $this->elasticsearchIndex->search($search, 'my_type');
         $puceneResult = $this->puceneIndex->search($search, 'my_type');
@@ -98,12 +80,72 @@ class SearchComparisonTest extends KernelTestCase
         $puceneHits = $this->normalize($puceneResult['hits']);
 
         foreach ($puceneHits as $id => $puceneHit) {
+            $this->assertArrayHasKey($id, $elasticsearchHits, $id);
             $this->assertEquals($elasticsearchHits[$id]['document'], $puceneHit['document']);
 
             // if position matches: OK
             // else score has to be equals
             if ($elasticsearchHits[$id]['position'] !== $puceneHit['position']) {
-                $this->assertEquals($elasticsearchHits[$id]['_score'], $puceneHit['_score'], $id, 0.001);
+                $this->assertEquals($elasticsearchHits[$id]['_score'], $puceneHit['_score'], $id, 0.002);
+            }
+        }
+    }
+
+    public function testSearchMoreLikeThisDocument()
+    {
+        $query = new MoreLikeThis([new DocumentLike('my_index', 'my_type', 'Q4872')], ['title']);
+        $query->setMinTermFrequency(1);
+
+        $search = new Search($query);
+        $search->setSize(500);
+
+        $elasticsearchResult = $this->elasticsearchIndex->search($search, 'my_type');
+        $puceneResult = $this->puceneIndex->search($search, 'my_type');
+
+        $this->assertEquals(count($elasticsearchResult['hits']), count($puceneResult['hits']));
+
+        $elasticsearchHits = $this->normalize($elasticsearchResult['hits']);
+        $puceneHits = $this->normalize($puceneResult['hits']);
+
+        foreach ($puceneHits as $id => $puceneHit) {
+            $this->assertArrayHasKey($id, $elasticsearchHits, $id);
+            $this->assertEquals($elasticsearchHits[$id]['document'], $puceneHit['document']);
+
+            // if position matches: OK
+            // else score has to be equals
+            if ($elasticsearchHits[$id]['position'] !== $puceneHit['position']) {
+                $this->assertEquals($elasticsearchHits[$id]['_score'], $puceneHit['_score'], $id, 0.002);
+            }
+        }
+    }
+
+    public function testSearchMoreLikeThisDocuments()
+    {
+        $query = new MoreLikeThis(
+            [new DocumentLike('my_index', 'my_type', 'Q435'), new DocumentLike('my_index', 'my_type', 'Q4872')],
+            ['title']
+        );
+        $query->setMinTermFrequency(1);
+
+        $search = new Search($query);
+        $search->setSize(500);
+
+        $elasticsearchResult = $this->elasticsearchIndex->search($search, 'my_type');
+        $puceneResult = $this->puceneIndex->search($search, 'my_type');
+
+        $this->assertEquals(count($elasticsearchResult['hits']), count($puceneResult['hits']));
+
+        $elasticsearchHits = $this->normalize($elasticsearchResult['hits']);
+        $puceneHits = $this->normalize($puceneResult['hits']);
+
+        foreach ($puceneHits as $id => $puceneHit) {
+            $this->assertArrayHasKey($id, $elasticsearchHits, $id);
+            $this->assertEquals($elasticsearchHits[$id]['document'], $puceneHit['document']);
+
+            // if position matches: OK
+            // else score has to be equals
+            if ($elasticsearchHits[$id]['position'] !== $puceneHit['position']) {
+                $this->assertEquals($elasticsearchHits[$id]['_score'], $puceneHit['_score'], $id, 0.002);
             }
         }
     }
@@ -139,10 +181,5 @@ class SearchComparisonTest extends KernelTestCase
         }
 
         return $result;
-    }
-
-    protected function get($id)
-    {
-        return self::$kernel->getContainer()->get($id);
     }
 }

@@ -44,7 +44,7 @@ class PuceneExtension extends Extension
 
     private function loadPucene(array $config, ContainerBuilder $container)
     {
-        $storages = [];
+        $serviceIds = [];
         foreach ($config['indices'] as $name => $options) {
             $definition = new Definition(
                 DbalStorage::class,
@@ -56,9 +56,9 @@ class PuceneExtension extends Extension
             );
 
             $container->setDefinition('pucene_pucene.doctrine_dbal.' . $name, $definition);
-            $storages[$name] = new Reference('pucene_pucene.doctrine_dbal.' . $name);
+            $serviceIds[$name] = 'pucene_pucene.doctrine_dbal.' . $name;
         }
 
-        $container->getDefinition('pucene.client')->replaceArgument(0, $storages);
+        $container->getDefinition('pucene.storage_factory')->replaceArgument(1, $serviceIds);
     }
 }

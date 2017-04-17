@@ -17,6 +17,13 @@
 
             <tag name="pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\FullText\Match"/>
         </service>
+        <service id="pucene_pucene.query_builder.more_like_this"
+                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Specialized\MoreLikeThisQueryBuilder">
+            <argument type="service" id="pucene.client"/>
+            <argument type="service" id="pucene_pucene.analysis.standard"/>
+
+            <tag name="pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\MoreLikeThis"/>
+        </service>
 
         <service id="pucene.query_builder.pool"
                  class="Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderPool">

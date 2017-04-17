@@ -17,6 +17,16 @@ class MoreLikeThis implements QueryInterface
     private $fields;
 
     /**
+     * @var int
+     */
+    private $minTermFrequency = 2;
+
+    /**
+     * @var int
+     */
+    private $minDocFreq = 5;
+
+    /**
      * @param array $like
      * @param array $fields
      */
@@ -44,5 +54,53 @@ class MoreLikeThis implements QueryInterface
     public function getFields(): array
     {
         return $this->fields;
+    }
+
+    /**
+     * Returns minTermFrequency.
+     *
+     * @return int
+     */
+    public function getMinTermFrequency(): int
+    {
+        return $this->minTermFrequency;
+    }
+
+    /**
+     * Set minTermFrequency.
+     *
+     * @param int $minTermFrequency
+     *
+     * @return self
+     */
+    public function setMinTermFrequency(int $minTermFrequency): MoreLikeThis
+    {
+        $this->minTermFrequency = $minTermFrequency;
+
+        return $this;
+    }
+
+    /**
+     * Returns minDocFreq.
+     *
+     * @return int
+     */
+    public function getMinDocFreq(): int
+    {
+        return $this->minDocFreq;
+    }
+
+    /**
+     * Set minDocFreq.
+     *
+     * @param int $minDocFreq
+     *
+     * @return self
+     */
+    public function setMinDocFreq(int $minDocFreq): MoreLikeThis
+    {
+        $this->minDocFreq = $minDocFreq;
+
+        return $this;
     }
 }

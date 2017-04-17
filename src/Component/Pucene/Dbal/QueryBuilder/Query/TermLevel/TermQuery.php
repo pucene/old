@@ -17,33 +17,47 @@ use Pucene\Component\QueryBuilder\Query\TermLevel\Term;
 class TermQuery implements QueryInterface
 {
     /**
-     * @var Term
+     * @var string
      */
-    private $query;
+    private $field;
 
     /**
-     * @param Term $query
+     * @var string
      */
-    public function __construct(Term $query)
+    private $term;
+
+    /**
+     * @var float
+     */
+    private $boost;
+
+    /**
+     * @param string $field
+     * @param string $term
+     * @param float $boost
+     */
+    public function __construct(string $field, string $term, float $boost = 1)
     {
-        $this->query = $query;
+        $this->field = $field;
+        $this->term = $term;
+        $this->boost = $boost;
     }
 
     public function getField()
     {
-        return $this->query->getField();
+        return $this->field;
     }
 
     public function getTerm()
     {
-        return $this->query->getTerm();
+        return $this->term;
     }
 
     public function build(ExpressionBuilder $expr, ParameterBag $parameter)
     {
         return $expr->andX(
-            $expr->eq('field.name', "'" . $this->query->getField() . "'"),
-            $expr->eq('token.term', "'" . $this->query->getTerm() . "'")
+            $expr->eq('field.name', "'" . $this->field . "'"),
+            $expr->eq('token.term', "'" . $this->term . "'")
         );
     }
 
@@ -52,7 +66,8 @@ class TermQuery implements QueryInterface
         return $expr->multiply(
             new TermFrequency($this->getField(), $this->getTerm(), $queryBuilder, $expr),
             $expr->value($queryBuilder->inverseDocumentFrequency($this->getField(), $this->getTerm())),
-            new FieldLengthNorm($this->getField(), $queryBuilder, $expr)
+            new FieldLengthNorm($this->getField(), $queryBuilder, $expr),
+            $this->boost
         );
     }
 }

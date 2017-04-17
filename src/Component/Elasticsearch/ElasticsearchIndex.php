@@ -86,4 +86,23 @@ class ElasticsearchIndex implements IndexInterface
 
         return $response['hits'];
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function get($type, $id)
+    {
+        $response = $this->client->get(
+            [
+                'index' => $this->name,
+                'type' => $type,
+                'id' => $id,
+            ]
+        );
+
+        // TODO pucene version
+        unset($response['_version'], $response['found']);
+
+        return $response;
+    }
 }

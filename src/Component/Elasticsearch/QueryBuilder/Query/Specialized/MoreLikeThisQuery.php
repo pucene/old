@@ -40,7 +40,12 @@ class MoreLikeThisQuery implements QueryInterface
             $like = reset($like);
         }
 
-        $parameters = ['like' => $like];
+        $parameters = [
+            'like' => $like,
+            'min_term_freq' => $this->query->getMinTermFrequency(),
+            'min_doc_freq' => $this->query->getMinDocFreq(),
+            'minimum_should_match' => '0%',
+        ];
         if (count($this->query->getFields())) {
             $parameters['fields'] = $this->query->getFields();
         }

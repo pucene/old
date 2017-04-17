@@ -45,21 +45,21 @@ class DocumentPersister
 
             $fieldTerms = [];
             foreach ($field->getTokens() as $token) {
-                if (!array_key_exists($token->getTerm(), $terms)) {
-                    $terms[$token->getTerm()] = $this->findOrCreateTerm($token->getTerm());
+                if (!array_key_exists($token->getEncodedTerm(), $terms)) {
+                    $terms[$token->getEncodedTerm()] = $this->findOrCreateTerm($token->getEncodedTerm());
                 }
 
-                if (!array_key_exists($token->getTerm(), $fieldTerms)) {
-                    $fieldTerms[$token->getTerm()] = 0;
+                if (!array_key_exists($token->getEncodedTerm(), $fieldTerms)) {
+                    $fieldTerms[$token->getEncodedTerm()] = 0;
                 }
-                if (!array_key_exists($token->getTerm(), $documentTerms)) {
-                    $documentTerms[$token->getTerm()] = 0;
+                if (!array_key_exists($token->getEncodedTerm(), $documentTerms)) {
+                    $documentTerms[$token->getEncodedTerm()] = 0;
                 }
 
-                ++$fieldTerms[$token->getTerm()];
-                ++$documentTerms[$token->getTerm()];
+                ++$fieldTerms[$token->getEncodedTerm()];
+                ++$documentTerms[$token->getEncodedTerm()];
 
-                $this->insertToken($fieldId, $token->getTerm(), $token);
+                $this->insertToken($fieldId, $token->getEncodedTerm(), $token);
             }
 
             foreach ($fieldTerms as $term => $frequency) {

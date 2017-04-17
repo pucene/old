@@ -22,8 +22,6 @@ class MatchQuery implements QueryInterface
 
     /**
      * @param array $queries
-     *
-     * @internal param Match $query
      */
     public function __construct(array $queries)
     {

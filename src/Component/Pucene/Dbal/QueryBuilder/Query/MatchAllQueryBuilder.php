@@ -2,6 +2,7 @@
 
 namespace Pucene\Component\Pucene\Dbal\QueryBuilder\Query;
 
+use Pucene\Component\Pucene\Dbal\DbalStorage;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderInterface;
 use Pucene\Component\QueryBuilder\Query\QueryInterface;
 
@@ -10,7 +11,7 @@ use Pucene\Component\QueryBuilder\Query\QueryInterface;
  */
 class MatchAllQueryBuilder implements QueryBuilderInterface
 {
-    public function build(QueryInterface $query)
+    public function build(QueryInterface $query, DbalStorage $storage)
     {
         return new MatchAllQuery($query);
     }
