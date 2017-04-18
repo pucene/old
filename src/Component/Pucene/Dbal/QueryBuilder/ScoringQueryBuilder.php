@@ -135,7 +135,7 @@ class ScoringQueryBuilder
         return $this->docCount = (int) $queryBuilder->execute()->fetchColumn();
     }
 
-    private function getDocCountPerTerm(string $field, string $term)
+    public function getDocCountPerTerm(string $field, string $term)
     {
         if (array_key_exists($term, $this->docCountPerTerm)) {
             return $this->docCountPerTerm[$term];

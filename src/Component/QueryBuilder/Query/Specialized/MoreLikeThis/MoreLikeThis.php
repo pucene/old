@@ -13,6 +13,8 @@ class MoreLikeThis implements QueryInterface
 
     /**
      * @var string[]
+     *
+     * TODO default '_all'
      */
     private $fields;
 

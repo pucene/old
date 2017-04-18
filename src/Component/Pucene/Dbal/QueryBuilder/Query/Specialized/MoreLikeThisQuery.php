@@ -6,7 +6,6 @@ use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ParameterBag;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\FullText\MatchQuery;
 use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\DocumentLike;
-use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\TextLike;
 
 class MoreLikeThisQuery extends MatchQuery
 {
@@ -23,7 +22,12 @@ class MoreLikeThisQuery extends MatchQuery
     {
         parent::__construct($queries);
 
-        $this->exclude = $exclude;
+        $this->exclude = array_filter(
+            $exclude,
+            function ($like) {
+                return $like instanceof DocumentLike;
+            }
+        );
     }
 
     /**
@@ -32,11 +36,11 @@ class MoreLikeThisQuery extends MatchQuery
     public function build(ExpressionBuilder $expr, ParameterBag $parameter)
     {
         $expression = $expr->andX(parent::build($expr, $parameter));
-        foreach ($this->exclude as $document) {
-            if ($document instanceof TextLike) {
-                continue;
-            }
+        if (0 === count($this->exclude)) {
+            return $expression;
+        }
 
+        foreach ($this->exclude as $document) {
             $expression->add(
                 'NOT' . $expr->andX(
                     $expr->eq('document.id', "'" . $document->getId() . "'"),

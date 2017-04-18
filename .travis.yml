@@ -5,13 +5,12 @@ language: php
 php:
   - '7.0'
 
-services:
-  - elasticsearch
-
 env:
   global:
     - COMPOSER_FLAGS="--prefer-lowest --prefer-dist --no-interaction"
     - CODE_COVERAGE="--coverage-clover=coverage.clover"
+    - ES_VERSION=2.4.4
+    - ES_DOWNLOAD_URL=https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/${ES_VERSION}/elasticsearch-${ES_VERSION}.tar.gz
 
 cache:
   directories:
@@ -21,6 +20,10 @@ cache:
 before_install:
   - if [[ -z $CODE_COVERAGE ]]; then phpenv config-rm xdebug.ini ; fi
   - composer self-update
+  - wget ${ES_DOWNLOAD_URL}
+  - tar -xzf elasticsearch-${ES_VERSION}.tar.gz
+  - ./elasticsearch-${ES_VERSION}/bin/elasticsearch > elasticsearch.log 2>&1 &
+  - wget -q --waitretry=1 --retry-connrefused -T 10 -O - http://127.0.0.1:9200
 
 install:
   - travis_retry composer update
@@ -34,6 +37,7 @@ script:
   - ./vendor/bin/phpunit $CODE_COVERAGE
 
 after_script:
+  - cat elasticsearch.log
   - if [[ -n $CODE_COVERAGE ]]; then wget https://scrutinizer-ci.com/ocular.phar ; fi
   - if [[ -n $CODE_COVERAGE ]]; then php ocular.phar code-coverage:upload --format=php-clover coverage.clover ; fi
 
