@@ -42,7 +42,7 @@ class QueryBuilderCompilerPass implements CompilerPassInterface
         $references = [];
         foreach ($container->findTaggedServiceIds($this->tagName) as $id => $tags) {
             foreach ($tags as $tag) {
-                $references[$tag[self::QUERY_ATTRIBUTE_NAME]] = new Reference($id);
+                $references[$tag[self::QUERY_ATTRIBUTE_NAME]] = $id;
             }
         }
 
