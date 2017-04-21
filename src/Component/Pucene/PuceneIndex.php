@@ -88,4 +88,12 @@ class PuceneIndex implements IndexInterface
             ),
         ];
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function get($type, $id)
+    {
+        return $this->storage->get($type, $id);
+    }
 }

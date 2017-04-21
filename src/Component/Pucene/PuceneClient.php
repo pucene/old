@@ -8,9 +8,9 @@ use Pucene\Component\Client\ClientInterface;
 class PuceneClient implements ClientInterface
 {
     /**
-     * @var StorageInterface[]
+     * @var StorageFactoryInterface
      */
-    private $storages;
+    private $storageFactory;
 
     /**
      * @var AnalyzerInterface
@@ -18,12 +18,12 @@ class PuceneClient implements ClientInterface
     private $analyzer;
 
     /**
-     * @param StorageInterface[] $storages
+     * @param StorageFactoryInterface $storageFactory
      * @param AnalyzerInterface $analyzer
      */
-    public function __construct(array $storages, AnalyzerInterface $analyzer)
+    public function __construct(StorageFactoryInterface $storageFactory, AnalyzerInterface $analyzer)
     {
-        $this->storages = $storages;
+        $this->storageFactory = $storageFactory;
         $this->analyzer = $analyzer;
     }
 
@@ -32,7 +32,7 @@ class PuceneClient implements ClientInterface
      */
     public function get($name)
     {
-        return new PuceneIndex($name, $this->storages[$name], $this->analyzer);
+        return new PuceneIndex($name, $this->storageFactory->create($name), $this->analyzer);
     }
 
     /**
@@ -40,7 +40,7 @@ class PuceneClient implements ClientInterface
      */
     public function create($name, array $parameters)
     {
-        $this->storages[$name]->createIndex($parameters);
+        return $this->storageFactory->create($name)->createIndex($parameters);
     }
 
     /**
@@ -48,6 +48,6 @@ class PuceneClient implements ClientInterface
      */
     public function delete($name)
     {
-        $this->storages[$name]->deleteIndex();
+        return $this->storageFactory->create($name)->deleteIndex();
     }
 }

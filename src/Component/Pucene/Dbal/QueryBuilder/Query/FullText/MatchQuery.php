@@ -22,8 +22,6 @@ class MatchQuery implements QueryInterface
 
     /**
      * @param array $queries
-     *
-     * @internal param Match $query
      */
     public function __construct(array $queries)
     {
@@ -42,27 +40,24 @@ class MatchQuery implements QueryInterface
 
     public function scoring(MathExpressionBuilder $expr, ScoringQueryBuilder $queryBuilder)
     {
-        $terms = array_map(
-            function (TermQuery $query) {
-                return $query->getTerm();
-            },
-            $this->queries
-        );
+        $queryNorm = $queryBuilder->queryNorm($this->queries);
 
         $expression = $expr->add();
         foreach ($this->queries as $query) {
-            $queryNorm = $queryBuilder->queryNorm($query->getField(), $terms);
             $inverseDocumentFrequency = $queryBuilder->inverseDocumentFrequency($query->getField(), $query->getTerm());
 
             $expression->add(
                 $expr->multiply(
-                    $expr->value($queryNorm * $inverseDocumentFrequency),
-                    new Coord($query->getField(), $terms, $queryBuilder, $expr),
+                    $expr->value($queryNorm),
+                    $expr->value($inverseDocumentFrequency),
                     $query->scoring($expr, $queryBuilder)
                 )
             );
         }
 
-        return $expression;
+        return $expr->multiply(
+            $expression,
+            new Coord($this->queries, $queryBuilder, $expr)
+        );
     }
 }

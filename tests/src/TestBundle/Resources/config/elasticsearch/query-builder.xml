@@ -15,6 +15,11 @@
                  class="Pucene\Component\Elasticsearch\QueryBuilder\Query\FullText\MatchQueryBuilder">
             <tag name="pucene.elasticsearch.query_builder" query="Pucene\Component\QueryBuilder\Query\FullText\Match"/>
         </service>
+        <service id="pucene_elasticsearch.query_builder.more_like_this"
+                 class="Pucene\Component\Elasticsearch\QueryBuilder\Query\Specialized\MoreLikeThisBuilder">
+            <tag name="pucene.elasticsearch.query_builder"
+                 query="Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\MoreLikeThis"/>
+        </service>
 
         <service id="pucene.elasticsearch.query_builder.pool"
                  class="Pucene\Component\Elasticsearch\QueryBuilder\QueryBuilderPool">

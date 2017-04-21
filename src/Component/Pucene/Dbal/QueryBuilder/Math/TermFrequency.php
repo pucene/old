@@ -50,9 +50,7 @@ class TermFrequency implements ExpressionInterface
     {
         return $this->expr->coalesce(
             $this->expr->sqrt(
-                $this->expr->count(
-                    $this->expr->variable($this->queryBuilder->joinTerm($this->field, $this->term) . '.id')
-                )
+                $this->expr->variable($this->queryBuilder->joinTerm($this->field, $this->term) . '.frequency')
             ),
             $this->expr->value(0)
         );

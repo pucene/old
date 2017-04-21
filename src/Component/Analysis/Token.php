@@ -56,6 +56,16 @@ class Token
     }
 
     /**
+     * Returns encoded term.
+     *
+     * @return string
+     */
+    public function getEncodedTerm()
+    {
+        return utf8_encode($this->term);
+    }
+
+    /**
      * Returns startOffset.
      *
      * @return mixed

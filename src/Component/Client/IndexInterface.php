@@ -28,4 +28,12 @@ interface IndexInterface
      * @return array
      */
     public function search(Search $search, $type);
+
+    /**
+     * @param $type
+     * @param $id
+     *
+     * @return array
+     */
+    public function get($type, $id);
 }
