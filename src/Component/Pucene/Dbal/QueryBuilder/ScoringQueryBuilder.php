@@ -5,6 +5,7 @@ namespace Pucene\Component\Pucene\Dbal\QueryBuilder;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pucene\Component\Pucene\Dbal\PuceneSchema;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermQuery;
 
 class ScoringQueryBuilder
 {
@@ -58,16 +59,17 @@ class ScoringQueryBuilder
         return $this->calculateInverseDocumentFrequency($this->getDocCountPerTerm($field, $term));
     }
 
-    public function inverseDocumentFrequencyPerDocument(string $term): float
-    {
-        return $this->calculateInverseDocumentFrequency($this->getDocCountPerTermPerDocument($term));
-    }
-
-    public function queryNorm(string $field, array $terms): float
+    /**
+     * @param TermQuery[] $queries
+     *
+     * @return float
+     */
+    public function queryNorm(array $queries): float
     {
         $sum = 0;
-        foreach ($this->getDocCountPerTerms($field, $terms) as $term => $value) {
-            $sum += pow($this->calculateInverseDocumentFrequency($value), 2);
+        foreach ($queries as $query) {
+            $docCount = $this->getDocCountPerTerm($query->getField(), $query->getTerm());
+            $sum += pow($this->calculateInverseDocumentFrequency($docCount), 2);
         }
 
         if ($sum === 0) {
@@ -79,7 +81,7 @@ class ScoringQueryBuilder
 
     public function joinTerm(string $field, string $term): string
     {
-        $termName = $term . 'Term';
+        $termName = $field . ucfirst($term) . 'Term';
         if (in_array($termName, $this->joins)) {
             return $termName;
         }
@@ -137,8 +139,9 @@ class ScoringQueryBuilder
 
     public function getDocCountPerTerm(string $field, string $term)
     {
-        if (array_key_exists($term, $this->docCountPerTerm)) {
-            return $this->docCountPerTerm[$term];
+        $key = $field . '-' . $term;
+        if (array_key_exists($key, $this->docCountPerTerm)) {
+            return $this->docCountPerTerm[$key];
         }
 
         $queryBuilder = (new QueryBuilder($this->connection))
@@ -156,31 +159,7 @@ class ScoringQueryBuilder
                 sprintf('field.id = term.field_id and term.term = \'%s\'', $term)
             );
 
-        return $this->docCountPerTerm[$term] = (int) $queryBuilder->execute()->fetchColumn();
-    }
-
-    public function getDocCountPerTermPerDocument(string $term)
-    {
-        if (array_key_exists($term, $this->docCountPerTerm)) {
-            return $this->docCountPerTerm[$term];
-        }
-
-        $queryBuilder = (new QueryBuilder($this->connection))
-            ->select('count(document.id) as count')
-            ->from($this->schema->getDocumentsTableName(), 'document')
-            ->innerJoin(
-                'document',
-                $this->schema->getFieldsTableName(),
-                'field',
-                'document.id = field.document_id'
-            )->innerJoin(
-                'field',
-                $this->schema->getFieldTermsTableName(),
-                'term',
-                sprintf('field.id = term.field_id and term.term = \'%s\'', $term)
-            );
-
-        return $this->docCountPerTerm[$term] = (int) $queryBuilder->execute()->fetchColumn();
+        return $this->docCountPerTerm[$key] = (int)$queryBuilder->execute()->fetchColumn();
     }
 
     private function getDocCountPerTerms(string $field, array $terms)
@@ -207,7 +186,7 @@ class ScoringQueryBuilder
 
         $result = [];
         foreach ($queryBuilder->execute() as $item) {
-            $this->docCountPerTerm[$item['term']] = $result[$item['term']] = $item['count'];
+            $this->docCountPerTerm[$field . '-' . $item['term']] = $result[$item['term']] = $item['count'];
         }
 
         return $result;

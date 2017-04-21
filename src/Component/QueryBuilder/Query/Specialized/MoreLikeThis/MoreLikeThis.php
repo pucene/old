@@ -21,7 +21,12 @@ class MoreLikeThis implements QueryInterface
     /**
      * @var int
      */
-    private $minTermFrequency = 2;
+    private $maxQueryTerms = 25;
+
+    /**
+     * @var int
+     */
+    private $minTermFreq = 2;
 
     /**
      * @var int
@@ -59,25 +64,49 @@ class MoreLikeThis implements QueryInterface
     }
 
     /**
+     * Returns maxQueryTerms.
+     *
+     * @return int
+     */
+    public function getMaxQueryTerms(): int
+    {
+        return $this->maxQueryTerms;
+    }
+
+    /**
+     * Set maxQueryTerms.
+     *
+     * @param int $maxQueryTerms
+     *
+     * @return self
+     */
+    public function setMaxQueryTerms(int $maxQueryTerms): MoreLikeThis
+    {
+        $this->maxQueryTerms = $maxQueryTerms;
+
+        return $this;
+    }
+
+    /**
      * Returns minTermFrequency.
      *
      * @return int
      */
-    public function getMinTermFrequency(): int
+    public function getMinTermFreq(): int
     {
-        return $this->minTermFrequency;
+        return $this->minTermFreq;
     }
 
     /**
      * Set minTermFrequency.
      *
-     * @param int $minTermFrequency
+     * @param int $minTermFreq
      *
      * @return self
      */
-    public function setMinTermFrequency(int $minTermFrequency): MoreLikeThis
+    public function setMinTermFreq(int $minTermFreq): MoreLikeThis
     {
-        $this->minTermFrequency = $minTermFrequency;
+        $this->minTermFreq = $minTermFreq;
 
         return $this;
     }

@@ -45,7 +45,8 @@ class MoreLikeThisQuery implements QueryInterface
 
         $parameters = [
             'like' => $like,
-            'min_term_freq' => $this->query->getMinTermFrequency(),
+            'max_query_terms' => $this->query->getMaxQueryTerms(),
+            'min_term_freq' => $this->query->getMinTermFreq(),
             'min_doc_freq' => $this->query->getMinDocFreq(),
             'minimum_should_match' => '0%',
         ];

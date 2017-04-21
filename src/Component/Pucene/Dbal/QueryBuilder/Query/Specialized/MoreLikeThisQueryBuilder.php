@@ -39,6 +39,11 @@ class MoreLikeThisQueryBuilder implements QueryBuilderInterface
         $this->analyzer = $analyzer;
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @param MoreLikeThis $query
+     */
     public function build(QueryInterface $query, DbalStorage $storage)
     {
         $scoringQueryBuilder = $storage->createScoringQueryBuilder();
@@ -46,7 +51,8 @@ class MoreLikeThisQueryBuilder implements QueryBuilderInterface
 
         $queries = [];
         foreach ($query->getFields() as $field) {
-            foreach ($terms as $term => $boost) {
+            foreach (array_slice($terms[$field], 0, $query->getMaxQueryTerms()) as $term => $attributes) {
+                // $boost = $attributes['complete'] / reset($terms[$field])['complete'];
                 $queries[] = new TermQuery($field, $term);
             }
         }
@@ -59,7 +65,7 @@ class MoreLikeThisQueryBuilder implements QueryBuilderInterface
         $terms = [];
         foreach ($query->getLike() as $like) {
             if ($like instanceof TextLike) {
-                $this->likeText($like, $terms);
+                $this->likeText($query, $like, $terms);
             } elseif ($like instanceof DocumentLike) {
                 $this->likeDocument($query, $like, $terms);
             } elseif ($like instanceof ArtificialDocumentLike) {
@@ -68,28 +74,40 @@ class MoreLikeThisQueryBuilder implements QueryBuilderInterface
         }
 
         $result = [];
-        foreach ($terms as $term => $parameter) {
-            $frequency = 0;
-            foreach ($query->getFields() as $field) {
-                $frequency += $scoringQueryBuilder->getDocCountPerTerm($field, $term);
-            }
+        foreach ($query->getFields() as $field) {
+            $result[$field] = [];
 
-            if ($parameter['count'] < $query->getMinTermFrequency() || $frequency < $query->getMinDocFreq()) {
-                continue;
-            }
+            foreach ($terms[$field] as $term => $parameter) {
+                $frequency = $scoringQueryBuilder->getDocCountPerTerm($field, $term);
 
-            $result[$term] = $scoringQueryBuilder->inverseDocumentFrequencyPerDocument($term) * $parameter['count'];
+                if ($parameter['count'] < $query->getMinTermFreq() || $frequency < $query->getMinDocFreq()) {
+                    continue;
+                }
+
+                $idf = $scoringQueryBuilder->inverseDocumentFrequency($field, $term);
+                $result[$field][$term] = [
+                    'idf' => $idf,
+                    'count' => $parameter['count'],
+                    'complete' => $idf * $parameter['count'],
+                ];
+            }
+            uasort(
+                $result[$field],
+                function ($a, $b) {
+                    return $a['idf'] <=> $b['idf'];
+                }
+            );
+            $result[$field] = array_reverse($result[$field]);
         }
-
-        asort($result);
-        $result = array_reverse($result);
 
         return $result;
     }
 
-    private function likeText(TextLike $like, array &$terms)
+    private function likeText(MoreLikeThis $query, TextLike $like, array &$terms)
     {
-        $this->analyzeText($like->getText(), $terms);
+        foreach ($query->getFields() as $field) {
+            $this->analyzeText($field, $like->getText(), $terms);
+        }
     }
 
     private function likeDocument(MoreLikeThis $query, DocumentLike $like, array &$terms)
@@ -98,27 +116,31 @@ class MoreLikeThisQueryBuilder implements QueryBuilderInterface
         $document = $index->get($like->getType(), $like->getId());
 
         foreach ($query->getFields() as $field) {
-            $this->analyzeText($document['_source'][$field], $terms);
+            $this->analyzeText($field, $document['_source'][$field], $terms);
         }
     }
 
     private function likeArtificialDocument(MoreLikeThis $query, ArtificialDocumentLike $like, array &$terms)
     {
         foreach ($query->getFields() as $field) {
-            $this->analyzeText($like->getDocument()[$field], $terms);
+            $this->analyzeText($field, $like->getDocument()[$field], $terms);
         }
     }
 
-    private function analyzeText(string $text, array &$terms)
+    private function analyzeText(string $field, string $text, array &$terms)
     {
         $tokens = $this->analyzer->analyze($text);
 
+        if (!array_key_exists($field, $terms)) {
+            $terms[$field] = [];
+        }
+
         foreach ($tokens as $token) {
-            if (!array_key_exists($token->getEncodedTerm(), $terms)) {
-                $terms[$token->getEncodedTerm()] = ['count' => 0];
+            if (!array_key_exists($token->getEncodedTerm(), $terms[$field])) {
+                $terms[$field][$token->getEncodedTerm()] = ['count' => 0];
             }
 
-            ++$terms[$token->getEncodedTerm()]['count'];
+            ++$terms[$field][$token->getEncodedTerm()]['count'];
         }
     }
 }
