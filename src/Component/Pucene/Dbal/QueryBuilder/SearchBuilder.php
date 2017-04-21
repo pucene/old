@@ -11,14 +11,14 @@ use Pucene\Component\QueryBuilder\Sort\IdSort;
 class SearchBuilder
 {
     /**
-     * @var QueryBuilderPool
+     * @var QueryBuilderPoolInterface
      */
     private $builders;
 
     /**
-     * @param QueryBuilderPool $builders
+     * @param QueryBuilderPoolInterface $builders
      */
-    public function __construct(QueryBuilderPool $builders)
+    public function __construct(QueryBuilderPoolInterface $builders)
     {
         $this->builders = $builders;
     }

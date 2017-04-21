@@ -2,7 +2,7 @@
 
 namespace Pucene\Component\Pucene\Dbal\QueryBuilder;
 
-class QueryBuilderPool
+class QueryBuilderPool implements QueryBuilderPoolInterface
 {
     /**
      * @var QueryBuilderInterface[]
