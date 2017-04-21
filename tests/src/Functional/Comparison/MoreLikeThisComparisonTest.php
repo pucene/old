@@ -11,7 +11,7 @@ use Pucene\Component\QueryBuilder\Search;
 /**
  * This testcase compares elasticsearch with pucene results for the "more_like_this" query.
  */
-class MoreLikeThisTest extends ComparisonTestCase
+class MoreLikeThisComparisonTest extends ComparisonTestCase
 {
     public function testText()
     {

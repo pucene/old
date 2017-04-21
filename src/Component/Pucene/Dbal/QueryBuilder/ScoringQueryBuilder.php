@@ -159,7 +159,7 @@ class ScoringQueryBuilder
                 sprintf('field.id = term.field_id and term.term = \'%s\'', $term)
             );
 
-        return $this->docCountPerTerm[$key] = (int)$queryBuilder->execute()->fetchColumn();
+        return $this->docCountPerTerm[$key] = (int) $queryBuilder->execute()->fetchColumn();
     }
 
     private function getDocCountPerTerms(string $field, array $terms)
