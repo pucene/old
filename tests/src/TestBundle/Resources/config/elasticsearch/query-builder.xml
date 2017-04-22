@@ -21,11 +21,11 @@
                  query="Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\MoreLikeThisQuery"/>
         </service>
         <service id="pucene_elasticsearch.query_builder.bool"
-                 class="Pucene\Component\Elasticsearch\QueryBuilder\Query\Compound\BooleanBuilder">
+                 class="Pucene\Component\Elasticsearch\QueryBuilder\Query\Compound\BoolBuilderFactory">
             <argument type="service" id="pucene.elasticsearch.query_builder.pool"/>
 
             <tag name="pucene.elasticsearch.query_builder"
-                 query="Pucene\Component\QueryBuilder\Query\Compound\Boolean"/>
+                 query="Pucene\Component\QueryBuilder\Query\Compound\BoolQuery"/>
         </service>
 
         <service id="pucene.elasticsearch.query_builder.pool"

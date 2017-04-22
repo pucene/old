@@ -4,7 +4,7 @@ namespace Pucene\Component\QueryBuilder\Query\Compound;
 
 use Pucene\Component\QueryBuilder\Query\QueryInterface;
 
-class Boolean implements QueryInterface
+class BoolQuery implements QueryInterface
 {
     /**
      * @var QueryInterface[]

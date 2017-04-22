@@ -26,8 +26,10 @@
                  query="Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\MoreLikeThisQuery"/>
         </service>
         <service id="pucene.pucene.query_builder.bool"
-                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Compound\BooleanQueryBuilder">
-            <tag name="pucene.pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\Compound\Boolean"/>
+                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Compound\BoolBuilderFactory">
+            <argument type="service" id="pucene.pucene.query_builder.pool"/>
+
+            <tag name="pucene.pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\Compound\BoolQuery"/>
         </service>
 
         <service id="pucene.pucene.query_builder.pool"

@@ -5,15 +5,15 @@ namespace Pucene\Component\Elasticsearch\QueryBuilder\Query\Compound;
 use Pucene\Component\Elasticsearch\QueryBuilder\QueryBuilderPool;
 use Pucene\Component\Elasticsearch\QueryBuilder\QueryBuilderPoolInterface;
 use Pucene\Component\Elasticsearch\QueryBuilder\QueryInterface;
-use Pucene\Component\QueryBuilder\Query\Compound\Boolean;
+use Pucene\Component\QueryBuilder\Query\Compound\BoolQuery;
 
 /**
  * Represents bool query.
  */
-class BooleanQuery implements QueryInterface
+class BoolBuilder implements QueryInterface
 {
     /**
-     * @var Boolean
+     * @var BoolQuery
      */
     private $query;
 
@@ -23,10 +23,10 @@ class BooleanQuery implements QueryInterface
     private $queryBuilderPool;
 
     /**
-     * @param Boolean $query
+     * @param BoolQuery $query
      * @param QueryBuilderPoolInterface $queryBuilderPool
      */
-    public function __construct(Boolean $query, QueryBuilderPoolInterface $queryBuilderPool)
+    public function __construct(BoolQuery $query, QueryBuilderPoolInterface $queryBuilderPool)
     {
         $this->query = $query;
         $this->queryBuilderPool = $queryBuilderPool;

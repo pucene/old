@@ -5,7 +5,9 @@ namespace Pucene\Component\Pucene\Dbal\QueryBuilder\Query\FullText;
 use Pucene\Component\Analysis\AnalyzerInterface;
 use Pucene\Component\Pucene\Dbal\DbalStorage;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermBuilder;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Compound\BoolBuilder;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderInterface;
+use Pucene\Component\QueryBuilder\Query\FullText\MatchQuery;
 use Pucene\Component\QueryBuilder\Query\QueryInterface;
 
 /**
@@ -28,6 +30,8 @@ class MatchBuilderFactory implements QueryBuilderInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param MatchQuery $query
      */
     public function build(QueryInterface $query, DbalStorage $storage)
     {
@@ -38,6 +42,6 @@ class MatchBuilderFactory implements QueryBuilderInterface
             $terms[] = new TermBuilder($query->getField(), $token->getEncodedTerm());
         }
 
-        return new MatchBuilder($terms);
+        return new BoolBuilder($terms);
     }
 }

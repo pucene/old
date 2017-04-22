@@ -9,7 +9,7 @@ use Pucene\Component\QueryBuilder\Query\QueryInterface;
 /**
  * Build bool query.
  */
-class BooleanBuilder implements QueryBuilderInterface
+class BoolBuilderFactory implements QueryBuilderInterface
 {
     /**
      * @var QueryBuilderPoolInterface
@@ -26,6 +26,6 @@ class BooleanBuilder implements QueryBuilderInterface
 
     public function build(QueryInterface $query)
     {
-        return new BooleanQuery($query, $this->queryBuilderPool);
+        return new BoolBuilder($query, $this->queryBuilderPool);
     }
 }
