@@ -42,6 +42,6 @@ class MatchBuilderFactory implements QueryBuilderInterface
             $terms[] = new TermBuilder($query->getField(), $token->getEncodedTerm());
         }
 
-        return new BoolBuilder($terms);
+        return new BoolBuilder($terms, $storage->getSchema(), $storage->getConnection());
     }
 }

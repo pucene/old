@@ -64,7 +64,7 @@ class TermBuilder implements QueryInterface
     {
         return $expr->multiply(
             new TermFrequency($this->getField(), $this->getTerm(), $queryBuilder, $expr),
-            $expr->value($queryBuilder->inverseDocumentFrequency($this->getField(), $this->getTerm())),
+            $expr->value($queryBuilder->inverseDocumentFrequency($this)),
             new FieldLengthNorm($this->getField(), $queryBuilder, $expr),
             $this->boost
         );

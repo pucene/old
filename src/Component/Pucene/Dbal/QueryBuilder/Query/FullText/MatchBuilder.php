@@ -44,7 +44,7 @@ class MatchBuilder implements QueryInterface
 
         $expression = $expr->add();
         foreach ($this->queries as $query) {
-            $inverseDocumentFrequency = $queryBuilder->inverseDocumentFrequency($query->getField(), $query->getTerm());
+            $inverseDocumentFrequency = $queryBuilder->inverseDocumentFrequency($query);
 
             $expression->add(
                 $expr->multiply(

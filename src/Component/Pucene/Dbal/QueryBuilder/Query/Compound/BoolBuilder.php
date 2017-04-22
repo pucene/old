@@ -2,8 +2,10 @@
 
 namespace Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Compound;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
 use Pucene\Component\Math\MathExpressionBuilder;
+use Pucene\Component\Pucene\Dbal\PuceneSchema;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\Math\Coord;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ParameterBag;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryInterface;
@@ -19,9 +21,21 @@ class BoolBuilder implements QueryInterface
      */
     private $shouldQueries;
 
-    public function __construct(array $shouldQueries)
+    /**
+     * @var PuceneSchema
+     */
+    private $schema;
+
+    /**
+     * @var Connection
+     */
+    private $connection;
+
+    public function __construct(array $shouldQueries, PuceneSchema $schema, Connection $connection)
     {
         $this->shouldQueries = $shouldQueries;
+        $this->schema = $schema;
+        $this->connection = $connection;
     }
 
     public function build(ExpressionBuilder $expr, ParameterBag $parameter)
@@ -40,7 +54,7 @@ class BoolBuilder implements QueryInterface
 
         $expression = $expr->add();
         foreach ($this->shouldQueries as $query) {
-            $inverseDocumentFrequency = $queryBuilder->inverseDocumentFrequency($query->getField(), $query->getTerm());
+            $inverseDocumentFrequency = $queryBuilder->inverseDocumentFrequency($query);
 
             $expression->add(
                 $expr->multiply(
@@ -51,6 +65,6 @@ class BoolBuilder implements QueryInterface
             );
         }
 
-        return $expr->multiply($expression, new Coord($this->shouldQueries, $queryBuilder, $expr));
+        return $expr->multiply($expression, new Coord($this->shouldQueries, $this->schema, $this->connection, $expr));
     }
 }

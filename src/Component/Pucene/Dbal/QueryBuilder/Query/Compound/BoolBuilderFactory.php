@@ -40,6 +40,6 @@ class BoolBuilderFactory implements QueryBuilderInterface
             $query->getShouldQueries()
         );
 
-        return new BoolBuilder($shouldQueries);
+        return new BoolBuilder($shouldQueries, $storage->getSchema(), $storage->getConnection());
     }
 }

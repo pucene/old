@@ -87,7 +87,7 @@ abstract class ComparisonTestCase extends KernelTestCase
             // if position matches: OK
             // else score has to be equals
             if ($elasticsearchHits[$id]['position'] !== $puceneHit['position']) {
-                $this->assertEquals($elasticsearchHits[$id]['_score'], $puceneHit['_score'], $id, 0.002);
+                $this->assertEquals($elasticsearchHits[$id]['_score'], $puceneHit['_score'], $id, 0.02);
             }
         }
     }

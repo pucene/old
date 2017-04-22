@@ -57,7 +57,7 @@ class MoreLikeThisBuilderFactory implements QueryBuilderInterface
             }
         }
 
-        return new MoreLikeThisBuilder($queries, $query->getLike());
+        return new MoreLikeThisBuilder($queries, $query->getLike(), $storage->getSchema(), $storage->getConnection());
     }
 
     private function getTerms(MoreLikeThisQuery $query, ScoringQueryBuilder $scoringQueryBuilder)
@@ -84,7 +84,7 @@ class MoreLikeThisBuilderFactory implements QueryBuilderInterface
                     continue;
                 }
 
-                $idf = $scoringQueryBuilder->inverseDocumentFrequency($field, $term);
+                $idf = $scoringQueryBuilder->inverseDocumentFrequency(new TermBuilder($field, $term));
                 $result[$field][$term] = [
                     'idf' => $idf,
                     'count' => $parameter['count'],

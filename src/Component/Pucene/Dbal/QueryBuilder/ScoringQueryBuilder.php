@@ -54,9 +54,9 @@ class ScoringQueryBuilder
             ->groupBy('innerDocument.id');
     }
 
-    public function inverseDocumentFrequency(string $field, string $term): float
+    public function inverseDocumentFrequency(QueryInterface $query): float
     {
-        return $this->calculateInverseDocumentFrequency($this->getDocCountPerTerm($field, $term));
+        return $this->calculateInverseDocumentFrequency($this->getDocCountForQuery($query));
     }
 
     /**
@@ -68,7 +68,7 @@ class ScoringQueryBuilder
     {
         $sum = 0;
         foreach ($queries as $query) {
-            $docCount = $this->getDocCountPerTerm($query->getField(), $query->getTerm());
+            $docCount = $this->getDocCountForQuery($query);
             $sum += pow($this->calculateInverseDocumentFrequency($docCount), 2);
         }
 
@@ -135,6 +135,22 @@ class ScoringQueryBuilder
             ->from($this->schema->getDocumentsTableName(), 'document');
 
         return $this->docCount = (int) $queryBuilder->execute()->fetchColumn();
+    }
+
+    public function getDocCountForQuery(QueryInterface $query)
+    {
+        $queryBuilder = (new QueryBuilder($this->connection))
+            ->select('count(document.id) as count')
+            ->from($this->schema->getDocumentsTableName(), 'document')
+            ->innerJoin('document', $this->schema->getFieldsTableName(), 'field', 'field.document_id = document.id')
+            ->innerJoin('field', $this->schema->getTokensTableName(), 'token', 'token.field_id = field.id');
+
+        $expression = $query->build($queryBuilder->expr(), new ParameterBag($queryBuilder));
+        if ($expression) {
+            $queryBuilder->where($expression);
+        }
+
+        return (int) $queryBuilder->execute()->fetchColumn();
     }
 
     public function getDocCountPerTerm(string $field, string $term)
