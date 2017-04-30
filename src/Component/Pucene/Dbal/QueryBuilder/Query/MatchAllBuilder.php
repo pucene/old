@@ -22,4 +22,9 @@ class MatchAllBuilder implements QueryInterface
     {
         // no expression
     }
+
+    public function getTerms()
+    {
+        return [];
+    }
 }

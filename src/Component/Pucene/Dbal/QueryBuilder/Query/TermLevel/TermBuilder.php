@@ -60,13 +60,26 @@ class TermBuilder implements QueryInterface
         );
     }
 
-    public function scoring(MathExpressionBuilder $expr, ScoringQueryBuilder $queryBuilder)
+    public function scoring(MathExpressionBuilder $expr, ScoringQueryBuilder $queryBuilder, $queryNorm = null)
     {
-        return $expr->multiply(
+        $inverseDocumentFrequency = $queryBuilder->inverseDocumentFrequency($this);
+
+        $expression = $expr->multiply(
             new TermFrequency($this->getField(), $this->getTerm(), $queryBuilder, $expr),
-            $expr->value($queryBuilder->inverseDocumentFrequency($this)),
+            $expr->value($inverseDocumentFrequency),
             new FieldLengthNorm($this->getField(), $queryBuilder, $expr),
             $this->boost
         );
+
+        if ($queryNorm) {
+            $expression->add($expr->value($queryNorm * $inverseDocumentFrequency));
+        }
+
+        return $expression;
+    }
+
+    public function getTerms()
+    {
+        return [$this];
     }
 }

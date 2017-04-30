@@ -48,23 +48,27 @@ class BoolBuilder implements QueryInterface
         return $or;
     }
 
-    public function scoring(MathExpressionBuilder $expr, ScoringQueryBuilder $queryBuilder)
+    public function scoring(MathExpressionBuilder $expr, ScoringQueryBuilder $queryBuilder, $queryNorm = null)
     {
-        $queryNorm = $queryBuilder->queryNorm($this->shouldQueries);
+        if (!$queryNorm) {
+            $queryNorm = $queryBuilder->queryNorm($this->getTerms());
+        }
 
         $expression = $expr->add();
         foreach ($this->shouldQueries as $query) {
-            $inverseDocumentFrequency = $queryBuilder->inverseDocumentFrequency($query);
-
-            $expression->add(
-                $expr->multiply(
-                    $expr->value($queryNorm),
-                    $expr->value($inverseDocumentFrequency),
-                    $query->scoring($expr, $queryBuilder)
-                )
-            );
+            $expression->add($query->scoring($expr, $queryBuilder, $queryNorm));
         }
 
         return $expr->multiply($expression, new Coord($this->shouldQueries, $this->schema, $this->connection, $expr));
+    }
+
+    public function getTerms()
+    {
+        $terms = [];
+        foreach ($this->shouldQueries as $query) {
+            $terms = array_merge($terms, $query->getTerms());
+        }
+
+        return $terms;
     }
 }

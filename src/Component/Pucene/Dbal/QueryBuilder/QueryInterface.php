@@ -16,4 +16,9 @@ interface QueryInterface
     public function build(ExpressionBuilder $expr, ParameterBag $parameter);
 
     public function scoring(MathExpressionBuilder $expr, ScoringQueryBuilder $queryBuilder);
+
+    /**
+     * @return QueryInterface[]
+     */
+    public function getTerms();
 }
