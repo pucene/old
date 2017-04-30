@@ -38,8 +38,6 @@ class SearchBuilder
         $queryBuilder = (new QueryBuilder($connection))
             ->from($schema->getDocumentsTableName(), 'document')
             ->select('document.*')
-            ->innerJoin('document', $schema->getFieldsTableName(), 'field', 'field.document_id = document.id')
-            ->innerJoin('field', $schema->getTokensTableName(), 'token', 'token.field_id = field.id')
             ->where('document.type IN (?)')
             ->groupBy('document.id')
             ->setMaxResults($search->getSize())

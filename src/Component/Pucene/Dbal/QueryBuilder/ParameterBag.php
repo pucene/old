@@ -29,4 +29,14 @@ class ParameterBag
     {
         $this->queryBuilder->setParameter($this->index++, $value);
     }
+
+    /**
+     * Returns queryBuilder.
+     *
+     * @return QueryBuilder
+     */
+    public function getQueryBuilder(): QueryBuilder
+    {
+        return $this->queryBuilder;
+    }
 }

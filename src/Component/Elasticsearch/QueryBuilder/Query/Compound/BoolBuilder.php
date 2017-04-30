@@ -43,6 +43,27 @@ class BoolBuilder implements QueryInterface
             }
         }
 
+        if (0 < count($this->query->getFilterQueries())) {
+            $parameter['filter'] = [];
+            foreach ($this->query->getFilterQueries() as $query) {
+                $parameter['filter'][] = $this->queryBuilderPool->get(get_class($query))->build($query)->toArray();
+            }
+        }
+
+        if (0 < count($this->query->getMustNotQueries())) {
+            $parameter['must_not'] = [];
+            foreach ($this->query->getMustNotQueries() as $query) {
+                $parameter['must_not'][] = $this->queryBuilderPool->get(get_class($query))->build($query)->toArray();
+            }
+        }
+
+        if (0 < count($this->query->getMustQueries())) {
+            $parameter['must'] = [];
+            foreach ($this->query->getMustQueries() as $query) {
+                $parameter['must'][] = $this->queryBuilderPool->get(get_class($query))->build($query)->toArray();
+            }
+        }
+
         return ['bool' => $parameter];
     }
 }

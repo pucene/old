@@ -40,6 +40,34 @@ class BoolBuilderFactory implements QueryBuilderInterface
             $query->getShouldQueries()
         );
 
-        return new BoolBuilder($shouldQueries, $storage->getSchema(), $storage->getConnection());
+        $mustQueries = array_map(
+            function ($shouldQuery) use ($storage) {
+                return $this->queryBuilderPool->get(get_class($shouldQuery))->build($shouldQuery, $storage);
+            },
+            $query->getMustQueries()
+        );
+
+        $mustNotQueries = array_map(
+            function ($shouldQuery) use ($storage) {
+                return $this->queryBuilderPool->get(get_class($shouldQuery))->build($shouldQuery, $storage);
+            },
+            $query->getMustNotQueries()
+        );
+
+        $filterQueries = array_map(
+            function ($shouldQuery) use ($storage) {
+                return $this->queryBuilderPool->get(get_class($shouldQuery))->build($shouldQuery, $storage);
+            },
+            $query->getFilterQueries()
+        );
+
+        return new BoolBuilder(
+            $shouldQueries,
+            $mustQueries,
+            $mustNotQueries,
+            $filterQueries,
+            $storage->getSchema(),
+            $storage->getConnection()
+        );
     }
 }

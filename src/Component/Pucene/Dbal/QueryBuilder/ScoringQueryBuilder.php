@@ -141,9 +141,7 @@ class ScoringQueryBuilder
     {
         $queryBuilder = (new QueryBuilder($this->connection))
             ->select('count(document.id) as count')
-            ->from($this->schema->getDocumentsTableName(), 'document')
-            ->innerJoin('document', $this->schema->getFieldsTableName(), 'field', 'field.document_id = document.id')
-            ->innerJoin('field', $this->schema->getTokensTableName(), 'token', 'token.field_id = field.id');
+            ->from($this->schema->getDocumentsTableName(), 'document');
 
         $expression = $query->build($queryBuilder->expr(), new ParameterBag($queryBuilder));
         if ($expression) {
@@ -176,35 +174,5 @@ class ScoringQueryBuilder
             );
 
         return $this->docCountPerTerm[$key] = (int) $queryBuilder->execute()->fetchColumn();
-    }
-
-    private function getDocCountPerTerms(string $field, array $terms)
-    {
-        $inExpression = $this->connection->getExpressionBuilder()->in(
-            'fieldTerm.term',
-            "'" . implode("','", $terms) . "'"
-        );
-
-        $queryBuilder = (new QueryBuilder($this->connection))
-            ->select('count(document.id) as count')->addSelect('fieldTerm.term as term')
-            ->from($this->schema->getDocumentsTableName(), 'document')
-            ->innerJoin(
-                'document',
-                $this->schema->getFieldsTableName(),
-                'field',
-                sprintf('document.id = field.document_id and field.name = \'%s\'', $field)
-            )->innerJoin(
-                'field',
-                $this->schema->getFieldTermsTableName(),
-                'fieldTerm',
-                sprintf('field.id = fieldTerm.field_id and %s', $inExpression)
-            )->groupBy('fieldTerm.term');
-
-        $result = [];
-        foreach ($queryBuilder->execute() as $item) {
-            $this->docCountPerTerm[$field . '-' . $item['term']] = $result[$item['term']] = $item['count'];
-        }
-
-        return $result;
     }
 }

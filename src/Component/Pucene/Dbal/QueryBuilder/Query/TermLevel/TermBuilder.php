@@ -15,6 +15,8 @@ use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
  */
 class TermBuilder implements QueryInterface
 {
+    private static $index = 0;
+
     /**
      * @var string
      */
@@ -54,10 +56,22 @@ class TermBuilder implements QueryInterface
 
     public function build(ExpressionBuilder $expr, ParameterBag $parameter)
     {
-        return $expr->andX(
-            $expr->eq('field.name', "'" . $this->field . "'"),
-            $expr->eq('token.term', "'" . $this->term . "'")
-        );
+        $fieldName = 'field' . ucfirst($this->field) . uniqid();
+        $termName = 'field' . ucfirst($this->term) . uniqid();
+
+        $parameter->getQueryBuilder()->leftJoin(
+                'document',
+                'pu_my_index_fields',
+                $fieldName,
+                $fieldName . '.document_id = document.id AND ' . $fieldName . '.name = \'' . $this->field . '\''
+            )->leftJoin(
+                $fieldName,
+                'pu_my_index_tokens',
+                $termName,
+                $termName . '.field_id = ' . $fieldName . '.id AND ' . $termName . '.term = \'' . $this->term . '\''
+            );
+
+        return $expr->isNotNull($termName . '.id');
     }
 
     public function scoring(MathExpressionBuilder $expr, ScoringQueryBuilder $queryBuilder, $queryNorm = null)

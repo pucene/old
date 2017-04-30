@@ -17,9 +17,24 @@ use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
 class BoolBuilder implements QueryInterface
 {
     /**
-     * @var QueryInterface
+     * @var QueryInterface[]
      */
     private $shouldQueries;
+
+    /**
+     * @var QueryInterface[]
+     */
+    private $mustQueries;
+
+    /**
+     * @var QueryInterface[]
+     */
+    private $mustNotQueries;
+
+    /**
+     * @var QueryInterface[]
+     */
+    private $filterQueries;
 
     /**
      * @var PuceneSchema
@@ -31,19 +46,44 @@ class BoolBuilder implements QueryInterface
      */
     private $connection;
 
-    public function __construct(array $shouldQueries, PuceneSchema $schema, Connection $connection)
-    {
+    public function __construct(
+        array $shouldQueries,
+        array $mustQueries,
+        array $mustNotQueries,
+        array $filterQueries,
+        PuceneSchema $schema,
+        Connection $connection
+    ) {
         $this->shouldQueries = $shouldQueries;
+        $this->mustQueries = $mustQueries;
+        $this->mustNotQueries = $mustNotQueries;
+        $this->filterQueries = $filterQueries;
         $this->schema = $schema;
         $this->connection = $connection;
     }
 
     public function build(ExpressionBuilder $expr, ParameterBag $parameter)
     {
+        $and = $expr->andX();
+        foreach ($this->mustNotQueries as $query) {
+            $and->add('NOT ' . $query->build($expr, $parameter));
+        }
+
+        $mustQueries = array_merge($this->mustQueries, $this->filterQueries);
+        if (count($mustQueries)) {
+            foreach ($mustQueries as $query) {
+                $and->add($query->build($expr, $parameter));
+            }
+
+            return $and;
+        }
+
         $or = $expr->orX();
         foreach ($this->shouldQueries as $query) {
             $or->add($query->build($expr, $parameter));
         }
+
+        $and->add($or);
 
         return $or;
     }
@@ -54,18 +94,21 @@ class BoolBuilder implements QueryInterface
             $queryNorm = $queryBuilder->queryNorm($this->getTerms());
         }
 
+        $queries = array_merge($this->shouldQueries, $this->mustQueries);
+
         $expression = $expr->add();
-        foreach ($this->shouldQueries as $query) {
+        foreach ($queries as $query) {
             $expression->add($query->scoring($expr, $queryBuilder, $queryNorm));
         }
 
-        return $expr->multiply($expression, new Coord($this->shouldQueries, $this->schema, $this->connection, $expr));
+        return $expr->multiply($expression, new Coord($queries, $this->schema, $this->connection, $expr));
     }
 
     public function getTerms()
     {
         $terms = [];
-        foreach ($this->shouldQueries as $query) {
+        $queries = array_merge($this->shouldQueries, $this->mustQueries);
+        foreach ($queries as $query) {
             $terms = array_merge($terms, $query->getTerms());
         }
 

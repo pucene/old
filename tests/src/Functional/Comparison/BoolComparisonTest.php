@@ -2,12 +2,8 @@
 
 namespace Pucene\Tests\Functional\Comparison;
 
-use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Compound\BooleanQuery;
-use Pucene\Component\QueryBuilder\Query\Compound\Boolean;
 use Pucene\Component\QueryBuilder\Query\Compound\BoolQuery;
-use Pucene\Component\QueryBuilder\Query\FullText\Match;
 use Pucene\Component\QueryBuilder\Query\FullText\MatchQuery;
-use Pucene\Component\QueryBuilder\Query\TermLevel\Term;
 use Pucene\Component\QueryBuilder\Query\TermLevel\TermQuery;
 use Pucene\Component\QueryBuilder\Search;
 
@@ -16,59 +12,102 @@ use Pucene\Component\QueryBuilder\Search;
  */
 class BoolComparisonTest extends ComparisonTestCase
 {
-    public function testShouldTerm()
+    public function provideQueries()
+    {
+        return [
+            [[new TermQuery('title', 'museum')]],
+            [[new TermQuery('title', 'museum'), new TermQuery('title', 'arts')]],
+            [[new MatchQuery('title', 'Museum Lyon')]],
+            [[new MatchQuery('title', 'Museum Lyon'), new MatchQuery('title', 'Art Museum')]],
+            [[new MatchQuery('title', 'Museum Lyon'), new TermQuery('title', 'arts')]],
+            [
+                [
+                    (new BoolQuery())->should(new TermQuery('title', 'museum'))->should(new TermQuery('title', 'lyon')),
+                    new TermQuery('title', 'arts'),
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideQueries
+     */
+    public function testShould($queries, $size = 50)
     {
         $query = new BoolQuery();
-        $query->should(new TermQuery('title', 'museum'));
+        foreach ($queries as $innerQuery) {
+            $query->should($innerQuery);
+        }
+
+        $this->assertSearch((new Search($query))->setSize($size));
+    }
+
+    /**
+     * @dataProvider provideQueries
+     */
+    public function testMust($queries, $size = 50)
+    {
+        $query = new BoolQuery();
+        foreach ($queries as $innerQuery) {
+            $query->must($innerQuery);
+        }
+
+        $this->assertSearch((new Search($query))->setSize($size));
+    }
+
+    /**
+     * @dataProvider provideQueries
+     */
+    public function testFilter($queries, $size = 50)
+    {
+        $query = new BoolQuery();
+        foreach ($queries as $innerQuery) {
+            $query->must($innerQuery);
+        }
+
+        $this->assertSearch((new Search($query))->setSize($size));
+    }
+
+    /**
+     * @dataProvider provideQueries
+     */
+    public function testMustNot($queries, $size = 50)
+    {
+        $query = new BoolQuery();
+        foreach ($queries as $innerQuery) {
+            $query->must($innerQuery);
+        }
+
+        $this->assertSearch((new Search($query))->setSize($size));
+    }
+
+    public function testMustAndShouldTermQuery()
+    {
+        $query = new BoolQuery();
+        $query->must(new TermQuery('title', 'museum'));
+        $query->should(new TermQuery('title', 'lyon'));
 
         $this->assertSearch(new Search($query));
     }
 
-    public function testShouldTerms()
+    public function testMustAndShouldAndFilterTermQuery()
     {
         $query = new BoolQuery();
-        $query->should(new TermQuery('title', 'museum'));
-        $query->should(new TermQuery('title', 'arts'));
+        $query->must(new TermQuery('title', 'museum'));
+        $query->should(new TermQuery('title', 'lyon'));
+        $query->filter(new TermQuery('title', 'arts'));
 
         $this->assertSearch(new Search($query));
     }
 
-    public function testShouldMatch()
+    public function testMustAndShouldAndMustNotAndFilterTermQuery()
     {
         $query = new BoolQuery();
-        $query->should(new MatchQuery('title', 'Museum Lyon'));
+        $query->must(new TermQuery('title', 'museum'));
+        $query->should(new TermQuery('title', 'lyon'));
+        $query->filter(new TermQuery('title', 'arts'));
+        $query->mustNot(new TermQuery('title', 'pushkin'));
 
-        $this->assertSearch((new Search($query))->setSize(20));
-    }
-
-    public function testShouldMatches()
-    {
-        $query = new BoolQuery();
-        $query->should(new MatchQuery('title', 'Museum Lyon'));
-        $query->should(new MatchQuery('title', 'Art Museum'));
-
-        $this->assertSearch((new Search($query))->setSize(50));
-    }
-
-    public function testShouldMatchAndTerm()
-    {
-        $query = new Boolean();
-        $query->should(new Match('title', 'Museum Lyon'));
-        $query->should(new Term('title', 'arts'));
-
-        $this->assertSearch((new Search($query))->setSize(50));
-    }
-
-    public function testShouldNestedBool()
-    {
-        $nested = new Boolean();
-        $nested->should(new Term('title', 'museum'));
-        $nested->should(new Term('title', 'lyon'));
-
-        $query = new Boolean();
-        $query->should($nested);
-        $query->should(new Term('title', 'arts'));
-
-        $this->assertSearch((new Search($query))->setSize(50));
+        $this->assertSearch(new Search($query));
     }
 }

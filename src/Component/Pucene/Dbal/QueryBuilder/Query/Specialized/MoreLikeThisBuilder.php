@@ -6,10 +6,10 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
 use Pucene\Component\Pucene\Dbal\PuceneSchema;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ParameterBag;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\FullText\MatchBuilder;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Compound\BoolBuilder;
 use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\DocumentLike;
 
-class MoreLikeThisBuilder extends MatchBuilder
+class MoreLikeThisBuilder extends BoolBuilder
 {
     /**
      * @var DocumentLike[]
@@ -24,7 +24,7 @@ class MoreLikeThisBuilder extends MatchBuilder
      */
     public function __construct(array $queries, array $exclude, PuceneSchema $schema, Connection $connection)
     {
-        parent::__construct($queries, $schema, $connection);
+        parent::__construct($queries, [], [], [], $schema, $connection);
 
         $this->exclude = array_filter(
             $exclude,
