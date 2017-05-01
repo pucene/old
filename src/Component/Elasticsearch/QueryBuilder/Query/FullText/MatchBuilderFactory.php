@@ -8,10 +8,10 @@ use Pucene\Component\QueryBuilder\Query\QueryInterface;
 /**
  * Build match query.
  */
-class MatchQueryBuilder implements QueryBuilderInterface
+class MatchBuilderFactory implements QueryBuilderInterface
 {
     public function build(QueryInterface $query)
     {
-        return new MatchQuery($query);
+        return new MatchBuilder($query);
     }
 }

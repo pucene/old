@@ -4,7 +4,7 @@ namespace Pucene\Tests\Functional\Comparison;
 
 use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\ArtificialDocumentLike;
 use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\DocumentLike;
-use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\MoreLikeThis;
+use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\MoreLikeThisQuery;
 use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\TextLike;
 use Pucene\Component\QueryBuilder\Search;
 
@@ -15,7 +15,7 @@ class MoreLikeThisComparisonTest extends ComparisonTestCase
 {
     public function testText()
     {
-        $query = new MoreLikeThis([new TextLike('Museum of Arts of Lyon')], ['title']);
+        $query = new MoreLikeThisQuery([new TextLike('Museum of Arts of Lyon')], ['title']);
         $query->setMinTermFreq(1);
 
         $search = new Search($query);
@@ -26,7 +26,7 @@ class MoreLikeThisComparisonTest extends ComparisonTestCase
 
     public function testDocument()
     {
-        $query = new MoreLikeThis([new DocumentLike('my_index', 'my_type', 'Q4872')], ['title']);
+        $query = new MoreLikeThisQuery([new DocumentLike('my_index', 'my_type', 'Q4872')], ['title']);
         $query->setMinTermFreq(1);
 
         $search = new Search($query);
@@ -37,7 +37,7 @@ class MoreLikeThisComparisonTest extends ComparisonTestCase
 
     public function testDocuments()
     {
-        $query = new MoreLikeThis(
+        $query = new MoreLikeThisQuery(
             [new DocumentLike('my_index', 'my_type', 'Q435'), new DocumentLike('my_index', 'my_type', 'Q4872')],
             ['title']
         );
@@ -51,7 +51,7 @@ class MoreLikeThisComparisonTest extends ComparisonTestCase
 
     public function testArtificialDocument()
     {
-        $query = new MoreLikeThis(
+        $query = new MoreLikeThisQuery(
             [
                 new ArtificialDocumentLike(
                     'my_index',
@@ -73,7 +73,7 @@ class MoreLikeThisComparisonTest extends ComparisonTestCase
 
     public function testArtificialDocuments()
     {
-        $query = new MoreLikeThis(
+        $query = new MoreLikeThisQuery(
             [
                 new ArtificialDocumentLike(
                     'my_index',
@@ -102,7 +102,7 @@ class MoreLikeThisComparisonTest extends ComparisonTestCase
 
     public function testMaxQueryTerms()
     {
-        $query = new MoreLikeThis(
+        $query = new MoreLikeThisQuery(
             [new DocumentLike('my_index', 'my_type', 'Q435'), new DocumentLike('my_index', 'my_type', 'Q4872')],
             ['title', 'description']
         );

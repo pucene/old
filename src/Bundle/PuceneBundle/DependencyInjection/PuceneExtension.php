@@ -51,12 +51,12 @@ class PuceneExtension extends Extension
                 [
                     $name,
                     new Reference($config['adapters']['pucene']['doctrine_dbal_connection']),
-                    new Reference('pucene_pucene.query_builder.search'),
+                    new Reference('pucene.pucene.query_builder.search'),
                 ]
             );
 
-            $container->setDefinition('pucene_pucene.doctrine_dbal.' . $name, $definition);
-            $serviceIds[$name] = 'pucene_pucene.doctrine_dbal.' . $name;
+            $container->setDefinition('pucene.pucene.doctrine_dbal.' . $name, $definition);
+            $serviceIds[$name] = 'pucene.pucene.doctrine_dbal.' . $name;
         }
 
         $container->getDefinition('pucene.storage_factory')->replaceArgument(1, $serviceIds);

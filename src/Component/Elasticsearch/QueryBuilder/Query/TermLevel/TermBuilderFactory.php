@@ -8,10 +8,10 @@ use Pucene\Component\QueryBuilder\Query\QueryInterface;
 /**
  * Builder for term query.
  */
-class TermQueryBuilder implements QueryBuilderInterface
+class TermBuilderFactory implements QueryBuilderInterface
 {
     public function build(QueryInterface $query)
     {
-        return new TermQuery($query);
+        return new TermBuilder($query);
     }
 }

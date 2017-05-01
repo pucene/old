@@ -5,19 +5,19 @@ namespace Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Specialized;
 use Pucene\Component\Analysis\AnalyzerInterface;
 use Pucene\Component\Client\ClientInterface;
 use Pucene\Component\Pucene\Dbal\DbalStorage;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermQuery;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermBuilder;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderInterface;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
 use Pucene\Component\QueryBuilder\Query\QueryInterface;
 use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\ArtificialDocumentLike;
 use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\DocumentLike;
-use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\MoreLikeThis;
+use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\MoreLikeThisQuery;
 use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\TextLike;
 
 /**
  * Builder for more_like_this query.
  */
-class MoreLikeThisQueryBuilder implements QueryBuilderInterface
+class MoreLikeThisBuilderFactory implements QueryBuilderInterface
 {
     /**
      * @var ClientInterface
@@ -42,7 +42,7 @@ class MoreLikeThisQueryBuilder implements QueryBuilderInterface
     /**
      * {@inheritdoc}
      *
-     * @param MoreLikeThis $query
+     * @param MoreLikeThisQuery $query
      */
     public function build(QueryInterface $query, DbalStorage $storage)
     {
@@ -53,14 +53,14 @@ class MoreLikeThisQueryBuilder implements QueryBuilderInterface
         foreach ($query->getFields() as $field) {
             foreach (array_slice($terms[$field], 0, $query->getMaxQueryTerms()) as $term => $attributes) {
                 // $boost = $attributes['complete'] / reset($terms[$field])['complete'];
-                $queries[] = new TermQuery($field, $term);
+                $queries[] = new TermBuilder($field, $term);
             }
         }
 
-        return new MoreLikeThisQuery($queries, $query->getLike());
+        return new MoreLikeThisBuilder($queries, $query->getLike());
     }
 
-    private function getTerms(MoreLikeThis $query, ScoringQueryBuilder $scoringQueryBuilder)
+    private function getTerms(MoreLikeThisQuery $query, ScoringQueryBuilder $scoringQueryBuilder)
     {
         $terms = [];
         foreach ($query->getLike() as $like) {
@@ -103,14 +103,14 @@ class MoreLikeThisQueryBuilder implements QueryBuilderInterface
         return $result;
     }
 
-    private function likeText(MoreLikeThis $query, TextLike $like, array &$terms)
+    private function likeText(MoreLikeThisQuery $query, TextLike $like, array &$terms)
     {
         foreach ($query->getFields() as $field) {
             $this->analyzeText($field, $like->getText(), $terms);
         }
     }
 
-    private function likeDocument(MoreLikeThis $query, DocumentLike $like, array &$terms)
+    private function likeDocument(MoreLikeThisQuery $query, DocumentLike $like, array &$terms)
     {
         $index = $this->client->get($like->getIndex());
         $document = $index->get($like->getType(), $like->getId());
@@ -120,7 +120,7 @@ class MoreLikeThisQueryBuilder implements QueryBuilderInterface
         }
     }
 
-    private function likeArtificialDocument(MoreLikeThis $query, ArtificialDocumentLike $like, array &$terms)
+    private function likeArtificialDocument(MoreLikeThisQuery $query, ArtificialDocumentLike $like, array &$terms)
     {
         foreach ($query->getFields() as $field) {
             $this->analyzeText($field, $like->getDocument()[$field], $terms);

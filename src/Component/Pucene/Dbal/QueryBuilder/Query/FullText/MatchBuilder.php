@@ -6,17 +6,17 @@ use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
 use Pucene\Component\Math\MathExpressionBuilder;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\Math\Coord;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ParameterBag;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermQuery;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermBuilder;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryInterface;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
 
 /**
  * Represents match query.
  */
-class MatchQuery implements QueryInterface
+class MatchBuilder implements QueryInterface
 {
     /**
-     * @var TermQuery[]
+     * @var TermBuilder[]
      */
     private $queries;
 

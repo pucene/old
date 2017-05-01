@@ -4,10 +4,8 @@ namespace Pucene\Component\QueryBuilder\Query\FullText;
 
 use Pucene\Component\QueryBuilder\Query\QueryInterface;
 
-class Match implements QueryInterface
+class MatchQuery implements QueryInterface
 {
-    const NAME = 'match';
-
     /**
      * @var string
      */

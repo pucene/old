@@ -1,18 +1,18 @@
 <?php
 
-namespace Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel;
+namespace Pucene\Component\Pucene\Dbal\QueryBuilder\Query;
 
 use Pucene\Component\Pucene\Dbal\DbalStorage;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderInterface;
 use Pucene\Component\QueryBuilder\Query\QueryInterface;
 
 /**
- * Builder for term query.
+ * Builds match_all query.
  */
-class TermQueryBuilder implements QueryBuilderInterface
+class MatchAllBuilderFactory implements QueryBuilderInterface
 {
     public function build(QueryInterface $query, DbalStorage $storage)
     {
-        return new TermQuery($query->getField(), $query->getTerm());
+        return new MatchAllBuilder();
     }
 }

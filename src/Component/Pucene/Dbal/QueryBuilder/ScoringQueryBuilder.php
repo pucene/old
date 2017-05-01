@@ -5,7 +5,7 @@ namespace Pucene\Component\Pucene\Dbal\QueryBuilder;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pucene\Component\Pucene\Dbal\PuceneSchema;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermQuery;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermBuilder;
 
 class ScoringQueryBuilder
 {
@@ -60,7 +60,7 @@ class ScoringQueryBuilder
     }
 
     /**
-     * @param TermQuery[] $queries
+     * @param TermBuilder[] $queries
      *
      * @return float
      */

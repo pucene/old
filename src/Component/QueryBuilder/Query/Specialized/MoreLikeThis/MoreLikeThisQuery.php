@@ -4,7 +4,7 @@ namespace Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis;
 
 use Pucene\Component\QueryBuilder\Query\QueryInterface;
 
-class MoreLikeThis implements QueryInterface
+class MoreLikeThisQuery implements QueryInterface
 {
     /**
      * @var array
@@ -80,7 +80,7 @@ class MoreLikeThis implements QueryInterface
      *
      * @return self
      */
-    public function setMaxQueryTerms(int $maxQueryTerms): MoreLikeThis
+    public function setMaxQueryTerms(int $maxQueryTerms): MoreLikeThisQuery
     {
         $this->maxQueryTerms = $maxQueryTerms;
 
@@ -104,7 +104,7 @@ class MoreLikeThis implements QueryInterface
      *
      * @return self
      */
-    public function setMinTermFreq(int $minTermFreq): MoreLikeThis
+    public function setMinTermFreq(int $minTermFreq): MoreLikeThisQuery
     {
         $this->minTermFreq = $minTermFreq;
 
@@ -128,7 +128,7 @@ class MoreLikeThis implements QueryInterface
      *
      * @return self
      */
-    public function setMinDocFreq(int $minDocFreq): MoreLikeThis
+    public function setMinDocFreq(int $minDocFreq): MoreLikeThisQuery
     {
         $this->minDocFreq = $minDocFreq;
 

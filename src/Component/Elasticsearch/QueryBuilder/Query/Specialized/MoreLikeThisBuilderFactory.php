@@ -1,17 +1,17 @@
 <?php
 
-namespace Pucene\Component\Elasticsearch\QueryBuilder\Query;
+namespace Pucene\Component\Elasticsearch\QueryBuilder\Query\Specialized;
 
 use Pucene\Component\Elasticsearch\QueryBuilder\QueryBuilderInterface;
 use Pucene\Component\QueryBuilder\Query\QueryInterface;
 
 /**
- * Builds match_all query.
+ * Build match query.
  */
-class MatchAllQueryBuilder implements QueryBuilderInterface
+class MoreLikeThisBuilderFactory implements QueryBuilderInterface
 {
     public function build(QueryInterface $query)
     {
-        return new MatchAllQuery($query);
+        return new MoreLikeThisBuilder($query);
     }
 }
