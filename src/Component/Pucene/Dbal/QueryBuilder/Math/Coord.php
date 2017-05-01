@@ -8,7 +8,6 @@ use Pucene\Component\Math\Expression\Value;
 use Pucene\Component\Math\ExpressionInterface;
 use Pucene\Component\Math\MathExpressionBuilder;
 use Pucene\Component\Pucene\Dbal\PuceneSchema;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\ParameterBag;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderInterface;
 
 class Coord implements ExpressionInterface
@@ -70,7 +69,7 @@ class Coord implements ExpressionInterface
                 ->where('innerDocument.id = document.id')
                 ->setMaxResults(1);
 
-            $expression = $query->build($queryBuilder->expr(), new ParameterBag($queryBuilder));
+            $expression = $query->build($queryBuilder->expr(), $queryBuilder);
             if ($expression) {
                 $queryBuilder->andWhere($expression);
             }

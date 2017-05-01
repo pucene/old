@@ -2,9 +2,10 @@
 
 namespace Pucene\Component\Math\Expression;
 
+use Pucene\Component\Math\CompositeExpressionInterface;
 use Pucene\Component\Math\ExpressionInterface;
 
-class CompositeExpression implements ExpressionInterface
+class CompositeExpression implements CompositeExpressionInterface
 {
     /**
      * @var ExpressionInterface[]
@@ -26,7 +27,7 @@ class CompositeExpression implements ExpressionInterface
         $this->glue = $glue;
     }
 
-    public function add(ExpressionInterface $part): self
+    public function add(ExpressionInterface $part): CompositeExpressionInterface
     {
         $this->parts[] = $part;
 

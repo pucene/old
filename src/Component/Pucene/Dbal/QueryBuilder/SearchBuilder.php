@@ -46,7 +46,7 @@ class SearchBuilder
 
         $query = $this->builders->get(get_class($search->getQuery()))->build($search->getQuery(), $storage);
 
-        $expression = $query->build($queryBuilder->expr(), new ParameterBag($queryBuilder));
+        $expression = $query->build($queryBuilder->expr(), $queryBuilder);
         if ($expression) {
             $queryBuilder->andWhere($expression);
         }

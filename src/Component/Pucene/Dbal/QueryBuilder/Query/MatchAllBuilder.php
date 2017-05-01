@@ -3,8 +3,8 @@
 namespace Pucene\Component\Pucene\Dbal\QueryBuilder\Query;
 
 use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Pucene\Component\Math\MathExpressionBuilder;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\ParameterBag;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderInterface;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
 
@@ -13,7 +13,7 @@ use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
  */
 class MatchAllBuilder implements QueryBuilderInterface
 {
-    public function build(ExpressionBuilder $expr, ParameterBag $parameter)
+    public function build(ExpressionBuilder $expr, QueryBuilder $queryBuilder)
     {
         // no expression
     }

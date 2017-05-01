@@ -3,17 +3,18 @@
 namespace Pucene\Component\Pucene\Dbal\QueryBuilder;
 
 use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Pucene\Component\Math\MathExpressionBuilder;
 
 interface QueryBuilderInterface
 {
     /**
      * @param ExpressionBuilder $expr
-     * @param ParameterBag $parameter
+     * @param QueryBuilder $queryBuilder
      *
      * @return mixed
      */
-    public function build(ExpressionBuilder $expr, ParameterBag $parameter);
+    public function build(ExpressionBuilder $expr, QueryBuilder $queryBuilder);
 
     public function scoring(MathExpressionBuilder $expr, ScoringQueryBuilder $queryBuilder);
 
