@@ -2,16 +2,23 @@
 
 namespace Pucene\Component\Pucene\Dbal\QueryBuilder;
 
-use Pucene\Component\Pucene\Dbal\DbalStorage;
-use Pucene\Component\QueryBuilder\Query\QueryInterface as PuceneQueryInterface;
+use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
+use Pucene\Component\Math\MathExpressionBuilder;
 
 interface QueryBuilderInterface
 {
     /**
-     * @param PuceneQueryInterface $query
-     * @param DbalStorage $storage
+     * @param ExpressionBuilder $expr
+     * @param ParameterBag $parameter
      *
-     * @return QueryInterface
+     * @return mixed
      */
-    public function build(PuceneQueryInterface $query, DbalStorage $storage);
+    public function build(ExpressionBuilder $expr, ParameterBag $parameter);
+
+    public function scoring(MathExpressionBuilder $expr, ScoringQueryBuilder $queryBuilder);
+
+    /**
+     * @return QueryBuilderInterface[]
+     */
+    public function getTerms();
 }

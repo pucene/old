@@ -6,7 +6,7 @@ use Pucene\Component\Analysis\AnalyzerInterface;
 use Pucene\Component\Client\ClientInterface;
 use Pucene\Component\Pucene\Dbal\DbalStorage;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermBuilder;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderInterface;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderFactoryInterface;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
 use Pucene\Component\QueryBuilder\Query\QueryInterface;
 use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\ArtificialDocumentLike;
@@ -17,7 +17,7 @@ use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\TextLike;
 /**
  * Builder for more_like_this query.
  */
-class MoreLikeThisBuilderFactory implements QueryBuilderInterface
+class MoreLikeThisBuilderFactory implements QueryBuilderFactoryInterface
 {
     /**
      * @var ClientInterface
@@ -57,7 +57,7 @@ class MoreLikeThisBuilderFactory implements QueryBuilderInterface
             }
         }
 
-        return new MoreLikeThisBuilder($queries, $query->getLike());
+        return new MoreLikeThisBuilder($queries, $query->getLike(), $storage->getSchema(), $storage->getConnection());
     }
 
     private function getTerms(MoreLikeThisQuery $query, ScoringQueryBuilder $scoringQueryBuilder)
@@ -84,7 +84,7 @@ class MoreLikeThisBuilderFactory implements QueryBuilderInterface
                     continue;
                 }
 
-                $idf = $scoringQueryBuilder->inverseDocumentFrequency($field, $term);
+                $idf = $scoringQueryBuilder->inverseDocumentFrequency(new TermBuilder($field, $term));
                 $result[$field][$term] = [
                     'idf' => $idf,
                     'count' => $parameter['count'],

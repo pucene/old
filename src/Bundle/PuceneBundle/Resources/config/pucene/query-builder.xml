@@ -28,10 +28,17 @@
             <tag name="pucene.query_builder"
                  query="Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\MoreLikeThisQuery"/>
         </service>
+        <service id="pucene_pucene.query_builder.bool"
+                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Compound\BoolBuilderFactory">
+            <argument type="service" id="pucene.query_builder.pool"/>
+
+            <tag name="pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\Compound\BoolQuery"/>
+        </service>
 
         <service id="pucene.query_builder.pool"
-                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderPool">
+                 class="Pucene\Bundle\PuceneBundle\Pucene\LazyLoadingQueryBuilderFactoryPool">
             <argument type="collection"/>
+            <argument type="service" id="service_container"/>
         </service>
 
         <service id="pucene.pucene.query_builder.search"

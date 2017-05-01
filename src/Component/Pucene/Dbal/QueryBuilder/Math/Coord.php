@@ -2,23 +2,21 @@
 
 namespace Pucene\Component\Pucene\Dbal\QueryBuilder\Math;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Pucene\Component\Math\Expression\Value;
 use Pucene\Component\Math\ExpressionInterface;
 use Pucene\Component\Math\MathExpressionBuilder;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermBuilder;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
+use Pucene\Component\Pucene\Dbal\PuceneSchema;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\ParameterBag;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderInterface;
 
 class Coord implements ExpressionInterface
 {
     /**
-     * @var TermBuilder[]
+     * @var QueryBuilderInterface[]
      */
     private $queries;
-
-    /**
-     * @var ScoringQueryBuilder
-     */
-    private $queryBuilder;
 
     /**
      * @var MathExpressionBuilder
@@ -26,14 +24,30 @@ class Coord implements ExpressionInterface
     private $expr;
 
     /**
-     * @param TermBuilder[] $queries
-     * @param ScoringQueryBuilder $queryBuilder
+     * @var PuceneSchema
+     */
+    private $schema;
+
+    /**
+     * @var Connection
+     */
+    private $connection;
+
+    /**
+     * @param QueryBuilderInterface[] $queries
+     * @param PuceneSchema $schema
+     * @param Connection $connection
      * @param MathExpressionBuilder $expr
      */
-    public function __construct(array $queries, ScoringQueryBuilder $queryBuilder, MathExpressionBuilder $expr)
-    {
+    public function __construct(
+        array $queries,
+        PuceneSchema $schema,
+        Connection $connection,
+        MathExpressionBuilder $expr
+    ) {
         $this->queries = $queries;
-        $this->queryBuilder = $queryBuilder;
+        $this->schema = $schema;
+        $this->connection = $connection;
         $this->expr = $expr;
     }
 
@@ -41,9 +55,27 @@ class Coord implements ExpressionInterface
     {
         $sum = [];
         foreach ($this->queries as $query) {
-            $sum[] = $this->expr->count(
-                $this->expr->variable($this->queryBuilder->joinTerm($query->getField(), $query->getTerm()) . '.id')
-            );
+            $queryBuilder = (new QueryBuilder($this->connection))->select('1')
+                ->from(
+                    $this->schema->getDocumentsTableName(),
+                    'document'
+                )
+                ->innerJoin(
+                    'document',
+                    $this->schema->getFieldsTableName(),
+                    'field',
+                    'field.document_id = document.id'
+                )
+                ->innerJoin('field', $this->schema->getTokensTableName(), 'token', 'token.field_id = field.id')
+                ->where('innerDocument.id = document.id')
+                ->setMaxResults(1);
+
+            $expression = $query->build($queryBuilder->expr(), new ParameterBag($queryBuilder));
+            if ($expression) {
+                $queryBuilder->andWhere($expression);
+            }
+
+            $sum[] = $this->expr->coalesce($this->expr->variable($queryBuilder->getSQL()), $this->expr->value(0));
         }
 
         return $this->expr->devide(call_user_func_array([$this->expr, 'add'], $sum), new Value(count($this->queries)));

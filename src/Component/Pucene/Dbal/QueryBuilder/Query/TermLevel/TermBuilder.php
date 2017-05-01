@@ -7,14 +7,16 @@ use Pucene\Component\Math\MathExpressionBuilder;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\Math\FieldLengthNorm;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\Math\TermFrequency;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ParameterBag;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryInterface;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderInterface;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
 
 /**
  * Represents term query.
  */
-class TermBuilder implements QueryInterface
+class TermBuilder implements QueryBuilderInterface
 {
+    private static $index = 0;
+
     /**
      * @var string
      */
@@ -54,19 +56,44 @@ class TermBuilder implements QueryInterface
 
     public function build(ExpressionBuilder $expr, ParameterBag $parameter)
     {
-        return $expr->andX(
-            $expr->eq('field.name', "'" . $this->field . "'"),
-            $expr->eq('token.term', "'" . $this->term . "'")
-        );
+        $fieldName = 'field' . ucfirst($this->field) . uniqid();
+        $termName = 'field' . ucfirst($this->term) . uniqid();
+
+        $parameter->getQueryBuilder()->leftJoin(
+                'document',
+                'pu_my_index_fields',
+                $fieldName,
+                $fieldName . '.document_id = document.id AND ' . $fieldName . '.name = \'' . $this->field . '\''
+            )->leftJoin(
+                $fieldName,
+                'pu_my_index_tokens',
+                $termName,
+                $termName . '.field_id = ' . $fieldName . '.id AND ' . $termName . '.term = \'' . $this->term . '\''
+            );
+
+        return $expr->isNotNull($termName . '.id');
     }
 
-    public function scoring(MathExpressionBuilder $expr, ScoringQueryBuilder $queryBuilder)
+    public function scoring(MathExpressionBuilder $expr, ScoringQueryBuilder $queryBuilder, $queryNorm = null)
     {
-        return $expr->multiply(
+        $inverseDocumentFrequency = $queryBuilder->inverseDocumentFrequency($this);
+
+        $expression = $expr->multiply(
             new TermFrequency($this->getField(), $this->getTerm(), $queryBuilder, $expr),
-            $expr->value($queryBuilder->inverseDocumentFrequency($this->getField(), $this->getTerm())),
+            $expr->value($inverseDocumentFrequency),
             new FieldLengthNorm($this->getField(), $queryBuilder, $expr),
             $this->boost
         );
+
+        if ($queryNorm) {
+            $expression->add($expr->value($queryNorm * $inverseDocumentFrequency));
+        }
+
+        return $expression;
+    }
+
+    public function getTerms()
+    {
+        return [$this];
     }
 }

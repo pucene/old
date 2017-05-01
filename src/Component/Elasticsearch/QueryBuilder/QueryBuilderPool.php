@@ -5,7 +5,7 @@ namespace Pucene\Component\Elasticsearch\QueryBuilder;
 /**
  * Pool of query builder.
  */
-class QueryBuilderPool
+class QueryBuilderPool implements QueryBuilderPoolInterface
 {
     /**
      * @var QueryBuilderInterface[]

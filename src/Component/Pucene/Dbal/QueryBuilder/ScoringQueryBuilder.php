@@ -54,9 +54,9 @@ class ScoringQueryBuilder
             ->groupBy('innerDocument.id');
     }
 
-    public function inverseDocumentFrequency(string $field, string $term): float
+    public function inverseDocumentFrequency(QueryBuilderInterface $query): float
     {
-        return $this->calculateInverseDocumentFrequency($this->getDocCountPerTerm($field, $term));
+        return $this->calculateInverseDocumentFrequency($this->getDocCountForQuery($query));
     }
 
     /**
@@ -68,7 +68,7 @@ class ScoringQueryBuilder
     {
         $sum = 0;
         foreach ($queries as $query) {
-            $docCount = $this->getDocCountPerTerm($query->getField(), $query->getTerm());
+            $docCount = $this->getDocCountForQuery($query);
             $sum += pow($this->calculateInverseDocumentFrequency($docCount), 2);
         }
 
@@ -137,6 +137,20 @@ class ScoringQueryBuilder
         return $this->docCount = (int) $queryBuilder->execute()->fetchColumn();
     }
 
+    public function getDocCountForQuery(QueryBuilderInterface $query)
+    {
+        $queryBuilder = (new QueryBuilder($this->connection))
+            ->select('count(document.id) as count')
+            ->from($this->schema->getDocumentsTableName(), 'document');
+
+        $expression = $query->build($queryBuilder->expr(), new ParameterBag($queryBuilder));
+        if ($expression) {
+            $queryBuilder->where($expression);
+        }
+
+        return (int) $queryBuilder->execute()->fetchColumn();
+    }
+
     public function getDocCountPerTerm(string $field, string $term)
     {
         $key = $field . '-' . $term;
@@ -160,35 +174,5 @@ class ScoringQueryBuilder
             );
 
         return $this->docCountPerTerm[$key] = (int) $queryBuilder->execute()->fetchColumn();
-    }
-
-    private function getDocCountPerTerms(string $field, array $terms)
-    {
-        $inExpression = $this->connection->getExpressionBuilder()->in(
-            'fieldTerm.term',
-            "'" . implode("','", $terms) . "'"
-        );
-
-        $queryBuilder = (new QueryBuilder($this->connection))
-            ->select('count(document.id) as count')->addSelect('fieldTerm.term as term')
-            ->from($this->schema->getDocumentsTableName(), 'document')
-            ->innerJoin(
-                'document',
-                $this->schema->getFieldsTableName(),
-                'field',
-                sprintf('document.id = field.document_id and field.name = \'%s\'', $field)
-            )->innerJoin(
-                'field',
-                $this->schema->getFieldTermsTableName(),
-                'fieldTerm',
-                sprintf('field.id = fieldTerm.field_id and %s', $inExpression)
-            )->groupBy('fieldTerm.term');
-
-        $result = [];
-        foreach ($queryBuilder->execute() as $item) {
-            $this->docCountPerTerm[$field . '-' . $item['term']] = $result[$item['term']] = $item['count'];
-        }
-
-        return $result;
     }
 }

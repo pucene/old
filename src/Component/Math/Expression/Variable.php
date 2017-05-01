@@ -21,6 +21,6 @@ class Variable implements ExpressionInterface
 
     public function __toString(): string
     {
-        return $this->variable;
+        return '(' . $this->variable . ')';
     }
 }
