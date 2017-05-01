@@ -19,22 +19,22 @@ class MathExpressionBuilder
         return new Value($x);
     }
 
-    public function add(...$x): ExpressionInterface
+    public function add(...$x): CompositeExpressionInterface
     {
         return new CompositeExpression($x, '+');
     }
 
-    public function substract(...$x): ExpressionInterface
+    public function substract(...$x): CompositeExpressionInterface
     {
         return new CompositeExpression($x, '-');
     }
 
-    public function multiply(...$x): ExpressionInterface
+    public function multiply(...$x): CompositeExpressionInterface
     {
         return new CompositeExpression($x, '*');
     }
 
-    public function devide(...$x): ExpressionInterface
+    public function devide(...$x): CompositeExpressionInterface
     {
         return new CompositeExpression($x, '/');
     }

@@ -143,7 +143,7 @@ class ScoringQueryBuilder
             ->select('count(document.id) as count')
             ->from($this->schema->getDocumentsTableName(), 'document');
 
-        $expression = $query->build($queryBuilder->expr(), new ParameterBag($queryBuilder));
+        $expression = $query->build($queryBuilder->expr(), $queryBuilder);
         if ($expression) {
             $queryBuilder->where($expression);
         }

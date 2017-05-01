@@ -4,10 +4,10 @@ namespace Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Compound;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Pucene\Component\Math\MathExpressionBuilder;
 use Pucene\Component\Pucene\Dbal\PuceneSchema;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\Math\Coord;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\ParameterBag;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderInterface;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
 
@@ -62,17 +62,17 @@ class BoolBuilder implements QueryBuilderInterface
         $this->connection = $connection;
     }
 
-    public function build(ExpressionBuilder $expr, ParameterBag $parameter)
+    public function build(ExpressionBuilder $expr, QueryBuilder $queryBuilder)
     {
         $and = $expr->andX();
         foreach ($this->mustNotQueries as $query) {
-            $and->add('NOT ' . $query->build($expr, $parameter));
+            $and->add('NOT ' . $query->build($expr, $queryBuilder));
         }
 
         $mustQueries = array_merge($this->mustQueries, $this->filterQueries);
         if (count($mustQueries)) {
             foreach ($mustQueries as $query) {
-                $and->add($query->build($expr, $parameter));
+                $and->add($query->build($expr, $queryBuilder));
             }
 
             return $and;
@@ -80,7 +80,7 @@ class BoolBuilder implements QueryBuilderInterface
 
         $or = $expr->orX();
         foreach ($this->shouldQueries as $query) {
-            $or->add($query->build($expr, $parameter));
+            $or->add($query->build($expr, $queryBuilder));
         }
 
         $and->add($or);

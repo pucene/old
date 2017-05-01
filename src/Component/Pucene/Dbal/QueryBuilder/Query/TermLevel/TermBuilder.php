@@ -3,10 +3,10 @@
 namespace Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel;
 
 use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Pucene\Component\Math\MathExpressionBuilder;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\Math\FieldLengthNorm;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\Math\TermFrequency;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\ParameterBag;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderInterface;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
 
@@ -15,8 +15,6 @@ use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
  */
 class TermBuilder implements QueryBuilderInterface
 {
-    private static $index = 0;
-
     /**
      * @var string
      */
@@ -54,12 +52,12 @@ class TermBuilder implements QueryBuilderInterface
         return $this->term;
     }
 
-    public function build(ExpressionBuilder $expr, ParameterBag $parameter)
+    public function build(ExpressionBuilder $expr, QueryBuilder $queryBuilder)
     {
         $fieldName = 'field' . ucfirst($this->field) . uniqid();
         $termName = 'field' . ucfirst($this->term) . uniqid();
 
-        $parameter->getQueryBuilder()->leftJoin(
+        $queryBuilder->leftJoin(
                 'document',
                 'pu_my_index_fields',
                 $fieldName,

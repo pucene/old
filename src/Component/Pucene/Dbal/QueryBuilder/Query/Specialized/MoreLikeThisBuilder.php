@@ -4,8 +4,8 @@ namespace Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Specialized;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Pucene\Component\Pucene\Dbal\PuceneSchema;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\ParameterBag;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Compound\BoolBuilder;
 use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\DocumentLike;
 
@@ -37,9 +37,9 @@ class MoreLikeThisBuilder extends BoolBuilder
     /**
      * {@inheritdoc}
      */
-    public function build(ExpressionBuilder $expr, ParameterBag $parameter)
+    public function build(ExpressionBuilder $expr, QueryBuilder $queryBuilder)
     {
-        $expression = $expr->andX(parent::build($expr, $parameter));
+        $expression = $expr->andX(parent::build($expr, $queryBuilder));
         if (0 === count($this->exclude)) {
             return $expression;
         }
