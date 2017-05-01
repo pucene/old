@@ -3,22 +3,22 @@
 namespace Pucene\Component\Elasticsearch\QueryBuilder\Query\FullText;
 
 use Pucene\Component\Elasticsearch\QueryBuilder\QueryInterface;
-use Pucene\Component\QueryBuilder\Query\FullText\Match;
+use Pucene\Component\QueryBuilder\Query\FullText\MatchQuery;
 
 /**
  * Represents match query.
  */
-class MatchQuery implements QueryInterface
+class MatchBuilder implements QueryInterface
 {
     /**
-     * @var Match
+     * @var MatchQuery
      */
     private $query;
 
     /**
-     * @param Match $query
+     * @param MatchQuery $query
      */
-    public function __construct(Match $query)
+    public function __construct(MatchQuery $query)
     {
         $this->query = $query;
     }

@@ -3,22 +3,25 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="pucene_elasticsearch.query_builder.term"
-                 class="Pucene\Component\Elasticsearch\QueryBuilder\Query\TermLevel\TermQueryBuilder">
-            <tag name="pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\TermLevel\Term"/>
-        </service>
-        <service id="pucene_elasticsearch.query_builder.match_all"
-                 class="Pucene\Component\Elasticsearch\QueryBuilder\Query\MatchAllQueryBuilder">
-            <tag name="pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\MatchAll"/>
-        </service>
-        <service id="pucene_elasticsearch.query_builder.match"
-                 class="Pucene\Component\Elasticsearch\QueryBuilder\Query\FullText\MatchQueryBuilder">
-            <tag name="pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\FullText\Match"/>
-        </service>
-        <service id="pucene_elasticsearch.query_builder.more_like_this"
-                 class="Pucene\Component\Elasticsearch\QueryBuilder\Query\Specialized\MoreLikeThisBuilder">
+        <service id="pucene.elasticsearch.query_builder.term"
+                 class="Pucene\Component\Elasticsearch\QueryBuilder\Query\TermLevel\TermBuilderFactory">
             <tag name="pucene.query_builder"
-                 query="Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\MoreLikeThis"/>
+                 query="Pucene\Component\QueryBuilder\Query\TermLevel\TermQuery"/>
+        </service>
+        <service id="pucene.elasticsearch.query_builder.match_all"
+                 class="Pucene\Component\Elasticsearch\QueryBuilder\Query\MatchAllBuilderFactory">
+            <tag name="pucene.query_builder"
+                 query="Pucene\Component\QueryBuilder\Query\MatchAllQuery"/>
+        </service>
+        <service id="pucene.elasticsearch.query_builder.match"
+                 class="Pucene\Component\Elasticsearch\QueryBuilder\Query\FullText\MatchBuilderFactory">
+            <tag name="pucene.query_builder"
+                 query="Pucene\Component\QueryBuilder\Query\FullText\MatchQuery"/>
+        </service>
+        <service id="pucene.elasticsearch.query_builder.more_like_this"
+                 class="Pucene\Component\Elasticsearch\QueryBuilder\Query\Specialized\MoreLikeThisBuilderFactory">
+            <tag name="pucene.query_builder"
+                 query="Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\MoreLikeThisQuery"/>
         </service>
 
         <service id="pucene.query_builder.pool"

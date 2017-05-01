@@ -2,7 +2,7 @@
 
 namespace Pucene\Tests\Functional\Comparison;
 
-use Pucene\Component\QueryBuilder\Query\FullText\Match;
+use Pucene\Component\QueryBuilder\Query\FullText\MatchQuery;
 use Pucene\Component\QueryBuilder\Search;
 
 /**
@@ -12,7 +12,7 @@ class MatchComparisonTest extends ComparisonTestCase
 {
     public function testSearchMatch()
     {
-        $search = new Search(new Match('title', 'museum lyon'));
+        $search = new Search(new MatchQuery('title', 'museum lyon'));
         $search->setSize(20);
 
         $this->assertSearch($search);

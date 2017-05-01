@@ -2,7 +2,7 @@
 
 namespace Pucene\Tests\Functional\Comparison;
 
-use Pucene\Component\QueryBuilder\Query\MatchAll;
+use Pucene\Component\QueryBuilder\Query\MatchAllQuery;
 use Pucene\Component\QueryBuilder\Search;
 use Pucene\Component\QueryBuilder\Sort\IdSort;
 
@@ -13,7 +13,7 @@ class MatchAllComparisonTest extends ComparisonTestCase
 {
     public function testSearchMatchAll()
     {
-        $search = new Search(new MatchAll());
+        $search = new Search(new MatchAllQuery());
         $search->addSort(new IdSort());
 
         $this->assertSearch($search);

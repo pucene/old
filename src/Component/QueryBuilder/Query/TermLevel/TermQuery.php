@@ -4,7 +4,7 @@ namespace Pucene\Component\QueryBuilder\Query\TermLevel;
 
 use Pucene\Component\QueryBuilder\Query\QueryInterface;
 
-class Term implements QueryInterface
+class TermQuery implements QueryInterface
 {
     const NAME = 'term';
 

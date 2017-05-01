@@ -9,12 +9,11 @@ use Pucene\Component\Pucene\Dbal\QueryBuilder\Math\TermFrequency;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ParameterBag;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryInterface;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
-use Pucene\Component\QueryBuilder\Query\TermLevel\Term;
 
 /**
  * Represents term query.
  */
-class TermQuery implements QueryInterface
+class TermBuilder implements QueryInterface
 {
     /**
      * @var string

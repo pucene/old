@@ -4,10 +4,10 @@ namespace Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Specialized;
 
 use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ParameterBag;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\FullText\MatchQuery;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\FullText\MatchBuilder;
 use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\DocumentLike;
 
-class MoreLikeThisQuery extends MatchQuery
+class MoreLikeThisBuilder extends MatchBuilder
 {
     /**
      * @var DocumentLike[]

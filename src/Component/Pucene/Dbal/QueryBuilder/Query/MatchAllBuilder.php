@@ -7,26 +7,12 @@ use Pucene\Component\Math\MathExpressionBuilder;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ParameterBag;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryInterface;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
-use Pucene\Component\QueryBuilder\Query\MatchAll;
 
 /**
  * Represents a match_all query.
  */
-class MatchAllQuery implements QueryInterface
+class MatchAllBuilder implements QueryInterface
 {
-    /**
-     * @var MatchAll
-     */
-    private $query;
-
-    /**
-     * @param MatchAll $query
-     */
-    public function __construct(MatchAll $query)
-    {
-        $this->query = $query;
-    }
-
     public function build(ExpressionBuilder $expr, ParameterBag $parameter)
     {
         // no expression

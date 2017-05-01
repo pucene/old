@@ -3,26 +3,30 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="pucene_pucene.query_builder.term"
-                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermQueryBuilder">
-            <tag name="pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\TermLevel\Term"/>
+        <service id="pucene.pucene.query_builder.term"
+                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermBuilderFactory">
+            <tag name="pucene.query_builder"
+                 query="Pucene\Component\QueryBuilder\Query\TermLevel\TermQuery"/>
         </service>
-        <service id="pucene_pucene.query_builder.match_all"
-                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\MatchAllQueryBuilder">
-            <tag name="pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\MatchAll"/>
+        <service id="pucene.pucene.query_builder.match_all"
+                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\MatchAllBuilderFactory">
+            <tag name="pucene.query_builder"
+                 query="Pucene\Component\QueryBuilder\Query\MatchAllQuery"/>
         </service>
-        <service id="pucene_pucene.query_builder.match"
-                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\FullText\MatchQueryBuilder">
-            <argument type="service" id="pucene_pucene.analysis.standard"/>
+        <service id="pucene.pucene.query_builder.match"
+                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\FullText\MatchBuilderFactory">
+            <argument type="service" id="pucene.pucene.analysis.standard"/>
 
-            <tag name="pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\FullText\Match"/>
+            <tag name="pucene.query_builder"
+                 query="Pucene\Component\QueryBuilder\Query\FullText\MatchQuery"/>
         </service>
-        <service id="pucene_pucene.query_builder.more_like_this"
-                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Specialized\MoreLikeThisQueryBuilder">
+        <service id="pucene.pucene.query_builder.more_like_this"
+                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Specialized\MoreLikeThisBuilderFactory">
             <argument type="service" id="pucene.client"/>
-            <argument type="service" id="pucene_pucene.analysis.standard"/>
+            <argument type="service" id="pucene.pucene.analysis.standard"/>
 
-            <tag name="pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\MoreLikeThis"/>
+            <tag name="pucene.query_builder"
+                 query="Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\MoreLikeThisQuery"/>
         </service>
 
         <service id="pucene.query_builder.pool"
@@ -30,7 +34,7 @@
             <argument type="collection"/>
         </service>
 
-        <service id="pucene_pucene.query_builder.search"
+        <service id="pucene.pucene.query_builder.search"
                  class="Pucene\Component\Pucene\Dbal\QueryBuilder\SearchBuilder">
             <argument type="service" id="pucene.query_builder.pool"/>
         </service>

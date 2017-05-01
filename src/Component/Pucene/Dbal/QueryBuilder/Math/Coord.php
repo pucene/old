@@ -5,13 +5,13 @@ namespace Pucene\Component\Pucene\Dbal\QueryBuilder\Math;
 use Pucene\Component\Math\Expression\Value;
 use Pucene\Component\Math\ExpressionInterface;
 use Pucene\Component\Math\MathExpressionBuilder;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermQuery;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermBuilder;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
 
 class Coord implements ExpressionInterface
 {
     /**
-     * @var TermQuery[]
+     * @var TermBuilder[]
      */
     private $queries;
 
@@ -26,7 +26,7 @@ class Coord implements ExpressionInterface
     private $expr;
 
     /**
-     * @param TermQuery[] $queries
+     * @param TermBuilder[] $queries
      * @param ScoringQueryBuilder $queryBuilder
      * @param MathExpressionBuilder $expr
      */

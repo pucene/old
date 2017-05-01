@@ -4,25 +4,26 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <service id="pucene.pucene.query_builder.term"
-                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermQueryBuilder">
-            <tag name="pucene.pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\TermLevel\Term"/>
+                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermBuilderFactory">
+            <tag name="pucene.pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\TermLevel\TermQuery"/>
         </service>
         <service id="pucene.pucene.query_builder.match_all"
-                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\MatchAllQueryBuilder">
-            <tag name="pucene.pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\MatchAll"/>
+                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\MatchAllBuilderFactory">
+            <tag name="pucene.pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\MatchAllQuery"/>
         </service>
         <service id="pucene.pucene.query_builder.match"
-                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\FullText\MatchQueryBuilder">
+                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\FullText\MatchBuilderFactory">
             <argument type="service" id="pucene.pucene.analysis.standard"/>
 
-            <tag name="pucene.pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\FullText\Match"/>
+            <tag name="pucene.pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\FullText\MatchQuery"/>
         </service>
         <service id="pucene.pucene.query_builder.more_like_this"
-                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Specialized\MoreLikeThisQueryBuilder">
+                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Specialized\MoreLikeThisBuilderFactory">
             <argument type="service" id="pucene.pucene.client"/>
             <argument type="service" id="pucene.pucene.analysis.standard"/>
 
-            <tag name="pucene.pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\MoreLikeThis"/>
+            <tag name="pucene.pucene.query_builder"
+                 query="Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\MoreLikeThisQuery"/>
         </service>
 
         <service id="pucene.pucene.query_builder.pool"
