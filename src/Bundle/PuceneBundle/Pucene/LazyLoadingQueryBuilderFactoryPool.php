@@ -2,10 +2,10 @@
 
 namespace Pucene\Bundle\PuceneBundle\Pucene;
 
-use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderPoolInterface;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderFactoryPoolInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LazyLoadingQueryBuilderPool implements QueryBuilderPoolInterface
+class LazyLoadingQueryBuilderFactoryPool implements QueryBuilderFactoryPoolInterface
 {
     /**
      * @var string[]

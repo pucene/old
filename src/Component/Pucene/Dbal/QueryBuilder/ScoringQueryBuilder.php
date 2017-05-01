@@ -54,7 +54,7 @@ class ScoringQueryBuilder
             ->groupBy('innerDocument.id');
     }
 
-    public function inverseDocumentFrequency(QueryInterface $query): float
+    public function inverseDocumentFrequency(QueryBuilderInterface $query): float
     {
         return $this->calculateInverseDocumentFrequency($this->getDocCountForQuery($query));
     }
@@ -137,7 +137,7 @@ class ScoringQueryBuilder
         return $this->docCount = (int) $queryBuilder->execute()->fetchColumn();
     }
 
-    public function getDocCountForQuery(QueryInterface $query)
+    public function getDocCountForQuery(QueryBuilderInterface $query)
     {
         $queryBuilder = (new QueryBuilder($this->connection))
             ->select('count(document.id) as count')

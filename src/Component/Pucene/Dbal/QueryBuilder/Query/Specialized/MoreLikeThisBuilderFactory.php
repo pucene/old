@@ -6,7 +6,7 @@ use Pucene\Component\Analysis\AnalyzerInterface;
 use Pucene\Component\Client\ClientInterface;
 use Pucene\Component\Pucene\Dbal\DbalStorage;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermBuilder;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderInterface;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderFactoryInterface;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
 use Pucene\Component\QueryBuilder\Query\QueryInterface;
 use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\ArtificialDocumentLike;
@@ -17,7 +17,7 @@ use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\TextLike;
 /**
  * Builder for more_like_this query.
  */
-class MoreLikeThisBuilderFactory implements QueryBuilderInterface
+class MoreLikeThisBuilderFactory implements QueryBuilderFactoryInterface
 {
     /**
      * @var ClientInterface

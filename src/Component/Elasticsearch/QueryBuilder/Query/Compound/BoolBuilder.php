@@ -2,7 +2,6 @@
 
 namespace Pucene\Component\Elasticsearch\QueryBuilder\Query\Compound;
 
-use Pucene\Component\Elasticsearch\QueryBuilder\QueryBuilderPool;
 use Pucene\Component\Elasticsearch\QueryBuilder\QueryBuilderPoolInterface;
 use Pucene\Component\Elasticsearch\QueryBuilder\QueryInterface;
 use Pucene\Component\QueryBuilder\Query\Compound\BoolQuery;

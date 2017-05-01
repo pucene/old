@@ -33,7 +33,7 @@
         </service>
 
         <service id="pucene.pucene.query_builder.pool"
-                 class="Pucene\Bundle\PuceneBundle\Pucene\LazyLoadingQueryBuilderPool">
+                 class="Pucene\Bundle\PuceneBundle\Pucene\LazyLoadingQueryBuilderFactoryPool">
             <argument type="collection"/>
             <argument type="service" id="service_container"/>
         </service>

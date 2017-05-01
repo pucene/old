@@ -4,16 +4,16 @@ namespace Pucene\Component\Pucene\Dbal\QueryBuilder\Query\FullText;
 
 use Pucene\Component\Analysis\AnalyzerInterface;
 use Pucene\Component\Pucene\Dbal\DbalStorage;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermBuilder;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Compound\BoolBuilder;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderInterface;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermBuilder;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderFactoryInterface;
 use Pucene\Component\QueryBuilder\Query\FullText\MatchQuery;
 use Pucene\Component\QueryBuilder\Query\QueryInterface;
 
 /**
  * Build match query.
  */
-class MatchBuilderFactory implements QueryBuilderInterface
+class MatchBuilderFactory implements QueryBuilderFactoryInterface
 {
     /**
      * @var AnalyzerInterface

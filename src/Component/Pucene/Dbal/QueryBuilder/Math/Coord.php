@@ -9,12 +9,12 @@ use Pucene\Component\Math\ExpressionInterface;
 use Pucene\Component\Math\MathExpressionBuilder;
 use Pucene\Component\Pucene\Dbal\PuceneSchema;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ParameterBag;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryInterface;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderInterface;
 
 class Coord implements ExpressionInterface
 {
     /**
-     * @var QueryInterface[]
+     * @var QueryBuilderInterface[]
      */
     private $queries;
 
@@ -34,7 +34,7 @@ class Coord implements ExpressionInterface
     private $connection;
 
     /**
-     * @param QueryInterface[] $queries
+     * @param QueryBuilderInterface[] $queries
      * @param PuceneSchema $schema
      * @param Connection $connection
      * @param MathExpressionBuilder $expr

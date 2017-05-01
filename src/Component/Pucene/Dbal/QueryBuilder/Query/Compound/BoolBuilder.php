@@ -8,31 +8,31 @@ use Pucene\Component\Math\MathExpressionBuilder;
 use Pucene\Component\Pucene\Dbal\PuceneSchema;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\Math\Coord;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ParameterBag;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryInterface;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderInterface;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
 
 /**
  * Represents bool query.
  */
-class BoolBuilder implements QueryInterface
+class BoolBuilder implements QueryBuilderInterface
 {
     /**
-     * @var QueryInterface[]
+     * @var QueryBuilderInterface[]
      */
     private $shouldQueries;
 
     /**
-     * @var QueryInterface[]
+     * @var QueryBuilderInterface[]
      */
     private $mustQueries;
 
     /**
-     * @var QueryInterface[]
+     * @var QueryBuilderInterface[]
      */
     private $mustNotQueries;
 
     /**
-     * @var QueryInterface[]
+     * @var QueryBuilderInterface[]
      */
     private $filterQueries;
 

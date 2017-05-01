@@ -2,15 +2,15 @@
 
 namespace Pucene\Component\Pucene\Dbal\QueryBuilder;
 
-class QueryBuilderPool implements QueryBuilderPoolInterface
+class QueryBuilderFactoryPool implements QueryBuilderFactoryPoolInterface
 {
     /**
-     * @var QueryBuilderInterface[]
+     * @var QueryBuilderFactoryInterface[]
      */
     private $builders = [];
 
     /**
-     * @param QueryBuilderInterface[] $builders
+     * @param QueryBuilderFactoryInterface[] $builders
      */
     public function __construct(array $builders)
     {

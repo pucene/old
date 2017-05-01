@@ -7,13 +7,13 @@ use Pucene\Component\Math\MathExpressionBuilder;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\Math\FieldLengthNorm;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\Math\TermFrequency;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ParameterBag;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryInterface;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderInterface;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
 
 /**
  * Represents term query.
  */
-class TermBuilder implements QueryInterface
+class TermBuilder implements QueryBuilderInterface
 {
     private static $index = 0;
 

@@ -3,25 +3,25 @@
 namespace Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Compound;
 
 use Pucene\Component\Pucene\Dbal\DbalStorage;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderInterface;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderPoolInterface;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderFactoryInterface;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderFactoryPoolInterface;
 use Pucene\Component\QueryBuilder\Query\Compound\BoolQuery;
 use Pucene\Component\QueryBuilder\Query\QueryInterface;
 
 /**
  * Build bool query.
  */
-class BoolBuilderFactory implements QueryBuilderInterface
+class BoolBuilderFactory implements QueryBuilderFactoryInterface
 {
     /**
-     * @var QueryBuilderPoolInterface
+     * @var QueryBuilderFactoryPoolInterface
      */
     private $queryBuilderPool;
 
     /**
-     * @param QueryBuilderPoolInterface $queryBuilderPool
+     * @param QueryBuilderFactoryPoolInterface $queryBuilderPool
      */
-    public function __construct(QueryBuilderPoolInterface $queryBuilderPool)
+    public function __construct(QueryBuilderFactoryPoolInterface $queryBuilderPool)
     {
         $this->queryBuilderPool = $queryBuilderPool;
     }

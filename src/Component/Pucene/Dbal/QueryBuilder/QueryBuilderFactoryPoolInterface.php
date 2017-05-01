@@ -2,7 +2,7 @@
 
 namespace Pucene\Component\Pucene\Dbal\QueryBuilder;
 
-interface QueryBuilderPoolInterface
+interface QueryBuilderFactoryPoolInterface
 {
     public function get($className);
 }
