@@ -66,7 +66,7 @@ class BoolBuilder implements QueryBuilderInterface
     {
         $and = $expr->andX();
         foreach ($this->mustNotQueries as $query) {
-            $and->add('NOT ' . $query->build($expr, $queryBuilder));
+            $and->add('NOT (' . $query->build($expr, $queryBuilder) . ')');
         }
 
         $mustQueries = array_merge($this->mustQueries, $this->filterQueries);
@@ -85,7 +85,7 @@ class BoolBuilder implements QueryBuilderInterface
 
         $and->add($or);
 
-        return $or;
+        return $and;
     }
 
     public function scoring(MathExpressionBuilder $expr, ScoringQueryBuilder $queryBuilder, $queryNorm = null)
