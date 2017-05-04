@@ -31,6 +31,10 @@
 
             <tag name="pucene.pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\Compound\BoolQuery"/>
         </service>
+        <service id="pucene.pucene.query_builder.ids"
+                 class="Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\IdsBuilderFactory">
+            <tag name="pucene.pucene.query_builder" query="Pucene\Component\QueryBuilder\Query\TermLevel\IdsQuery"/>
+        </service>
 
         <service id="pucene.pucene.query_builder.pool"
                  class="Pucene\Bundle\PuceneBundle\Pucene\LazyLoadingQueryBuilderFactoryPool">

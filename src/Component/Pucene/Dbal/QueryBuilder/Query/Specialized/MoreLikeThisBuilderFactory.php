@@ -5,6 +5,8 @@ namespace Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Specialized;
 use Pucene\Component\Analysis\AnalyzerInterface;
 use Pucene\Component\Client\ClientInterface;
 use Pucene\Component\Pucene\Dbal\DbalStorage;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\Compound\BoolBuilder;
+use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\IdsBuilder;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\Query\TermLevel\TermBuilder;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\QueryBuilderFactoryInterface;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
@@ -57,7 +59,14 @@ class MoreLikeThisBuilderFactory implements QueryBuilderFactoryInterface
             }
         }
 
-        return new MoreLikeThisBuilder($queries, $query->getLike(), $storage->getSchema(), $storage->getConnection());
+        return new BoolBuilder(
+            $queries,
+            [],
+            $this->getMustNotQueries($query->getLike()),
+            [],
+            $storage->getSchema(),
+            $storage->getConnection()
+        );
     }
 
     private function getTerms(MoreLikeThisQuery $query, ScoringQueryBuilder $scoringQueryBuilder)
@@ -142,5 +151,21 @@ class MoreLikeThisBuilderFactory implements QueryBuilderFactoryInterface
 
             ++$terms[$field][$token->getEncodedTerm()]['count'];
         }
+    }
+
+    private function getMustNotQueries(array $likes)
+    {
+        $ids = [];
+        foreach ($likes as $like) {
+            if ($like instanceof DocumentLike) {
+                $ids[] = $like->getId();
+            }
+        }
+
+        if (0 === count($ids)) {
+            return [];
+        }
+
+        return [new IdsBuilder($ids)];
     }
 }

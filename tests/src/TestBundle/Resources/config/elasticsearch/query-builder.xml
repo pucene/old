@@ -27,6 +27,11 @@
             <tag name="pucene.elasticsearch.query_builder"
                  query="Pucene\Component\QueryBuilder\Query\Compound\BoolQuery"/>
         </service>
+        <service id="pucene_elasticsearch.query_builder.ids"
+                 class="Pucene\Component\Elasticsearch\QueryBuilder\Query\TermLevel\IdsBuilderFactory">
+            <tag name="pucene.elasticsearch.query_builder"
+                 query="Pucene\Component\QueryBuilder\Query\TermLevel\IdsQuery"/>
+        </service>
 
         <service id="pucene.elasticsearch.query_builder.pool"
                  class="Pucene\Bundle\PuceneBundle\Elasticsearch\LazyLoadingQueryBuilderPool">
