@@ -3,13 +3,14 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="pucene.storage_factory" class="Pucene\Bundle\PuceneBundle\Storage\LazyLoadingDbalStorageFactory">
+        <service id="pucene.pucene.storage_factory"
+                 class="Pucene\Bundle\PuceneBundle\Storage\LazyLoadingDbalStorageFactory">
             <argument type="service" id="service_container"/>
             <argument/>
         </service>
 
-        <service id="pucene.client" class="Pucene\Component\Pucene\PuceneClient">
-            <argument type="service" id="pucene.storage_factory"/>
+        <service id="pucene.pucene.client" class="Pucene\Component\Pucene\PuceneClient">
+            <argument type="service" id="pucene.pucene.storage_factory"/>
             <argument type="service" id="pucene.pucene.analysis.standard"/>
         </service>
     </services>

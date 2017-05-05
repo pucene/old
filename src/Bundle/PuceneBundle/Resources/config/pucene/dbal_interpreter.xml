@@ -36,9 +36,9 @@
 
         <service id="pucene.pucene.interpreter.composite"
                  class="Pucene\Component\Pucene\Dbal\Interpreter\Element\CompositeInterpreter">
-            <tag name="pucene.pucene.interpreter" element="Pucene\Component\Pucene\Compiler\Element\CompositeElement"/>
-
             <argument type="service" id="pucene.pucene.interpreter_pool"/>
+
+            <tag name="pucene.pucene.interpreter" element="Pucene\Component\Pucene\Compiler\Element\CompositeElement"/>
         </service>
 
         <service id="pucene.pucene.interpreter.bool"

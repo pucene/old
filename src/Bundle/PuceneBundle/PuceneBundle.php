@@ -2,8 +2,6 @@
 
 namespace Pucene\Bundle\PuceneBundle;
 
-use Pucene\Bundle\PuceneBundle\DependencyInjection\CompilerPass\QueryBuilderCompilerPass;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -11,8 +9,4 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class PuceneBundle extends Bundle
 {
-    public function build(ContainerBuilder $container)
-    {
-        $container->addCompilerPass(new QueryBuilderCompilerPass());
-    }
 }

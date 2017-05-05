@@ -2,7 +2,7 @@
 
 namespace Pucene\Tests\TestBundle;
 
-use Pucene\Tests\TestBundle\DependencyInjection\CompilerPass\CollectorCompilerPass;
+use Pucene\Component\Symfony\Pool\CollectorCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -16,7 +16,8 @@ class TestBundle extends Bundle
         $container->addCompilerPass(
             new CollectorCompilerPass(
                 'pucene.pucene.visitor',
-                'pucene.pucene.visitor_pool'
+                'pucene.pucene.visitor_pool',
+                'query'
             )
         );
         $container->addCompilerPass(
@@ -29,7 +30,8 @@ class TestBundle extends Bundle
         $container->addCompilerPass(
             new CollectorCompilerPass(
                 'pucene.elasticsearch.query_builder',
-                'pucene.elasticsearch.query_builder.pool'
+                'pucene.elasticsearch.query_builder.pool',
+                'query'
             )
         );
     }

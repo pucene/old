@@ -6,7 +6,6 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pucene\Component\Pucene\Compiler\Compiler;
 use Pucene\Component\Pucene\Dbal\Interpreter\DbalInterpreter;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
 use Pucene\Component\Pucene\Model\Analysis;
 use Pucene\Component\Pucene\StorageInterface;
 use Pucene\Component\QueryBuilder\Search;
@@ -89,7 +88,7 @@ class DbalStorage implements StorageInterface
     public function saveDocument(Analysis $analysis)
     {
         $this->connection->transactional(
-            function(Connection $connection) use ($analysis) {
+            function() use ($analysis) {
                 $this->persister->persist($analysis->getDocument(), $analysis->getFields());
             }
         );
@@ -140,11 +139,6 @@ class DbalStorage implements StorageInterface
     public function termStatistics()
     {
         return new DbalTermStatistics($this->connection, $this->getSchema());
-    }
-
-    public function createScoringQueryBuilder()
-    {
-        return new ScoringQueryBuilder($this->connection, $this->getSchema());
     }
 
     public function getConnection()
