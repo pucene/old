@@ -33,7 +33,7 @@ class DbalInterpreter
      *
      * @return Document[]
      */
-    public function interpret(array $types, Search $search, DbalStorage $storage, ElementInterface $element = null)
+    public function interpret(array $types, Search $search, DbalStorage $storage, ElementInterface $element)
     {
         $connection = $storage->getConnection();
         $schema = $storage->getSchema();
@@ -47,22 +47,20 @@ class DbalInterpreter
             ->setFirstResult($search->getFrom())
             ->setParameter(0, implode(',', $types));
 
-        if ($element) {
-            /** @var InterpreterInterface $interpreter */
-            $interpreter = $this->interpreterPool->get(get_class($element));
-            $expression = $interpreter->interpret($element, $queryBuilder);
-            if ($expression) {
-                $queryBuilder->andWhere($expression);
-            }
+        /** @var InterpreterInterface $interpreter */
+        $interpreter = $this->interpreterPool->get(get_class($element));
+        $expression = $interpreter->interpret($element, $queryBuilder);
+        if ($expression) {
+            $queryBuilder->andWhere($expression);
+        }
 
-            $scoringAlgorithm = new ScoringAlgorithm($queryBuilder, $schema, $this->interpreterPool);
-            $expression = $interpreter->scoring($element, $scoringAlgorithm);
+        $scoringAlgorithm = new ScoringAlgorithm($queryBuilder, $schema, $this->interpreterPool);
+        $expression = $interpreter->scoring($element, $scoringAlgorithm);
 
-            if ($expression) {
-                $queryBuilder->addSelect($expression . ' as score')->orderBy('score', 'desc');
-            } else {
-                $queryBuilder->addSelect('1 as score');
-            }
+        if ($expression) {
+            $queryBuilder->addSelect($expression . ' as score')->orderBy('score', 'desc');
+        } else {
+            $queryBuilder->addSelect('1 as score');
         }
 
         if (0 < count($search->getSorts())) {

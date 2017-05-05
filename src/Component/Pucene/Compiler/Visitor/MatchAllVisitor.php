@@ -2,6 +2,7 @@
 
 namespace Pucene\Component\Pucene\Compiler\Visitor;
 
+use Pucene\Component\Pucene\Compiler\Element\MatchAllElement;
 use Pucene\Component\Pucene\Compiler\VisitorInterface;
 use Pucene\Component\Pucene\StorageInterface;
 use Pucene\Component\QueryBuilder\Query\MatchAllQuery;
@@ -16,6 +17,6 @@ class MatchAllVisitor implements VisitorInterface
      */
     public function visit(QueryInterface $query, StorageInterface $storage)
     {
-        return null;
+        return new MatchAllElement();
     }
 }

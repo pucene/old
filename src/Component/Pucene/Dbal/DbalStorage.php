@@ -108,6 +108,9 @@ class DbalStorage implements StorageInterface
     public function search(Search $search, $types)
     {
         $element = $this->compiler->compile($search->getQuery(), $this);
+        if ($element === null) {
+            return [];
+        }
 
         return $this->interpreter->interpret($types, $search, $this, $element);
     }
