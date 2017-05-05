@@ -30,8 +30,10 @@ class TestExtension extends Extension
         $container->setParameter('pucene.adapter_config.elasticsearch', $config['adapters']['elasticsearch']);
         $container->setParameter('pucene.indices', $config['indices']);
 
-        $fileLocator = new FileLocator(__DIR__ . '/../Resources/config');
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader->import('commands.xml');
 
+        $fileLocator = new FileLocator(__DIR__ . '/../../../../src/Bundle/PuceneBundle/Resources/config');
         $loaderResolver = new LoaderResolver(
             [new DirectoryLoader($container, $fileLocator), new XmlFileLoader($container, $fileLocator)]
         );
@@ -39,7 +41,6 @@ class TestExtension extends Extension
         $loader = new DelegatingLoader($loaderResolver);
         foreach (['pucene', 'elasticsearch'] as $adapter) {
             $loader->import($fileLocator->locate($adapter . '/'));
-            $loader->import($fileLocator->locate('commands.xml'));
         }
 
         $this->loadPucene($config, $container);
@@ -54,7 +55,8 @@ class TestExtension extends Extension
                 [
                     $name,
                     new Reference($config['adapters']['pucene']['doctrine_dbal_connection']),
-                    new Reference('pucene.pucene.query_builder.search'),
+                    new Reference('pucene.pucene.compiler'),
+                    new Reference('pucene.pucene.interpreter'),
                 ]
             );
 

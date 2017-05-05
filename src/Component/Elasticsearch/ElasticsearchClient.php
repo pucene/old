@@ -4,7 +4,7 @@ namespace Pucene\Component\Elasticsearch;
 
 use Elasticsearch\Client;
 use Pucene\Component\Client\ClientInterface;
-use Pucene\Component\Elasticsearch\QueryBuilder\SearchBuilder;
+use Pucene\Component\Elasticsearch\Compiler\Compiler;
 
 class ElasticsearchClient implements ClientInterface
 {
@@ -14,9 +14,9 @@ class ElasticsearchClient implements ClientInterface
     private $client;
 
     /**
-     * @var SearchBuilder
+     * @var Compiler
      */
-    private $searchBuilder;
+    private $compiler;
     /**
      * @var array
      */
@@ -24,13 +24,13 @@ class ElasticsearchClient implements ClientInterface
 
     /**
      * @param Client $client
-     * @param SearchBuilder $searchBuilder
+     * @param Compiler $compiler
      * @param array $adapterConfig
      */
-    public function __construct(Client $client, SearchBuilder $searchBuilder, array $adapterConfig)
+    public function __construct(Client $client, Compiler $compiler, array $adapterConfig)
     {
         $this->client = $client;
-        $this->searchBuilder = $searchBuilder;
+        $this->compiler = $compiler;
         $this->adapterConfig = $adapterConfig;
     }
 
@@ -39,7 +39,7 @@ class ElasticsearchClient implements ClientInterface
      */
     public function get($name)
     {
-        return new ElasticsearchIndex($name, $this->client, $this->searchBuilder);
+        return new ElasticsearchIndex($name, $this->client, $this->compiler);
     }
 
     /**

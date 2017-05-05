@@ -1,0 +1,49 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="pucene.pucene.visitor_pool" class="Pucene\Component\Symfony\Pool\LazyLoadingPool">
+            <argument type="collection"/>
+            <argument type="service" id="service_container"/>
+        </service>
+
+        <service id="pucene.pucene.compiler" class="Pucene\Component\Pucene\Compiler\Compiler">
+            <argument type="service" id="pucene.pucene.visitor_pool"/>
+        </service>
+
+        <service id="pucene.pucene.visitor.match_all" class="Pucene\Component\Pucene\Compiler\Visitor\MatchAllVisitor">
+            <tag name="pucene.pucene.visitor" query="Pucene\Component\QueryBuilder\Query\MatchAllQuery"/>
+        </service>
+
+        <service id="pucene.pucene.visitor.term" class="Pucene\Component\Pucene\Compiler\Visitor\TermLevel\TermVisitor">
+            <tag name="pucene.pucene.visitor" query="Pucene\Component\QueryBuilder\Query\TermLevel\TermQuery"/>
+        </service>
+
+        <service id="pucene.pucene.visitor.ids" class="Pucene\Component\Pucene\Compiler\Visitor\TermLevel\IdsVisitor">
+            <tag name="pucene.pucene.visitor" query="Pucene\Component\QueryBuilder\Query\TermLevel\IdsQuery"/>
+        </service>
+
+        <service id="pucene.pucene.visitor.match"
+                 class="Pucene\Component\Pucene\Compiler\Visitor\FullText\MatchVisitor">
+            <argument type="service" id="pucene.pucene.analysis.standard"/>
+
+            <tag name="pucene.pucene.visitor" query="Pucene\Component\QueryBuilder\Query\FullText\MatchQuery"/>
+        </service>
+
+        <service id="pucene.pucene.visitor.more_like_this"
+                 class="Pucene\Component\Pucene\Compiler\Visitor\Specialized\MoreLikeThisVisitor">
+            <argument type="service" id="pucene.pucene.analysis.standard"/>
+            <argument type="service" id="pucene.pucene.client"/>
+
+            <tag name="pucene.pucene.visitor"
+                 query="Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\MoreLikeThisQuery"/>
+        </service>
+
+        <service id="pucene.pucene.visitor.bool" class="Pucene\Component\Pucene\Compiler\Visitor\Compound\BoolVisitor">
+            <argument type="service" id="pucene.pucene.visitor_pool"/>
+
+            <tag name="pucene.pucene.visitor" query="Pucene\Component\QueryBuilder\Query\Compound\BoolQuery"/>
+        </service>
+    </services>
+</container>
