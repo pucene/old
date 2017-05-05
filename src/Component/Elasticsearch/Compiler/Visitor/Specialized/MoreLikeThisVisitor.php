@@ -1,35 +1,25 @@
 <?php
 
-namespace Pucene\Component\Elasticsearch\QueryBuilder\Query\Specialized;
+namespace Pucene\Component\Elasticsearch\Compiler\Visitor\Specialized;
 
-use Pucene\Component\Elasticsearch\QueryBuilder\QueryInterface;
+use Pucene\Component\Elasticsearch\Compiler\VisitorInterface;
+use Pucene\Component\QueryBuilder\Query\QueryInterface;
 use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\ArtificialDocumentLike;
 use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\DocumentLike;
 use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\MoreLikeThisQuery;
 use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\TextLike;
 
-/**
- * Represents more_like_this query.
- */
-class MoreLikeThisBuilder implements QueryInterface
+class MoreLikeThisVisitor implements VisitorInterface
 {
     /**
-     * @var MoreLikeThisQuery
-     */
-    private $query;
-
-    /**
+     * {@inheritdoc}
+     *
      * @param MoreLikeThisQuery $query
      */
-    public function __construct(MoreLikeThisQuery $query)
-    {
-        $this->query = $query;
-    }
-
-    public function toArray()
+    public function visit(QueryInterface $query)
     {
         $like = [];
-        foreach ($this->query->getLike() as $item) {
+        foreach ($query->getLike() as $item) {
             if ($item instanceof TextLike) {
                 $like[] = $item->getText();
             } elseif ($item instanceof DocumentLike) {
@@ -45,13 +35,14 @@ class MoreLikeThisBuilder implements QueryInterface
 
         $parameters = [
             'like' => $like,
-            'max_query_terms' => $this->query->getMaxQueryTerms(),
-            'min_term_freq' => $this->query->getMinTermFreq(),
-            'min_doc_freq' => $this->query->getMinDocFreq(),
+            'max_query_terms' => $query->getMaxQueryTerms(),
+            'min_term_freq' => $query->getMinTermFreq(),
+            'min_doc_freq' => $query->getMinDocFreq(),
             'minimum_should_match' => '0%',
         ];
-        if (count($this->query->getFields())) {
-            $parameters['fields'] = $this->query->getFields();
+
+        if (count($query->getFields())) {
+            $parameters['fields'] = $query->getFields();
         }
 
         return ['more_like_this' => $parameters];

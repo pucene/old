@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="pucene.elasticsearch.visitor.term"
+                 class="Pucene\Component\Elasticsearch\Compiler\Visitor\TermLevel\TermVisitor">
+            <tag name="pucene.elasticsearch.visitor"
+                 query="Pucene\Component\QueryBuilder\Query\TermLevel\TermQuery"/>
+        </service>
+        <service id="pucene.elasticsearch.visitor.match_all"
+                 class="Pucene\Component\Elasticsearch\Compiler\Visitor\MatchAllVisitor">
+            <tag name="pucene.elasticsearch.visitor"
+                 query="Pucene\Component\QueryBuilder\Query\MatchAllQuery"/>
+        </service>
+        <service id="pucene.elasticsearch.visitor.match"
+                 class="Pucene\Component\Elasticsearch\Compiler\Visitor\FullText\MatchVisitor">
+            <tag name="pucene.elasticsearch.visitor"
+                 query="Pucene\Component\QueryBuilder\Query\FullText\MatchQuery"/>
+        </service>
+        <service id="pucene.elasticsearch.visitor.more_like_this"
+                 class="Pucene\Component\Elasticsearch\Compiler\Visitor\Specialized\MoreLikeThisVisitor">
+            <tag name="pucene.elasticsearch.visitor"
+                 query="Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\MoreLikeThisQuery"/>
+        </service>
+        <service id="pucene.elasticsearch.visitor.bool"
+                 class="Pucene\Component\Elasticsearch\Compiler\Visitor\Compound\BoolVisitor">
+            <argument type="service" id="pucene.elasticsearch.visitor_pool"/>
+
+            <tag name="pucene.elasticsearch.visitor"
+                 query="Pucene\Component\QueryBuilder\Query\Compound\BoolQuery"/>
+        </service>
+        <service id="pucene.elasticsearch.visitor.ids"
+                 class="Pucene\Component\Elasticsearch\Compiler\Visitor\TermLevel\IdsVisitor">
+
+            <tag name="pucene.elasticsearch.visitor"
+                 query="Pucene\Component\QueryBuilder\Query\TermLevel\IdsQuery"/>
+        </service>
+
+        <service id="pucene.elasticsearch.visitor_pool"
+                 class="Pucene\Component\Symfony\Pool\LazyLoadingPool">
+            <argument type="collection"/>
+            <argument type="service" id="service_container"/>
+        </service>
+    </services>
+</container>

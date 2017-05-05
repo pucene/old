@@ -2,7 +2,6 @@
 
 namespace Pucene\Bundle\PuceneBundle\DependencyInjection;
 
-use Pucene\Bundle\PuceneBundle\DependencyInjection\CompilerPass\QueryBuilderCompilerPass;
 use Pucene\Component\Pucene\Dbal\DbalStorage;
 use Pucene\Component\Symfony\Pool\CollectorCompilerPass;
 use Symfony\Component\Config\FileLocator;
@@ -27,7 +26,7 @@ class PuceneExtension extends Extension
 
         $adapter = $config['adapter'];
         $container->setParameter('pucene.adapter', $adapter);
-        $container->setParameter('pucene.adapter_config.'. $adapter, $config['adapters'][$adapter]);
+        $container->setParameter('pucene.adapter_config.' . $adapter, $config['adapters'][$adapter]);
         $container->setParameter('pucene.indices', $config['indices']);
 
         $fileLocator = new FileLocator(__DIR__ . '/../Resources/config');
@@ -93,7 +92,7 @@ class PuceneExtension extends Extension
      */
     private function loadElasticsearch($config, $container)
     {
-        $pass = new CollectorCompilerPass('pucene.elasticsearch.query_builder', 'pucene.elasticsearch.query_builder.pool', 'query');
+        $pass = new CollectorCompilerPass('pucene.elasticsearch.visitor', 'pucene.elasticsearch.visitor_pool', 'query');
         $pass->process($container);
     }
 }

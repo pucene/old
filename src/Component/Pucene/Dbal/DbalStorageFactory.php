@@ -3,7 +3,6 @@
 namespace Pucene\Component\Pucene\Dbal;
 
 use Doctrine\DBAL\Connection;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\SearchBuilder;
 use Pucene\Component\Pucene\StorageFactoryInterface;
 use Pucene\Component\Pucene\StorageInterface;
 

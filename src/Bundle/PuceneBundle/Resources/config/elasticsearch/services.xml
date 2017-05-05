@@ -9,14 +9,14 @@
             <argument>%pucene.adapter_config.elasticsearch%</argument>
         </service>
 
-        <service id="pucene.elasticsearch.search_builder"
-                 class="Pucene\Component\Elasticsearch\QueryBuilder\SearchBuilder">
-            <argument type="service" id="pucene.elasticsearch.query_builder.pool"/>
+        <service id="pucene.elasticsearch.compiler"
+                 class="Pucene\Component\Elasticsearch\Compiler\Compiler">
+            <argument type="service" id="pucene.elasticsearch.visitor_pool"/>
         </service>
 
         <service id="pucene.elasticsearch.client" class="Pucene\Component\Elasticsearch\ElasticsearchClient">
             <argument type="service" id="pucene.elasticsearch.elasticsearch_client"/>
-            <argument type="service" id="pucene.elasticsearch.search_builder"/>
+            <argument type="service" id="pucene.elasticsearch.compiler"/>
             <argument>%pucene.adapter_config.elasticsearch%</argument>
         </service>
     </services>

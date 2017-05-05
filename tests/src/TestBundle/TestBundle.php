@@ -29,8 +29,8 @@ class TestBundle extends Bundle
         );
         $container->addCompilerPass(
             new CollectorCompilerPass(
-                'pucene.elasticsearch.query_builder',
-                'pucene.elasticsearch.query_builder.pool',
+                'pucene.elasticsearch.visitor',
+                'pucene.elasticsearch.visitor_pool',
                 'query'
             )
         );

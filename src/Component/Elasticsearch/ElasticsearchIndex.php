@@ -4,7 +4,7 @@ namespace Pucene\Component\Elasticsearch;
 
 use Elasticsearch\Client;
 use Pucene\Component\Client\IndexInterface;
-use Pucene\Component\Elasticsearch\QueryBuilder\SearchBuilder;
+use Pucene\Component\Elasticsearch\Compiler\Compiler;
 use Pucene\Component\QueryBuilder\Search;
 use Pucene\Component\QueryBuilder\Sort\IdSort;
 
@@ -21,20 +21,20 @@ class ElasticsearchIndex implements IndexInterface
     private $client;
 
     /**
-     * @var SearchBuilder
+     * @var Compiler
      */
-    private $searchBuilder;
+    private $compiler;
 
     /**
      * @param string $name
      * @param Client $client
-     * @param SearchBuilder $searchBuilder
+     * @param Compiler $compiler
      */
-    public function __construct($name, Client $client, SearchBuilder $searchBuilder)
+    public function __construct($name, Client $client, Compiler $compiler)
     {
         $this->name = $name;
         $this->client = $client;
-        $this->searchBuilder = $searchBuilder;
+        $this->compiler = $compiler;
     }
 
     /**
@@ -69,7 +69,7 @@ class ElasticsearchIndex implements IndexInterface
             'body' => [
                 'size' => $search->getSize(),
                 'from' => $search->getFrom(),
-                'query' => $this->searchBuilder->build($search)->toArray(),
+                'query' => $this->compiler->compile($search->getQuery()),
             ],
         ];
 
