@@ -12,6 +12,11 @@
             <argument type="service" id="pucene.pucene.interpreter_pool"/>
         </service>
 
+        <service id="pucene.pucene.interpreter.match_all"
+                 class="Pucene\Component\Pucene\Dbal\Interpreter\Element\MatchAllInterpreter">
+            <tag name="pucene.pucene.interpreter" element="Pucene\Component\Pucene\Compiler\Element\MatchAllElement"/>
+        </service>
+
         <service id="pucene.pucene.interpreter.term"
                  class="Pucene\Component\Pucene\Dbal\Interpreter\Element\TermInterpreter">
             <tag name="pucene.pucene.interpreter" element="Pucene\Component\Pucene\Compiler\Element\TermElement"/>

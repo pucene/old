@@ -14,7 +14,7 @@ abstract class BaseElement implements ElementInterface
     /**
      * @param float $boost
      */
-    public function __construct($boost)
+    public function __construct(float $boost = 1.0)
     {
         $this->boost = $boost;
     }

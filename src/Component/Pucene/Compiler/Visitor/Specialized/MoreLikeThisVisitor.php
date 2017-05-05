@@ -56,6 +56,10 @@ class MoreLikeThisVisitor implements VisitorInterface
             }
         }
 
+        if (0 === count($elements)) {
+            return;
+        }
+
         $mustNotElements = $this->getMustNotElements($query->getLike());
         if (0 === count($mustNotElements)) {
             return new CompositeElement(CompositeElement:: OR, $elements);
