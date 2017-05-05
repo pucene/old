@@ -4,10 +4,10 @@ namespace Pucene\Component\Pucene\Dbal;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Pucene\Component\Pucene\Compiler\Compiler;
+use Pucene\Component\Pucene\Dbal\Interpreter\DbalInterpreter;
 use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\SearchBuilder;
 use Pucene\Component\Pucene\Model\Analysis;
-use Pucene\Component\Pucene\Model\Document;
 use Pucene\Component\Pucene\StorageInterface;
 use Pucene\Component\QueryBuilder\Search;
 
@@ -24,9 +24,14 @@ class DbalStorage implements StorageInterface
     private $connection;
 
     /**
-     * @var SearchBuilder
+     * @var Compiler
      */
-    private $searchBuilder;
+    private $compiler;
+
+    /**
+     * @var DbalInterpreter
+     */
+    private $interpreter;
 
     /**
      * @var DocumentPersister
@@ -41,13 +46,15 @@ class DbalStorage implements StorageInterface
     /**
      * @param string $name
      * @param Connection $connection
-     * @param SearchBuilder $searchBuilder
+     * @param Compiler $compiler
+     * @param DbalInterpreter $interpreter
      */
-    public function __construct($name, Connection $connection, SearchBuilder $searchBuilder)
+    public function __construct($name, Connection $connection, Compiler $compiler, DbalInterpreter $interpreter)
     {
         $this->name = $name;
         $this->connection = $connection;
-        $this->searchBuilder = $searchBuilder;
+        $this->interpreter = $interpreter;
+        $this->compiler = $compiler;
 
         $this->persister = new DocumentPersister($connection, $this->getSchema());
     }
@@ -82,7 +89,7 @@ class DbalStorage implements StorageInterface
     public function saveDocument(Analysis $analysis)
     {
         $this->connection->transactional(
-            function (Connection $connection) use ($analysis) {
+            function(Connection $connection) use ($analysis) {
                 $this->persister->persist($analysis->getDocument(), $analysis->getFields());
             }
         );
@@ -99,24 +106,11 @@ class DbalStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function search(Search $search, $types, $index)
+    public function search(Search $search, $types)
     {
-        $queryBuilder = $this->searchBuilder->build($types, $search, $this);
+        $element = $this->compiler->compile($search->getQuery(), $this);
 
-        $result = $queryBuilder->execute()->fetchAll();
-
-        return array_map(
-            function ($row) use ($index) {
-                return new Document(
-                    $row['id'],
-                    $row['type'],
-                    $index,
-                    json_decode($row['document'], true),
-                    (float) $row['score']
-                );
-            },
-            $result
-        );
+        return $this->interpreter->interpret($types, $search, $this, $element);
     }
 
     /**
@@ -143,6 +137,11 @@ class DbalStorage implements StorageInterface
         ];
     }
 
+    public function termStatistics()
+    {
+        return new DbalTermStatistics($this->connection, $this->getSchema());
+    }
+
     public function createScoringQueryBuilder()
     {
         return new ScoringQueryBuilder($this->connection, $this->getSchema());
@@ -160,5 +159,10 @@ class DbalStorage implements StorageInterface
         }
 
         return $this->schema = new PuceneSchema($this->name);
+    }
+
+    public function getName()
+    {
+        return $this->name;
     }
 }

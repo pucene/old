@@ -54,7 +54,8 @@ class TestExtension extends Extension
                 [
                     $name,
                     new Reference($config['adapters']['pucene']['doctrine_dbal_connection']),
-                    new Reference('pucene.pucene.query_builder.search'),
+                    new Reference('pucene.pucene.compiler'),
+                    new Reference('pucene.pucene.interpreter'),
                 ]
             );
 

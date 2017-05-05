@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="pucene.pucene.interpreter_pool" class="Pucene\Component\Symfony\Pool\LazyLoadingPool">
+            <argument type="collection"/>
+            <argument type="service" id="service_container"/>
+        </service>
+
+        <service id="pucene.pucene.interpreter" class="Pucene\Component\Pucene\Dbal\Interpreter\DbalInterpreter">
+            <argument type="service" id="pucene.pucene.interpreter_pool"/>
+        </service>
+
+        <service id="pucene.pucene.interpreter.term"
+                 class="Pucene\Component\Pucene\Dbal\Interpreter\Element\TermInterpreter">
+            <tag name="pucene.pucene.interpreter" element="Pucene\Component\Pucene\Compiler\Element\TermElement"/>
+        </service>
+
+        <service id="pucene.pucene.interpreter.ids"
+                 class="Pucene\Component\Pucene\Dbal\Interpreter\Element\IdsInterpreter">
+            <tag name="pucene.pucene.interpreter" element="Pucene\Component\Pucene\Compiler\Element\IdsElement"/>
+        </service>
+
+        <service id="pucene.pucene.interpreter.type"
+                 class="Pucene\Component\Pucene\Dbal\Interpreter\Element\TypeInterpreter">
+            <tag name="pucene.pucene.interpreter" element="Pucene\Component\Pucene\Compiler\Element\TypeElement"/>
+        </service>
+
+        <service id="pucene.pucene.interpreter.not"
+                 class="Pucene\Component\Pucene\Dbal\Interpreter\Element\NotInterpreter">
+            <argument type="service" id="pucene.pucene.interpreter_pool"/>
+
+            <tag name="pucene.pucene.interpreter" element="Pucene\Component\Pucene\Compiler\Element\NotElement"/>
+        </service>
+
+        <service id="pucene.pucene.interpreter.composite"
+                 class="Pucene\Component\Pucene\Dbal\Interpreter\Element\CompositeInterpreter">
+            <tag name="pucene.pucene.interpreter" element="Pucene\Component\Pucene\Compiler\Element\CompositeElement"/>
+
+            <argument type="service" id="pucene.pucene.interpreter_pool"/>
+        </service>
+
+        <service id="pucene.pucene.interpreter.bool"
+                 class="Pucene\Component\Pucene\Dbal\Interpreter\Element\BoolInterpreter">
+            <argument type="service" id="pucene.pucene.interpreter_pool"/>
+
+            <tag name="pucene.pucene.interpreter" element="Pucene\Component\Pucene\Compiler\Element\BoolElement"/>
+        </service>
+    </services>
+</container>

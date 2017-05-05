@@ -77,7 +77,7 @@ class PuceneIndex implements IndexInterface
             $type = [$type];
         }
 
-        $documents = $this->storage->search($search, $type, $this->name);
+        $documents = $this->storage->search($search, $type);
 
         return [
             'hits' => array_map(
