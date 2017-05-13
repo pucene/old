@@ -44,7 +44,7 @@ class PuceneQueryBuilder extends QueryBuilder
 
     public function selectFrequency(string $field, string $term)
     {
-        $frequencyName = 'frequency' . ucfirst($field) . ucfirst($term);
+        $frequencyName = $this->escape('frequency' . ucfirst($field) . ucfirst($term));
         if (in_array($frequencyName, $this->joins)) {
             return $frequencyName . '.frequency';
         }
@@ -64,7 +64,7 @@ class PuceneQueryBuilder extends QueryBuilder
 
     public function joinTerm(string $field, string $term)
     {
-        $termName = 'term' . ucfirst($field) . ucfirst($term);
+        $termName = $this->escape('term' . ucfirst($field) . ucfirst($term));
         if (in_array($termName, $this->joins)) {
             return $termName;
         }
@@ -82,7 +82,7 @@ class PuceneQueryBuilder extends QueryBuilder
 
     public function joinField(string $field)
     {
-        $fieldName = 'field' . ucfirst($field);
+        $fieldName = $this->escape('field' . ucfirst($field));
         if (in_array($fieldName, $this->joins)) {
             return $fieldName;
         }
@@ -95,5 +95,10 @@ class PuceneQueryBuilder extends QueryBuilder
         );
 
         return $this->joins[] = $fieldName;
+    }
+
+    private function escape($name)
+    {
+        return trim(preg_replace('/\W/', '_', $name), '_');
     }
 }

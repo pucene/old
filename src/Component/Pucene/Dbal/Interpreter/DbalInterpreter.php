@@ -39,10 +39,9 @@ class DbalInterpreter
         $schema = $storage->getSchema();
 
         $queryBuilder = (new PuceneQueryBuilder($connection, $storage->getSchema()))
-            ->select('document.*')
+            ->select('DISTINCT document.*')
             ->from($schema->getDocumentsTableName(), 'document')
             ->where('document.type IN (?)')
-            ->groupBy('document.id')
             ->setMaxResults($search->getSize())
             ->setFirstResult($search->getFrom())
             ->setParameter(0, implode(',', $types));
@@ -54,11 +53,17 @@ class DbalInterpreter
             $queryBuilder->andWhere($expression);
         }
 
-        $scoringAlgorithm = new ScoringAlgorithm($queryBuilder, $schema, $this->interpreterPool);
+        $scoringQueryBuilder = (new PuceneQueryBuilder($connection, $storage->getSchema(), 'innerDocument'))
+            ->from($schema->getDocumentsTableName(), 'innerDocument')
+            ->where('innerDocument.id = document.id')
+            ->groupBy('innerDocument.id');
+
+        $scoringAlgorithm = new ScoringAlgorithm($scoringQueryBuilder, $schema, $this->interpreterPool);
         $expression = $interpreter->scoring($element, $scoringAlgorithm);
 
         if ($expression) {
-            $queryBuilder->addSelect($expression . ' as score')->orderBy('score', 'desc');
+            $scoringQueryBuilder->select($expression);
+            $queryBuilder->addSelect('(' . $scoringQueryBuilder->getSQL() . ') as score')->orderBy('score', 'desc');
         } else {
             $queryBuilder->addSelect('1 as score');
         }
