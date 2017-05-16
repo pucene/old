@@ -45,6 +45,15 @@ class BoolInterpreter implements InterpreterInterface
      */
     public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, $queryNorm = null)
     {
+        if (count($element->getScoringElements()) === 0) {
+            return 0;
+        } elseif (count($element->getScoringElements()) === 1) {
+            $innerElement = $element->getScoringElements()[0];
+            $interpreter = $this->interpreterPool->get(get_class($innerElement));
+
+            return $interpreter->scoring($innerElement, $scoring);
+        }
+
         if (!$queryNorm) {
             $queryNorm = $scoring->queryNorm($this->getTerms($element->getScoringElements()));
         }
@@ -61,7 +70,7 @@ class BoolInterpreter implements InterpreterInterface
 
         return $math->multiply(
             $expression,
-            new Coord($element->getScoringElements(), $this->interpreterPool, $scoring->getSchema(), $scoring->getConnection(), $math)
+            new Coord($element->getScoringElements(), $this->interpreterPool, $scoring->getQueryBuilder(), $math)
         );
     }
 

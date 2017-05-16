@@ -42,26 +42,6 @@ class PuceneQueryBuilder extends QueryBuilder
         return new MathExpressionBuilder();
     }
 
-    public function selectFrequency(string $field, string $term)
-    {
-        $frequencyName = $this->escape('frequency' . ucfirst($field) . ucfirst($term));
-        if (in_array($frequencyName, $this->joins)) {
-            return $frequencyName . '.frequency';
-        }
-
-        $fieldName = $this->joinField($field);
-        $this->leftJoin(
-            $fieldName,
-            $this->schema->getFieldTermsTableName(),
-            $frequencyName,
-            $frequencyName . '.field_id = ' . $fieldName . '.id AND ' . $frequencyName . '.term = \'' . $term . '\''
-        );
-
-        $this->joins[] = $frequencyName;
-
-        return $frequencyName . '.frequency';
-    }
-
     public function joinTerm(string $field, string $term)
     {
         $termName = $this->escape('term' . ucfirst($field) . ucfirst($term));
@@ -69,32 +49,17 @@ class PuceneQueryBuilder extends QueryBuilder
             return $termName;
         }
 
-        $fieldName = $this->joinField($field);
-        $this->leftJoin(
-            $fieldName,
-            $this->schema->getTokensTableName(),
+        $condition = sprintf(
+            '%1$s.document_id = %2$s.id AND %1$s.field_name = \'%3$s\' AND %1$s.term = \'%4$s\'',
             $termName,
-            $termName . '.field_id = ' . $fieldName . '.id AND ' . $termName . '.term = \'' . $term . '\''
+            $this->documentAlias,
+            $field,
+            $term
         );
+
+        $this->leftJoin($this->documentAlias, $this->schema->getTokensTableName(), $termName, $condition);
 
         return $this->joins[] = $termName;
-    }
-
-    public function joinField(string $field)
-    {
-        $fieldName = $this->escape('field' . ucfirst($field));
-        if (in_array($fieldName, $this->joins)) {
-            return $fieldName;
-        }
-
-        $this->leftJoin(
-            $this->documentAlias,
-            $this->schema->getFieldsTableName(),
-            $fieldName,
-            $fieldName . '.document_id = ' . $this->documentAlias . '.id AND ' . $fieldName . '.name = \'' . $field . '\''
-        );
-
-        return $this->joins[] = $fieldName;
     }
 
     private function escape($name)

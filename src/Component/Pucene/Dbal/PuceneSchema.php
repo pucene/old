@@ -28,11 +28,8 @@ class PuceneSchema
         $this->schema = new Schema();
 
         $this->createDocumentsTable();
-        $this->createFieldsTable();
-        $this->createTermsTable();
         $this->createTokensTable();
         $this->createDocumentTermsTable();
-        $this->createFieldTermsTable();
     }
 
     private function createDocumentsTable()
@@ -50,49 +47,24 @@ class PuceneSchema
         $documents->addUniqueIndex(['number']);
     }
 
-    private function createFieldsTable()
-    {
-        $this->tableNames['fields'] = sprintf('pu_%s_fields', $this->prefix);
-
-        $fields = $this->schema->createTable($this->tableNames['fields']);
-        $fields->addColumn('id', 'integer', ['autoincrement' => true]);
-        $fields->addColumn('document_id', 'string', ['length' => 255]);
-        $fields->addColumn('name', 'string', ['length' => 255]);
-        $fields->addColumn('number_of_terms', 'integer');
-        $fields->addColumn('field_norm', 'float');
-        $fields->setPrimaryKey(['id']);
-        $fields->addForeignKeyConstraint(
-            $this->tableNames['documents'],
-            ['document_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE']
-        );
-    }
-
     private function createTokensTable()
     {
         $this->tableNames['tokens'] = sprintf('pu_%s_tokens', $this->prefix);
 
         $fields = $this->schema->createTable($this->tableNames['tokens']);
         $fields->addColumn('id', 'integer', ['autoincrement' => true]);
-        $fields->addColumn('field_id', 'integer');
+        $fields->addColumn('document_id', 'string', ['length' => 255]);
+        $fields->addColumn('field_name', 'string', ['length' => 255]);
         $fields->addColumn('term', 'string', ['length' => 255]);
         $fields->addColumn('start_offset', 'integer');
         $fields->addColumn('end_offset', 'integer');
         $fields->addColumn('position', 'integer');
         $fields->addColumn('type', 'string', ['length' => 255]);
+        $fields->addColumn('term_frequency', 'integer');
+        $fields->addColumn('field_norm', 'float');
         $fields->setPrimaryKey(['id']);
-        $fields->addForeignKeyConstraint($this->tableNames['fields'], ['field_id'], ['id'], ['onDelete' => 'CASCADE']);
-        $fields->addForeignKeyConstraint($this->tableNames['terms'], ['term'], ['term']);
-    }
-
-    private function createTermsTable()
-    {
-        $this->tableNames['terms'] = sprintf('pu_%s_terms', $this->prefix);
-
-        $fields = $this->schema->createTable($this->tableNames['terms']);
-        $fields->addColumn('term', 'string', ['length' => 255]);
-        $fields->setPrimaryKey(['term']);
+        $fields->addForeignKeyConstraint($this->tableNames['documents'], ['document_id'], ['id'], ['onDelete' => 'CASCADE']);
+        $fields->addIndex(['field_name', 'term']);
     }
 
     private function createDocumentTermsTable()
@@ -111,21 +83,7 @@ class PuceneSchema
             ['id'],
             ['onDelete' => 'CASCADE']
         );
-        $fields->addForeignKeyConstraint($this->tableNames['terms'], ['term'], ['term']);
-    }
-
-    private function createFieldTermsTable()
-    {
-        $this->tableNames['field_terms'] = sprintf('pu_%s_field_terms', $this->prefix);
-
-        $fields = $this->schema->createTable($this->tableNames['field_terms']);
-        $fields->addColumn('id', 'integer', ['autoincrement' => true]);
-        $fields->addColumn('field_id', 'integer');
-        $fields->addColumn('term', 'string', ['length' => 255]);
-        $fields->addColumn('frequency', 'integer');
-        $fields->setPrimaryKey(['id']);
-        $fields->addForeignKeyConstraint($this->tableNames['fields'], ['field_id'], ['id'], ['onDelete' => 'CASCADE']);
-        $fields->addForeignKeyConstraint($this->tableNames['terms'], ['term'], ['term']);
+        $fields->addIndex(['term']);
     }
 
     public function toSql(AbstractPlatform $platform)
@@ -143,28 +101,13 @@ class PuceneSchema
         return $this->tableNames['documents'];
     }
 
-    public function getFieldsTableName()
-    {
-        return $this->tableNames['fields'];
-    }
-
     public function getTokensTableName()
     {
         return $this->tableNames['tokens'];
     }
 
-    public function getTermsTableName()
-    {
-        return $this->tableNames['terms'];
-    }
-
     public function getDocumentTermsTableName()
     {
         return $this->tableNames['document_terms'];
-    }
-
-    public function getFieldTermsTableName()
-    {
-        return $this->tableNames['field_terms'];
     }
 }

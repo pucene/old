@@ -2,14 +2,12 @@
 
 namespace Pucene\Component\Pucene\Dbal\Math;
 
-use Doctrine\DBAL\Connection;
 use Pucene\Component\Math\Expression\Value;
 use Pucene\Component\Math\ExpressionInterface;
 use Pucene\Component\Math\MathExpressionBuilder;
 use Pucene\Component\Pucene\Compiler\ElementInterface;
 use Pucene\Component\Pucene\Dbal\Interpreter\InterpreterInterface;
 use Pucene\Component\Pucene\Dbal\Interpreter\PuceneQueryBuilder;
-use Pucene\Component\Pucene\Dbal\PuceneSchema;
 use Pucene\Component\Symfony\Pool\PoolInterface;
 
 class Coord implements ExpressionInterface
@@ -30,33 +28,25 @@ class Coord implements ExpressionInterface
     private $expr;
 
     /**
-     * @var PuceneSchema
+     * @var PuceneQueryBuilder
      */
-    private $schema;
-
-    /**
-     * @var Connection
-     */
-    private $connection;
+    private $queryBuilder;
 
     /**
      * @param ElementInterface[] $elements
      * @param PoolInterface $interpreterPool
-     * @param PuceneSchema $schema
-     * @param Connection $connection
+     * @param PuceneQueryBuilder $queryBuilder
      * @param MathExpressionBuilder $expr
      */
     public function __construct(
         array $elements,
         PoolInterface $interpreterPool,
-        PuceneSchema $schema,
-        Connection $connection,
+        PuceneQueryBuilder $queryBuilder,
         MathExpressionBuilder $expr
     ) {
         $this->elements = $elements;
         $this->interpreterPool = $interpreterPool;
-        $this->schema = $schema;
-        $this->connection = $connection;
+        $this->queryBuilder = $queryBuilder;
         $this->expr = $expr;
     }
 
@@ -64,21 +54,12 @@ class Coord implements ExpressionInterface
     {
         $sum = [];
         foreach ($this->elements as $element) {
-            $queryBuilder = (new PuceneQueryBuilder($this->connection, $this->schema, 'innerDocument'))
-                ->select('1')
-                ->from($this->schema->getDocumentsTableName(), 'innerDocument')
-                ->where('innerDocument.id = document.id')
-                ->setMaxResults(1);
-
             /** @var InterpreterInterface $interpreter */
             $interpreter = $this->interpreterPool->get(get_class($element));
 
-            $expression = $interpreter->interpret($element, $queryBuilder);
-            if ($expression) {
-                $queryBuilder->andWhere($expression);
-            }
+            $expression = $interpreter->interpret($element, $this->queryBuilder);
 
-            $sum[] = $this->expr->coalesce($this->expr->variable($queryBuilder->getSQL()), $this->expr->value(0));
+            $sum[] = new IfCondition($expression, 1, 0);
         }
 
         return $this->expr->devide(call_user_func_array([$this->expr, 'add'], $sum), new Value(count($this->elements)));
