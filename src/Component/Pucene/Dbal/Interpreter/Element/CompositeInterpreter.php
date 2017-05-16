@@ -17,6 +17,15 @@ class CompositeInterpreter extends BoolInterpreter
      */
     public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder)
     {
+        if (count($element->getElements()) === 0) {
+            return 1;
+        } elseif (count($element->getElements()) === 1) {
+            $innerElement = $element->getElements()[0];
+            $interpreter = $this->interpreterPool->get(get_class($innerElement));
+
+            return $interpreter->interpret($innerElement, $queryBuilder);
+        }
+
         $expr = $queryBuilder->expr();
 
         $expression = $expr->orX();

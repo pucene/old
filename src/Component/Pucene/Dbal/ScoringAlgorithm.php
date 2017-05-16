@@ -63,7 +63,7 @@ class ScoringAlgorithm
 
         return $this->math->multiply(
             new TermFrequency($element->getField(), $element->getTerm(), $this->queryBuilder),
-            new FieldLengthNorm($element->getField(), $this->queryBuilder, $this->math),
+            new FieldLengthNorm($element->getField(), $element->getTerm(), $this->queryBuilder, $this->math),
             $this->math->value($factor)
         );
     }
@@ -105,6 +105,8 @@ class ScoringAlgorithm
 
     /**
      * @param int $docCount
+     *
+     * @return float
      */
     private function calculateInverseDocumentFrequency($docCount)
     {
@@ -113,9 +115,9 @@ class ScoringAlgorithm
 
     private function getDocCountForElement(ElementInterface $element)
     {
-        $queryBuilder = (new PuceneQueryBuilder($this->queryBuilder->getConnection(), $this->schema))->select(
-                'count(document.id) as count'
-            )->from($this->schema->getDocumentsTableName(), 'document');
+        $queryBuilder = (new PuceneQueryBuilder($this->queryBuilder->getConnection(), $this->schema))
+            ->select('count(document.id) as count')
+            ->from($this->schema->getDocumentsTableName(), 'document');
 
         $expression = $this->interpreterPool->get(get_class($element))->interpret($element, $queryBuilder);
         if ($expression) {
@@ -131,10 +133,20 @@ class ScoringAlgorithm
             return $this->docCount;
         }
 
-        $queryBuilder = (new PuceneQueryBuilder($this->queryBuilder->getConnection(), $this->schema))->select(
-                'count(document.id) as count'
-            )->from($this->schema->getDocumentsTableName(), 'document');
+        $queryBuilder = (new PuceneQueryBuilder($this->queryBuilder->getConnection(), $this->schema))
+            ->select('count(document.id) as count')
+            ->from($this->schema->getDocumentsTableName(), 'document');
 
         return $this->docCount = (int) $queryBuilder->execute()->fetchColumn();
+    }
+
+    /**
+     * Returns queryBuilder.
+     *
+     * @return PuceneQueryBuilder
+     */
+    public function getQueryBuilder(): PuceneQueryBuilder
+    {
+        return $this->queryBuilder;
     }
 }

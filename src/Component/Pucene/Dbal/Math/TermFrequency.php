@@ -50,7 +50,7 @@ class TermFrequency implements ExpressionInterface
     public function __toString(): string
     {
         return $this->expr->coalesce(
-            $this->expr->sqrt($this->expr->variable($this->queryBuilder->selectFrequency($this->field, $this->term))),
+            $this->expr->sqrt($this->expr->variable($this->queryBuilder->joinTerm($this->field, $this->term) . '.term_frequency')),
             $this->expr->value(0)
         );
     }

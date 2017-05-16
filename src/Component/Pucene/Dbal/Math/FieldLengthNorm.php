@@ -5,7 +5,6 @@ namespace Pucene\Component\Pucene\Dbal\Math;
 use Pucene\Component\Math\ExpressionInterface;
 use Pucene\Component\Math\MathExpressionBuilder;
 use Pucene\Component\Pucene\Dbal\Interpreter\PuceneQueryBuilder;
-use Pucene\Component\Pucene\Dbal\QueryBuilder\ScoringQueryBuilder;
 
 class FieldLengthNorm implements ExpressionInterface
 {
@@ -15,7 +14,12 @@ class FieldLengthNorm implements ExpressionInterface
     private $field;
 
     /**
-     * @var ScoringQueryBuilder
+     * @var string
+     */
+    private $term;
+
+    /**
+     * @var PuceneQueryBuilder
      */
     private $queryBuilder;
 
@@ -26,11 +30,13 @@ class FieldLengthNorm implements ExpressionInterface
 
     /**
      * @param string $field
+     * @param string $term
      * @param PuceneQueryBuilder $queryBuilder
      */
-    public function __construct(string $field, PuceneQueryBuilder $queryBuilder)
+    public function __construct(string $field, string $term, PuceneQueryBuilder $queryBuilder)
     {
         $this->field = $field;
+        $this->term = $term;
         $this->queryBuilder = $queryBuilder;
         $this->expr = $queryBuilder->math();
     }
@@ -38,7 +44,7 @@ class FieldLengthNorm implements ExpressionInterface
     public function __toString(): string
     {
         return $this->expr->coalesce(
-            $this->expr->variable($this->queryBuilder->joinField($this->field) . '.field_norm'),
+            $this->expr->variable($this->queryBuilder->joinTerm($this->field, $this->term) . '.field_norm'),
             $this->expr->value(0)
         );
     }
