@@ -99,7 +99,7 @@ class PuceneSchema
     /**
      * Create table per mapping type.
      *
-     * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html
+     * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html
      */
     private function createDocumentFieldsTables()
     {

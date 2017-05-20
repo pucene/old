@@ -5,7 +5,7 @@ namespace Pucene\Component\Mapping;
 /**
  * Mapping types.
  *
- * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html
  */
 class Types
 {
