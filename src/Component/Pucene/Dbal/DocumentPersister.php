@@ -3,7 +3,6 @@
 namespace Pucene\Component\Pucene\Dbal;
 
 use Doctrine\DBAL\Connection;
-use Pucene\Component\Analysis\Token;
 use Pucene\Component\Pucene\Math\ElasticsearchPrecision;
 use Pucene\Component\Pucene\Model\Document;
 use Pucene\Component\Pucene\Model\Field;
