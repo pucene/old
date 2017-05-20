@@ -2,6 +2,7 @@
 
 namespace Pucene\Bundle\PuceneBundle\DependencyInjection;
 
+use Pucene\Component\Mapping\Types;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -84,8 +85,12 @@ class Configuration implements ConfigurationInterface
                                     ->useAttributeAsKey('name')
                                     ->prototype('array')
                                         ->children()
-                                            ->scalarNode('type')->defaultValue('string')->end()
+                                            ->enumNode('type')
+                                                ->values(Types::getTypes())
+                                                ->defaultValue('text')
+                                            ->end()
                                             ->scalarNode('analyzer')->defaultValue('standard')->end()
+                                            ->scalarNode('format')->defaultValue('string')->end()
                                         ->end()
                                     ->end()
                                 ->end()
