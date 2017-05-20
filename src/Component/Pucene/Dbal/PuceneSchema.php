@@ -30,6 +30,7 @@ class PuceneSchema
         $this->createDocumentsTable();
         $this->createTokensTable();
         $this->createDocumentTermsTable();
+        $this->createDocumentFieldsTabe();
     }
 
     private function createDocumentsTable()
@@ -42,6 +43,7 @@ class PuceneSchema
         $documents->addColumn('type', 'string', ['length' => 255]);
         $documents->addColumn('document', 'json_array');
         $documents->addColumn('indexed_at', 'datetime');
+
         $documents->setPrimaryKey(['id']);
         $documents->addIndex(['type']);
         $documents->addUniqueIndex(['number']);
@@ -62,8 +64,14 @@ class PuceneSchema
         $fields->addColumn('type', 'string', ['length' => 255]);
         $fields->addColumn('term_frequency', 'integer');
         $fields->addColumn('field_norm', 'float');
+
         $fields->setPrimaryKey(['id']);
-        $fields->addForeignKeyConstraint($this->tableNames['documents'], ['document_id'], ['id'], ['onDelete' => 'CASCADE']);
+        $fields->addForeignKeyConstraint(
+            $this->tableNames['documents'],
+            ['document_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE']
+        );
         $fields->addIndex(['field_name', 'term']);
     }
 
@@ -76,6 +84,7 @@ class PuceneSchema
         $fields->addColumn('document_id', 'string', ['length' => 255]);
         $fields->addColumn('term', 'string', ['length' => 255]);
         $fields->addColumn('frequency', 'integer');
+
         $fields->setPrimaryKey(['id']);
         $fields->addForeignKeyConstraint(
             $this->tableNames['documents'],
@@ -84,6 +93,32 @@ class PuceneSchema
             ['onDelete' => 'CASCADE']
         );
         $fields->addIndex(['term']);
+    }
+
+    private function createDocumentFieldsTabe()
+    {
+        $this->tableNames['document_fields'] = sprintf('pu_%s_document_fields', $this->prefix);
+
+        $fields = $this->schema->createTable($this->tableNames['document_fields']);
+        $fields->addColumn('id', 'integer', ['autoincrement' => true]);
+        $fields->addColumn('document_id', 'string', ['length' => 255]);
+        $fields->addColumn('field_name', 'string', ['length' => 255]);
+        $fields->addColumn('text', 'text', ['nullable' => true]);
+        $fields->addColumn('keyword', 'text', ['nullable' => true]);
+        $fields->addColumn('date', 'datetime', ['nullable' => true]);
+        $fields->addColumn('long', 'bigint', ['nullable' => true]);
+        $fields->addColumn('double', 'double', ['nullable' => true]);
+        $fields->addColumn('boolean', 'boolean', ['nullable' => true]);
+        $fields->addColumn('ip', 'bigint', ['nullable' => true]);
+
+        $fields->setPrimaryKey(['id']);
+        $fields->addForeignKeyConstraint(
+            $this->tableNames['documents'],
+            ['document_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE']
+        );
+        $fields->addIndex(['field_name']);
     }
 
     public function toSql(AbstractPlatform $platform)
