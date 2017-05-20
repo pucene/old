@@ -3,7 +3,6 @@
 namespace Pucene\Component\Pucene\Dbal;
 
 use Doctrine\DBAL\Connection;
-use Pucene\Component\Analysis\Token;
 use Pucene\Component\Pucene\Math\ElasticsearchPrecision;
 use Pucene\Component\Pucene\Model\Document;
 use Pucene\Component\Pucene\Model\Field;
@@ -38,45 +37,37 @@ class DocumentPersister
     {
         $this->insertDocument($document);
 
-        $documentTerms = [];
         foreach ($fields as $field) {
             $fieldTerms = [];
             foreach ($field->getTokens() as $token) {
                 if (!array_key_exists($token->getEncodedTerm(), $fieldTerms)) {
                     $fieldTerms[$token->getEncodedTerm()] = 0;
                 }
-                if (!array_key_exists($token->getEncodedTerm(), $documentTerms)) {
-                    $documentTerms[$token->getEncodedTerm()] = 0;
-                }
 
                 ++$fieldTerms[$token->getEncodedTerm()];
-                ++$documentTerms[$token->getEncodedTerm()];
 
-                $this->insertToken($document->getId(), $field->getName(), $token->getEncodedTerm(), $token);
+                if ($fieldTerms[$token->getEncodedTerm()] > 1) {
+                    continue;
+                }
+
+                $this->insertToken(
+                    $document->getId(),
+                    $field->getName(),
+                    $token->getEncodedTerm(),
+                    ElasticsearchPrecision::fieldNorm($field->getNumberOfTerms())
+                );
             }
 
-            $fieldNorm = ElasticsearchPrecision::fieldNorm($field->getNumberOfTerms());
+            // update term frequency
             foreach ($fieldTerms as $term => $frequency) {
                 $this->connection->update(
-                    $this->schema->getTokensTableName(),
+                    $this->schema->getDocumentTermsTableName(),
                     [
                         'term_frequency' => $frequency,
-                        'field_norm' => $fieldNorm,
                     ],
                     ['document_id' => $document->getId(), 'field_name' => $field->getName(), 'term' => $term]
                 );
             }
-        }
-
-        foreach ($documentTerms as $term => $frequency) {
-            $this->connection->insert(
-                $this->schema->getDocumentTermsTableName(),
-                [
-                    'document_id' => $document->getId(),
-                    'term' => $term,
-                    'frequency' => $frequency,
-                ]
-            );
         }
     }
 
@@ -105,21 +96,18 @@ class DocumentPersister
     /**
      * @param string $documentId
      * @param string $fieldName
-     * @param int $termId
-     * @param Token $token
+     * @param string $term
+     * @param float $fieldNorm
      */
-    protected function insertToken(string $documentId, string $fieldName, $termId, Token $token)
+    protected function insertToken(string $documentId, string $fieldName, $term, $fieldNorm)
     {
         $this->connection->insert(
-            $this->schema->getTokensTableName(),
+            $this->schema->getDocumentTermsTableName(),
             [
                 'document_id' => $documentId,
                 'field_name' => $fieldName,
-                'term' => $termId,
-                'start_offset' => $token->getStartOffset(),
-                'end_offset' => $token->getEndOffset(),
-                'position' => $token->getPosition(),
-                'type' => $token->getType(),
+                'term' => $term,
+                'field_norm' => $fieldNorm,
             ]
         );
     }
