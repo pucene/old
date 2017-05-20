@@ -39,7 +39,7 @@ class DbalInterpreter
         $schema = $storage->getSchema();
 
         $queryBuilder = (new PuceneQueryBuilder($connection, $storage->getSchema()))
-            ->select('DISTINCT document.*')
+            ->select('document.*')
             ->from($schema->getDocumentsTableName(), 'document')
             ->where('document.type IN (?)')
             ->setMaxResults($search->getSize())

@@ -57,7 +57,7 @@ class PuceneQueryBuilder extends QueryBuilder
             $term
         );
 
-        $this->leftJoin($this->documentAlias, $this->schema->getTokensTableName(), $termName, $condition);
+        $this->leftJoin($this->documentAlias, $this->schema->getDocumentTermsTableName(), $termName, $condition);
 
         return $this->joins[] = $termName;
     }
