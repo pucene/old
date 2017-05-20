@@ -30,6 +30,7 @@ class PuceneSchema
 
         $this->createDocumentsTable();
         $this->createTokensTable();
+        $this->createMappingsTable();
         $this->createDocumentTermsTable();
         $this->createDocumentFieldsTables();
     }
@@ -94,6 +95,20 @@ class PuceneSchema
             ['onDelete' => 'CASCADE']
         );
         $fields->addIndex(['term']);
+    }
+
+    private function createMappingsTable()
+    {
+        $this->tableNames['mappings'] = sprintf('pu_%s_mappings', $this->prefix);
+
+        $fields = $this->schema->createTable($this->tableNames['mappings']);
+        $fields->addColumn('id', 'integer', ['autoincrement' => true]);
+        $fields->addColumn('name', 'string', ['length' => 255]);
+        $fields->addColumn('field_name', 'string', ['length' => 255]);
+        $fields->addColumn('options', 'json_array');
+
+        $fields->setPrimaryKey(['id']);
+        $fields->addIndex(['type', 'field_name']);
     }
 
     /**

@@ -84,17 +84,8 @@ class Configuration implements ConfigurationInterface
                                 ->arrayNode('properties')
                                     ->useAttributeAsKey('name')
                                     ->prototype('array')
-                                        ->children()
-                                            ->enumNode('type')
-                                                ->values(Types::getTypes())
-                                                ->defaultValue('text')
-                                            ->end()
-                                            ->scalarNode('analyzer')->defaultValue('standard')->end()
-                                            ->booleanNode('index')->defaultValue('true')->end()
-                                            ->floatNode('boost')->defaultValue(1)->end()
-                                            ->arrayNode('options')
-                                                ->prototype('variable')->end()->defaultValue([])
-                                            ->end()
+                                        ->children();
+                                            $node = $this->getFieldMappingNode($node)
                                         ->end()
                                     ->end()
                                 ->end()
@@ -104,6 +95,80 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
         ;
+
+        return $node;
+    }
+
+    private function getFieldMappingNode($node, $fields = true)
+    {
+        $node
+            ->enumNode('type')
+                ->values(Types::getTypes())
+                ->defaultValue('text')
+            ->end()
+            ->scalarNode('analyzer')->end()
+            ->booleanNode('index')->end()
+            ->floatNode('boost')->end();
+
+        if ($fields) {
+            $node = $node
+                ->arrayNode('fields')
+                    ->useAttributeAsKey('name')
+                    ->prototype('array')
+                        ->children();
+                            $node = $this->getFieldMappingNode($node, false)
+                        ->end()
+                    ->end()
+                ->end();
+        }
+
+        $node = $node
+            ->booleanNode('eager_global_ordinals')->end()
+            ->booleanNode('fielddata')->end()
+            ->arrayNode('fielddata_frequency_filter')
+                ->children()
+                    ->floatNode('min')->end()
+                    ->floatNode('max')->end()
+                    ->integerNode('min_segment_size')->end()
+                ->end()
+            ->end()
+            ->booleanNode('include_in_all')->end()
+            ->enumNode('index_options')
+                ->values([
+                    'docs',
+                    'freqs',
+                    'positions',
+                    'offsets',
+                ])
+            ->end()
+            ->booleanNode('norms')->end()
+            ->integerNode('position_increment_gap')->end()
+            ->booleanNode('store')->end()
+            ->scalarNode('search_analyzer')->end()
+            ->scalarNode('search_quote_analyzer')->end()
+            ->enumNode('similarity')
+                ->values([
+                    'BM25',
+                    'classic',
+                    'boolean',
+                ])
+            ->end()
+            ->enumNode('term_vector')
+                ->values([
+                    'no',
+                    'yes',
+                    'with_positions',
+                    'with_offsets',
+                    'with_positions_offsets',
+                ])
+            ->end()
+            ->booleanNode('doc_values')->end()
+            ->integerNode('ignore_above')->end()
+            ->scalarNode('null_value')->end()
+            ->scalarNode('normalizer')->end()
+            ->booleanNode('coerce')->end()
+            ->booleanNode('ignore_malformed')->end()
+            ->scalarNode('format')->end();
 
         return $node;
     }
