@@ -62,9 +62,8 @@ class PuceneSchema
         $fields->addColumn('end_offset', 'integer');
         $fields->addColumn('position', 'integer');
         $fields->addColumn('type', 'string', ['length' => 255]);
-        $fields->addColumn('term_frequency', 'integer');
-        $fields->addColumn('field_norm', 'float');
-
+        $fields->addColumn('term_frequency', 'integer', ['default' => 0]);
+        $fields->addColumn('field_norm', 'float', ['default' => 0]);
         $fields->setPrimaryKey(['id']);
         $fields->addForeignKeyConstraint(
             $this->tableNames['documents'],
