@@ -90,7 +90,6 @@ class Configuration implements ConfigurationInterface
                                                 ->defaultValue('text')
                                             ->end()
                                             ->scalarNode('analyzer')->defaultValue('standard')->end()
-                                            ->scalarNode('format')->defaultValue('string')->end()
                                         ->end()
                                     ->end()
                                 ->end()
