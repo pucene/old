@@ -106,7 +106,7 @@ class PuceneSchema
         $fields->addColumn('keyword', 'text', ['nullable' => true]);
         $fields->addColumn('date', 'datetime', ['nullable' => true]);
         $fields->addColumn('long', 'bigint', ['nullable' => true]);
-        $fields->addColumn('double', 'double', ['nullable' => true]);
+        $fields->addColumn('double', 'float', ['nullable' => true]);
         $fields->addColumn('boolean', 'boolean', ['nullable' => true]);
         $fields->addColumn('ip', 'bigint', ['nullable' => true]);
 
