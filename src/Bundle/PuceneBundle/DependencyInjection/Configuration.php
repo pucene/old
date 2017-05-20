@@ -89,7 +89,7 @@ class Configuration implements ConfigurationInterface
                                             ->booleanNode('index')->defaultValue('true')->end()
                                             ->floatNode('boost')->defaultValue(1)->end()
                                             ->arrayNode('options')
-                                                ->prototype('scalar')->end()->defaultValue([])
+                                                ->prototype('variable')->end()->defaultValue([])
                                             ->end()
                                         ->end()
                                     ->end()
