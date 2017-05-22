@@ -19,7 +19,7 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $treeBuilder->root('pucene')
             ->children()
-                ->enumNode('adapter')->isRequired()->values(['elasticsearch', 'pucene'])->end()
+                ->enumNode('adapter')->isRequired()->values(['elasticsearch', 'pucene', 'zend_search'])->end()
                 ->append($this->getAdaptersNode())
                 ->append($this->getIndexNode())
             ->end();
@@ -37,6 +37,11 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('doctrine_dbal_connection')->defaultValue('doctrine.dbal.default_connection')->end()
+                    ->end()
+                ->end()
+                ->arrayNode('zend_search')
+                    ->children()
+                        ->scalarNode('directory')->defaultValue('%kernel.root_dir%/../var/indexes')->end()
                     ->end()
                 ->end()
                 ->arrayNode('elasticsearch')

@@ -4,6 +4,7 @@ namespace Pucene\Tests\Functional\Comparison;
 
 use Pucene\Component\Client\IndexInterface;
 use Pucene\Component\QueryBuilder\Search;
+use Pucene\Component\ZendSearch\ZendSearchIndex;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class ComparisonTestCase extends KernelTestCase
@@ -19,6 +20,11 @@ abstract class ComparisonTestCase extends KernelTestCase
     protected $elasticsearchIndex;
 
     /**
+     * @var ZendSearchIndex
+     */
+    protected $zendSearchIndex;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -30,6 +36,9 @@ abstract class ComparisonTestCase extends KernelTestCase
 
         $elasticsearch = $this->get('pucene.elasticsearch.client');
         $this->elasticsearchIndex = $elasticsearch->get('my_index');
+
+        $zendSearch = $this->get('pucene.zend_search.client');
+        $this->zendSearchIndex = $zendSearch->get('my_index');
     }
 
     /**
@@ -74,15 +83,22 @@ abstract class ComparisonTestCase extends KernelTestCase
     {
         $elasticsearchResult = $this->elasticsearchIndex->search($search, 'my_type');
         $puceneResult = $this->puceneIndex->search($search, 'my_type');
+        $zendSearchResult = $this->zendSearchIndex->search($search, 'my_type');
 
         $this->assertEquals(count($elasticsearchResult['hits']), count($puceneResult['hits']));
+        $this->assertEquals(count($elasticsearchResult['hits']), count($zendSearchResult['hits']));
 
         $elasticsearchHits = $this->normalize($elasticsearchResult['hits']);
         $puceneHits = $this->normalize($puceneResult['hits']);
+        $zendSearchHits = $this->normalize($zendSearchResult['hits']);
+
+        // zend-search scoring is not comparable with elasticsearch/pucene scoring
 
         foreach ($puceneHits as $id => $puceneHit) {
             $this->assertArrayHasKey($id, $elasticsearchHits, $id);
+            $this->assertArrayHasKey($id, $zendSearchHits, $id);
             $this->assertEquals($elasticsearchHits[$id]['document'], $puceneHit['document']);
+            $this->assertEquals($zendSearchHits[$id]['document'], $puceneHit['document']);
 
             // if position matches: OK
             // else score has to be equals

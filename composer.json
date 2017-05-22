@@ -24,7 +24,8 @@
 
         "elasticsearch/elasticsearch": "^2.0",
         "ramsey/uuid": "^3.5",
-        "doctrine/dbal": "^2.5"
+        "doctrine/dbal": "^2.5",
+        "zendframework/zendsearch": "2.0.0rc6"
     },
     "require-dev": {
         "doctrine/doctrine-bundle": "^1.6",
