@@ -19,18 +19,36 @@
 
             <tag name="console.command"/>
         </service>
+        <service id="pucene.zend_search.commands.create_indices"
+                 class="Pucene\Bundle\PuceneBundle\Command\CreateIndicesCommand">
+            <argument type="string">zend_search:indices:create</argument>
+            <argument>%pucene.indices%</argument>
+            <argument type="service" id="pucene.zend_search.client"/>
 
-        <service id="pucene.pucene.commands.delete_indices" class="Pucene\Bundle\PuceneBundle\Command\DeleteIndicesCommand">
+            <tag name="console.command"/>
+        </service>
+
+        <service id="pucene.pucene.commands.delete_indices"
+                 class="Pucene\Bundle\PuceneBundle\Command\DeleteIndicesCommand">
             <argument type="string">pucene:indices:delete</argument>
             <argument>%pucene.indices%</argument>
             <argument type="service" id="pucene.pucene.client"/>
 
             <tag name="console.command"/>
         </service>
-        <service id="pucene.elasticsearch.commands.delete_indices" class="Pucene\Bundle\PuceneBundle\Command\DeleteIndicesCommand">
+        <service id="pucene.elasticsearch.commands.delete_indices"
+                 class="Pucene\Bundle\PuceneBundle\Command\DeleteIndicesCommand">
             <argument type="string">elasticsearch:indices:delete</argument>
             <argument>%pucene.indices%</argument>
             <argument type="service" id="pucene.elasticsearch.client"/>
+
+            <tag name="console.command"/>
+        </service>
+        <service id="pucene.zend_search.commands.delete_indices"
+                 class="Pucene\Bundle\PuceneBundle\Command\DeleteIndicesCommand">
+            <argument type="string">zend_search:indices:delete</argument>
+            <argument>%pucene.indices%</argument>
+            <argument type="service" id="pucene.zend_search.client"/>
 
             <tag name="console.command"/>
         </service>

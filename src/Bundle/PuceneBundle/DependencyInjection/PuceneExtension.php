@@ -46,6 +46,8 @@ class PuceneExtension extends Extension
             $this->loadPucene($config, $container);
         } elseif ($adapter === 'elasticsearch') {
             $this->loadElasticsearch($config, $container);
+        } elseif ($adapter === 'zend_search') {
+            $this->loadZendSearch($config, $container);
         }
 
         $container->setAlias('pucene.client', 'pucene.' . $adapter . '.client');
@@ -94,5 +96,19 @@ class PuceneExtension extends Extension
     {
         $pass = new CollectorCompilerPass('pucene.elasticsearch.visitor', 'pucene.elasticsearch.visitor_pool', 'query');
         $pass->process($container);
+    }
+
+    /**
+     * Load specific configuration for zend_search.
+     *
+     * @param array $config
+     * @param ContainerBuilder $container
+     */
+    private function loadZendSearch($config, $container)
+    {
+        $container->setParameter(
+            'pucene.adapter_config.zend_search.directory',
+            $config['adapters']['zend_search']['directory']
+        );
     }
 }

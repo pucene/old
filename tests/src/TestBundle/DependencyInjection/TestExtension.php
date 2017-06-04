@@ -39,11 +39,12 @@ class TestExtension extends Extension
         );
 
         $loader = new DelegatingLoader($loaderResolver);
-        foreach (['pucene', 'elasticsearch'] as $adapter) {
+        foreach (['pucene', 'elasticsearch', 'zend_search'] as $adapter) {
             $loader->import($fileLocator->locate($adapter . '/'));
         }
 
         $this->loadPucene($config, $container);
+        $this->loadZendSearch($config, $container);
     }
 
     private function loadPucene(array $config, ContainerBuilder $container)
@@ -65,5 +66,13 @@ class TestExtension extends Extension
         }
 
         $container->getDefinition('pucene.pucene.storage_factory')->replaceArgument(1, $serviceIds);
+    }
+
+    private function loadZendSearch(array $config, ContainerBuilder $container)
+    {
+        $container->setParameter(
+            'pucene.adapter_config.zend_search.directory',
+            $config['adapters']['zend_search']['directory']
+        );
     }
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="pucene.zend_search.client.filesystem" class="Symfony\Component\Filesystem\Filesystem"/>
+
+        <service id="pucene.zend_search.client" class="Pucene\Component\ZendSearch\ZendSearchClient">
+            <argument type="string">%pucene.adapter_config.zend_search.directory%</argument>
+            <argument type="service" id="pucene.zend_search.client.filesystem"/>
+        </service>
+    </services>
+</container>
