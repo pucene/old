@@ -4,12 +4,13 @@ namespace Pucene\Component\ZendSearch;
 
 use Pucene\Component\Client\IndexInterface;
 use Pucene\Component\QueryBuilder\Search;
+use Pucene\Component\ZendSearch\Compiler\Compiler;
+use Pucene\Component\ZendSearch\Compiler\Visitor\VisitorPool;
 use Ramsey\Uuid\Uuid;
 use ZendSearch\Lucene\Analysis\Analyzer\Analyzer;
 use ZendSearch\Lucene\Analysis\Analyzer\Common\Utf8\CaseInsensitive;
 use ZendSearch\Lucene\Document;
 use ZendSearch\Lucene\Index;
-use ZendSearch\Lucene\Search\Query\Term;
 use ZendSearch\Lucene\Search\QueryHit;
 use ZendSearch\Lucene\Search\QueryParser;
 
@@ -30,6 +31,11 @@ class ZendSearchIndex implements IndexInterface
     private $index;
 
     /**
+     * @var Compiler
+     */
+    private $compiler;
+
+    /**
      * @param string $name
      * @param Index $index
      */
@@ -37,6 +43,8 @@ class ZendSearchIndex implements IndexInterface
     {
         $this->name = $name;
         $this->index = $index;
+
+        $this->compiler = new Compiler(new VisitorPool());
 
         QueryParser::setDefaultOperator(QueryParser::B_AND);
         Analyzer::setDefault(new CaseInsensitive());
@@ -81,9 +89,7 @@ class ZendSearchIndex implements IndexInterface
      */
     public function search(Search $search, $type)
     {
-        $hits = $this->index->find(
-            new Term(new Index\Term($search->getQuery()->getTerm(), $search->getQuery()->getField()))
-        );
+        $hits = $this->index->find($this->compiler->compile($search->getQuery()));
 
         $documents = [];
         foreach ($hits as $hit) {

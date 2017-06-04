@@ -43,7 +43,7 @@ class ZendSearchClient implements ClientInterface
     {
         $this->filesystem->mkdir($this->directory . DIRECTORY_SEPARATOR . $name);
 
-        return new ZendSearchIndex(new Index($this->directory . DIRECTORY_SEPARATOR . $name, true));
+        return new ZendSearchIndex($name, new Index($this->directory . DIRECTORY_SEPARATOR . $name, true));
     }
 
     /**

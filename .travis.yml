@@ -32,6 +32,8 @@ install:
   - ./tests/bin/console doctrine:database:create -e prod
   - ./tests/bin/console pucene:indices:create -e prod
   - ./tests/bin/console test:import:json my_index ./tests/app/data.json --adapter pucene -e prod
+  - ./tests/bin/console zend_search:indices:create -e prod
+  - ./tests/bin/console test:import:json my_index ./tests/app/data.json --adapter zend_search -e prod
 
 script:
   - ./vendor/bin/phpunit $CODE_COVERAGE
