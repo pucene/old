@@ -53,6 +53,13 @@ class NotInterpreter implements InterpreterInterface
         );
     }
 
+    public function newScoring(ElementInterface $element, ScoringAlgorithm $scoring, array $row, $queryNorm = null)
+    {
+        $interpreter = $this->getInterpreter($element->getElement());
+
+        return $element->getBoost() * $interpreter->newScoring($element, $scoring, $row, $queryNorm);
+    }
+
     /**
      * Returns interpreter for element.
      *

@@ -58,7 +58,7 @@ class PuceneSchema
         $fields->addColumn('document_id', 'string', ['length' => 255]);
         $fields->addColumn('field_name', 'string', ['length' => 255]);
         $fields->addColumn('term', 'string', ['length' => 255]);
-        $fields->addColumn('term_frequency', 'integer', ['default' => 0]);
+        $fields->addColumn('term_frequency', 'float', ['default' => 0]);
         $fields->addColumn('field_norm', 'float', ['default' => 0]);
 
         $fields->setPrimaryKey(['id']);

@@ -8,10 +8,17 @@ use Pucene\Component\Pucene\Dbal\ScoringAlgorithm;
 use Pucene\Component\Pucene\Model\Document;
 use Pucene\Component\QueryBuilder\Search;
 use Pucene\Component\QueryBuilder\Sort\IdSort;
+use Pucene\Component\QueryBuilder\Sort\ScoreSort;
 use Pucene\Component\Symfony\Pool\PoolInterface;
+use Pucene\Component\Utils\SortUtils;
 
 class DbalInterpreter
 {
+    public static $sortPaths = [
+        ScoreSort::class => 'score',
+        IdSort::class => 'id',
+    ];
+
     /**
      * @var PoolInterface
      */
@@ -42,8 +49,6 @@ class DbalInterpreter
             ->select('document.*')
             ->from($schema->getDocumentsTableName(), 'document')
             ->where('document.type IN (?)')
-            ->setMaxResults($search->getSize())
-            ->setFirstResult($search->getFrom())
             ->setParameter(0, implode(',', $types));
 
         /** @var InterpreterInterface $interpreter */
@@ -54,21 +59,6 @@ class DbalInterpreter
         }
 
         $scoringAlgorithm = new ScoringAlgorithm($queryBuilder, $schema, $this->interpreterPool);
-        $expression = $interpreter->scoring($element, $scoringAlgorithm);
-
-        if ($expression) {
-            $queryBuilder->addSelect('(' . $expression . ') as score')->orderBy('score', 'desc');
-        } else {
-            $queryBuilder->addSelect('1 as score');
-        }
-
-        if (0 < count($search->getSorts())) {
-            foreach ($search->getSorts() as $sort) {
-                if ($sort instanceof IdSort) {
-                    $queryBuilder->addOrderBy('id', $sort->getOrder());
-                }
-            }
-        }
 
         $result = [];
         foreach ($queryBuilder->execute()->fetchAll() as $row) {
@@ -77,10 +67,17 @@ class DbalInterpreter
                 $row['type'],
                 $storage->getName(),
                 json_decode($row['document'], true),
-                array_key_exists('score', $row) ? (float) $row['score'] : 1
+                $interpreter->newScoring($element, $scoringAlgorithm, $row)
             );
         }
 
-        return $result;
+        $paths = [];
+        foreach ($search->getSorts() as $sort) {
+            $paths[] = self::$sortPaths[get_class($sort)];
+        }
+
+        $result = SortUtils::multisort($result, $paths);
+
+        return array_splice($result, $search->getFrom(), $search->getSize());
     }
 }

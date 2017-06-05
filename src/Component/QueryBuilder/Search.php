@@ -3,6 +3,7 @@
 namespace Pucene\Component\QueryBuilder;
 
 use Pucene\Component\QueryBuilder\Query\QueryInterface;
+use Pucene\Component\QueryBuilder\Sort\ScoreSort;
 use Pucene\Component\QueryBuilder\Sort\SortInterface;
 
 class Search
@@ -39,6 +40,8 @@ class Search
     public function __construct(QueryInterface $query = null)
     {
         $this->query = $query;
+
+        $this->sorts = [new ScoreSort()];
     }
 
     /**

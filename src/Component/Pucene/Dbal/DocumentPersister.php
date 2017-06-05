@@ -12,12 +12,12 @@ class DocumentPersister
     /**
      * @var Connection
      */
-    private $connection;
+    public $connection;
 
     /**
      * @var PuceneSchema
      */
-    private $schema;
+    public $schema;
 
     /**
      * @param Connection $connection
@@ -63,7 +63,7 @@ class DocumentPersister
                 $this->connection->update(
                     $this->schema->getDocumentTermsTableName(),
                     [
-                        'term_frequency' => $frequency,
+                        'term_frequency' => sqrt($frequency),
                     ],
                     ['document_id' => $document->getId(), 'field_name' => $field->getName(), 'term' => $term]
                 );

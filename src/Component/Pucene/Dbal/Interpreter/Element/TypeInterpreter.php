@@ -30,4 +30,14 @@ class TypeInterpreter implements InterpreterInterface
     {
         return (new MathExpressionBuilder())->value(1);
     }
+
+    public function newScoring(ElementInterface $element, ScoringAlgorithm $scoring, array $row, $queryNorm = null)
+    {
+        return 1;
+    }
+
+    public function matches(ElementInterface $element, array $row)
+    {
+        return $row['id'] === $element->getType();
+    }
 }

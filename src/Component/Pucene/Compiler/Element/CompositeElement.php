@@ -6,8 +6,8 @@ use Pucene\Component\Pucene\Compiler\ElementInterface;
 
 class CompositeElement extends BaseElement
 {
-    const OR = 'or';
-    const AND = 'and';
+    const OPERATOR_OR = 'or';
+    const OPERATOR_AND = 'and';
 
     /**
      * @var string

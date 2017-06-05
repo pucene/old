@@ -24,6 +24,6 @@ class IdsVisitor implements VisitorInterface
             return $ids;
         }
 
-        return new CompositeElement(CompositeElement:: AND, [$ids, new TypeElement($query->getType())]);
+        return new CompositeElement(CompositeElement:: OPERATOR_AND, [$ids, new TypeElement($query->getType())]);
     }
 }

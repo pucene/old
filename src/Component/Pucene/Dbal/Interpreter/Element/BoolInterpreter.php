@@ -35,6 +35,10 @@ class BoolInterpreter implements InterpreterInterface
      */
     public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder)
     {
+        foreach ($element->getScoringElements() as $innerElement) {
+            $this->getInterpreter($innerElement)->interpret($innerElement, $queryBuilder);
+        }
+
         return $this->getInterpreter($element->getElement())->interpret($element->getElement(), $queryBuilder);
     }
 
@@ -72,6 +76,42 @@ class BoolInterpreter implements InterpreterInterface
             $expression,
             new Coord($element->getScoringElements(), $this->interpreterPool, $scoring->getQueryBuilder(), $math)
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param BoolElement $element
+     */
+    public function newScoring(ElementInterface $element, ScoringAlgorithm $scoring, array $row, $queryNorm = null)
+    {
+        if (count($element->getScoringElements()) === 0 || $element->getBoost() === 0) {
+            return 0;
+        } elseif (count($element->getScoringElements()) === 1) {
+            $innerElement = $element->getScoringElements()[0];
+            $interpreter = $this->interpreterPool->get(get_class($innerElement));
+
+            return $interpreter->newScoring($innerElement, $scoring, $row);
+        }
+
+        if (!$queryNorm) {
+            $queryNorm = $scoring->queryNorm($this->getTerms($element->getScoringElements()));
+        }
+
+        $score = 0;
+        $coord = 0;
+        foreach ($element->getScoringElements() as $innerElement) {
+            /** @var InterpreterInterface $interpreter */
+            $interpreter = $this->interpreterPool->get(get_class($innerElement));
+
+            $score += $interpreter->newScoring($innerElement, $scoring, $row, $queryNorm);
+
+            if ($interpreter->matches($innerElement, $row)) {
+                $coord += 1 / count($element->getScoringElements());
+            }
+        }
+
+        return $score * $coord * $element->getBoost();
     }
 
     private function getTerms(array $elements)

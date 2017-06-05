@@ -62,15 +62,15 @@ class MoreLikeThisVisitor implements VisitorInterface
 
         $mustNotElements = $this->getMustNotElements($query->getLike());
         if (0 === count($mustNotElements)) {
-            return new CompositeElement(CompositeElement:: OR, $elements);
+            return new CompositeElement(CompositeElement:: OPERATOR_OR, $elements);
         }
 
         return new BoolElement(
             new CompositeElement(
-                CompositeElement:: AND,
+                CompositeElement:: OPERATOR_AND,
                 [
-                    new CompositeElement(CompositeElement:: AND, $mustNotElements),
-                    new CompositeElement(CompositeElement:: OR, $elements),
+                    new CompositeElement(CompositeElement:: OPERATOR_AND, $mustNotElements),
+                    new CompositeElement(CompositeElement:: OPERATOR_OR, $elements),
                 ]
             ),
             $elements

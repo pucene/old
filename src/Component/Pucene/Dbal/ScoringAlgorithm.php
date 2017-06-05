@@ -98,7 +98,7 @@ class ScoringAlgorithm
         return $this->queryBuilder->getConnection();
     }
 
-    private function inverseDocumentFrequency(ElementInterface $element): float
+    public function inverseDocumentFrequency(ElementInterface $element): float
     {
         return $this->calculateInverseDocumentFrequency($this->getDocCountForElement($element));
     }
