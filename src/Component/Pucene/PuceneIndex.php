@@ -96,4 +96,9 @@ class PuceneIndex implements IndexInterface
     {
         return $this->storage->get($type, $id);
     }
+
+    public function optimize()
+    {
+        $this->storage->optimize();
+    }
 }

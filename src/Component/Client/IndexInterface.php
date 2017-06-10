@@ -36,4 +36,6 @@ interface IndexInterface
      * @return array
      */
     public function get($type, $id);
+
+    public function optimize();
 }

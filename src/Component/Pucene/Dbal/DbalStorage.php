@@ -144,6 +144,11 @@ class DbalStorage implements StorageInterface
         return new DbalTermStatistics($this->connection, $this->getSchema());
     }
 
+    public function optimize()
+    {
+        $this->persister->optimize();
+    }
+
     public function getConnection()
     {
         return $this->connection;
