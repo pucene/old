@@ -20,4 +20,6 @@ interface StorageInterface
     public function get($type, $id);
 
     public function termStatistics();
+
+    public function optimize();
 }

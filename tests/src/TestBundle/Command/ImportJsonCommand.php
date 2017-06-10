@@ -2,6 +2,7 @@
 
 namespace Pucene\Tests\TestBundle\Command;
 
+use Pucene\Component\Client\ClientInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -30,6 +31,7 @@ class ImportJsonCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        /** @var ClientInterface $client */
         $client = $this->getContainer()->get('pucene.' . $input->getOption('adapter') . '.client');
         $index = $client->get($input->getArgument('index'));
 
@@ -43,6 +45,8 @@ class ImportJsonCommand extends ContainerAwareCommand
 
             $progressBar->advance();
         }
+
+        $index->optimize();
 
         $progressBar->finish();
     }

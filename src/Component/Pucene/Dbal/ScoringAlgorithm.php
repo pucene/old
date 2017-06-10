@@ -39,6 +39,11 @@ class ScoringAlgorithm
     private $docCount;
 
     /**
+     * @var int[]
+     */
+    private $docCounts = [];
+
+    /**
      * @param PuceneQueryBuilder $queryBuilder
      * @param PuceneSchema $schema
      * @param PoolInterface $interpreterPool
@@ -108,13 +113,18 @@ class ScoringAlgorithm
      *
      * @return float
      */
-    private function calculateInverseDocumentFrequency($docCount)
+    public function calculateInverseDocumentFrequency($docCount)
     {
         return 1 + log((float) $this->getDocCount() / ($docCount + 1));
     }
 
     private function getDocCountForElement(ElementInterface $element)
     {
+        $key = $element->getField() . $element->getTerm();
+        if (array_key_exists($key, $this->docCounts)) {
+            return $this->docCounts[$key];
+        }
+
         $queryBuilder = (new PuceneQueryBuilder($this->queryBuilder->getConnection(), $this->schema))
             ->select('count(document.id) as count')
             ->from($this->schema->getDocumentsTableName(), 'document');
@@ -124,10 +134,10 @@ class ScoringAlgorithm
             $queryBuilder->where($expression);
         }
 
-        return (int) $queryBuilder->execute()->fetchColumn();
+        return $this->docCounts[$key] = (int)$queryBuilder->execute()->fetchColumn();
     }
 
-    private function getDocCount()
+    public function getDocCount()
     {
         if ($this->docCount) {
             return $this->docCount;

@@ -20,8 +20,8 @@ class TermInterpreter implements InterpreterInterface
         $expr = $queryBuilder->expr();
         $name = $queryBuilder->joinTerm($element->getField(), $element->getTerm());
 
-        $queryBuilder->addSelect(sprintf('(%1$s.term_frequency * %1$s.field_norm) as %1$sValue', $name));
-        $queryBuilder->addSelect(sprintf('%1$s.id as %1$sId', $name));
+        $queryBuilder->addSelect(sprintf('(%1$s.score) as %1$sValue', $name));
+        $queryBuilder->addSelect(sprintf('%1$s.idf as %1$sIdf', $name));
 
         return $expr->isNotNull($name . '.id');
     }
@@ -43,18 +43,24 @@ class TermInterpreter implements InterpreterInterface
      */
     public function newScoring(ElementInterface $element, ScoringAlgorithm $scoring, array $row, $queryNorm = null)
     {
-        $idf = $scoring->inverseDocumentFrequency($element);
+        $termName = 'term' . ucfirst($element->getField()) . ucfirst($element->getTerm());
+        $idfName = $termName . 'Idf';
+        $valueName = $termName . 'Value';
+        if (!array_key_exists($valueName, $row)
+            || !array_key_exists($idfName, $row)
+            || $row[$valueName] === null
+            || $row[$idfName] === null
+        ) {
+            return 0;
+        }
+
+        $idf = $row[$idfName];
         $factor = $idf * $element->getBoost();
         if ($queryNorm) {
             $factor *= $idf * $queryNorm;
         }
 
-        $termName = 'term' . ucfirst($element->getField()) . ucfirst($element->getTerm()) . 'Value';
-        if (!array_key_exists($termName, $row) || $row[$termName] === null) {
-            return 0;
-        }
-
-        return $row[$termName] * $factor;
+        return $row[$valueName] * $factor;
     }
 
     /**
