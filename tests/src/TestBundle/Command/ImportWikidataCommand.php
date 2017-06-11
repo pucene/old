@@ -58,6 +58,8 @@ class ImportWikidataCommand extends ContainerAwareCommand
             $progressBar->advance();
         }
 
+        $index->optimize();
+
         $progressBar->finish();
     }
 }

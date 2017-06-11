@@ -19,9 +19,7 @@ class TermInterpreter implements InterpreterInterface
     {
         $expr = $queryBuilder->expr();
 
-        return $expr->isNotNull(
-            $queryBuilder->joinTerm($element->getField(), $element->getTerm()) . '.id'
-        );
+        return $expr->isNotNull($queryBuilder->joinTerm($element->getField(), $element->getTerm()) . '.id');
     }
 
     /**

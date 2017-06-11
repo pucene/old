@@ -7,8 +7,6 @@ use Pucene\Component\Math\MathExpressionBuilder;
 use Pucene\Component\Pucene\Compiler\Element\TermElement;
 use Pucene\Component\Pucene\Compiler\ElementInterface;
 use Pucene\Component\Pucene\Dbal\Interpreter\PuceneQueryBuilder;
-use Pucene\Component\Pucene\Dbal\Math\FieldLengthNorm;
-use Pucene\Component\Pucene\Dbal\Math\TermFrequency;
 use Pucene\Component\Symfony\Pool\PoolInterface;
 
 class ScoringAlgorithm
@@ -39,6 +37,11 @@ class ScoringAlgorithm
     private $docCount;
 
     /**
+     * @var int[]
+     */
+    private $docCounts = [];
+
+    /**
      * @param PuceneQueryBuilder $queryBuilder
      * @param PuceneSchema $schema
      * @param PoolInterface $interpreterPool
@@ -54,17 +57,21 @@ class ScoringAlgorithm
 
     public function scoreTerm(TermElement $element, float $queryNorm = null, float $boost = 1)
     {
-        $idf = $this->inverseDocumentFrequency($element);
+        $termName = $this->queryBuilder->joinTerm($element->getField(), $element->getTerm());
+        $expression = $this->math->multiply();
+        $expression->add($this->math->coalesce($this->math->variable($termName . '.idf'), $this->math->value(0)));
 
-        $factor = $idf * $boost;
-        if ($queryNorm) {
-            $factor *= $idf * $queryNorm;
+        if ($boost != 1) {
+            $expression->add($this->math->value($boost));
         }
 
-        return $this->math->multiply(
-            new TermFrequency($element->getField(), $element->getTerm(), $this->queryBuilder),
-            new FieldLengthNorm($element->getField(), $element->getTerm(), $this->queryBuilder, $this->math),
-            $this->math->value($factor)
+        if ($queryNorm) {
+            $expression->add($this->math->coalesce($this->math->variable($termName . '.idf'), $this->math->value(0)));
+            $expression->add($this->math->value($queryNorm));
+        }
+
+        return $expression->add(
+            $this->math->coalesce($this->math->variable($termName . '.score'), $this->math->value(0))
         );
     }
 
@@ -108,13 +115,18 @@ class ScoringAlgorithm
      *
      * @return float
      */
-    private function calculateInverseDocumentFrequency($docCount)
+    public function calculateInverseDocumentFrequency($docCount)
     {
         return 1 + log((float) $this->getDocCount() / ($docCount + 1));
     }
 
     private function getDocCountForElement(ElementInterface $element)
     {
+        $key = $element->getField() . $element->getTerm();
+        if (array_key_exists($key, $this->docCounts)) {
+            return $this->docCounts[$key];
+        }
+
         $queryBuilder = (new PuceneQueryBuilder($this->queryBuilder->getConnection(), $this->schema))
             ->select('count(document.id) as count')
             ->from($this->schema->getDocumentsTableName(), 'document');
@@ -124,10 +136,10 @@ class ScoringAlgorithm
             $queryBuilder->where($expression);
         }
 
-        return (int) $queryBuilder->execute()->fetchColumn();
+        return $this->docCounts[$key] = (int) $queryBuilder->execute()->fetchColumn();
     }
 
-    private function getDocCount()
+    public function getDocCount()
     {
         if ($this->docCount) {
             return $this->docCount;
