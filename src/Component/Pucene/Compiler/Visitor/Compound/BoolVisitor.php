@@ -45,11 +45,11 @@ class BoolVisitor implements VisitorInterface
         }
 
         if (count($andElements) === 0) {
-            return new CompositeElement(CompositeElement:: OR, $shouldElements);
+            return new CompositeElement(CompositeElement::OPERATOR_OR, $shouldElements);
         }
 
         return new BoolElement(
-            new CompositeElement(CompositeElement:: AND, $andElements),
+            new CompositeElement(CompositeElement::OPERATOR_AND, $andElements),
             array_merge($mustElements, $shouldElements)
         );
     }

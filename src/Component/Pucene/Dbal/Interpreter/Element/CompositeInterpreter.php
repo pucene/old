@@ -29,7 +29,7 @@ class CompositeInterpreter extends BoolInterpreter
         $expr = $queryBuilder->expr();
 
         $expression = $expr->orX();
-        if ($element->getOperator() === CompositeElement:: AND) {
+        if ($element->getOperator() === CompositeElement:: OPERATOR_AND) {
             $expression = $expr->andX();
         }
 
@@ -52,5 +52,36 @@ class CompositeInterpreter extends BoolInterpreter
     public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, $queryNorm = null)
     {
         return parent::scoring(new BoolElement($element, $element->getElements()), $scoring, $queryNorm);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param CompositeElement $element
+     */
+    public function newScoring(ElementInterface $element, ScoringAlgorithm $scoring, array $row, $queryNorm = null)
+    {
+        return parent::newScoring(new BoolElement($element, $element->getElements()), $scoring, $row, $queryNorm);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param CompositeElement $element
+     */
+    public function matches(ElementInterface $element, array $row)
+    {
+        foreach ($element->getElements() as $innerElement) {
+            $interpreter = $this->interpreterPool->get(get_class($innerElement));
+            if ($interpreter->matches($innerElement, $row)) {
+                if ($element->getOperator() === CompositeElement::OPERATOR_OR) {
+                    return true;
+                }
+            } elseif ($element->getOperator() === CompositeElement::OPERATOR_AND) {
+                return false;
+            }
+        }
+
+        return $element->getOperator() === CompositeElement::OPERATOR_AND;
     }
 }

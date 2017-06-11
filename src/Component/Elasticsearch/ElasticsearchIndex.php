@@ -105,4 +105,12 @@ class ElasticsearchIndex implements IndexInterface
 
         return $response;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function optimize()
+    {
+        // nothing to optimize currently.
+    }
 }
