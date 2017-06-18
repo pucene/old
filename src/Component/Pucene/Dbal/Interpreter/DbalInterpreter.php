@@ -58,8 +58,6 @@ class DbalInterpreter
 
         if ($expression) {
             $queryBuilder->addSelect('(' . $expression . ') as score')->orderBy('score', 'desc');
-        } else {
-            $queryBuilder->addSelect('1 as score');
         }
 
         if (0 < count($search->getSorts())) {
@@ -77,7 +75,7 @@ class DbalInterpreter
                 $row['type'],
                 $storage->getName(),
                 json_decode($row['document'], true),
-                array_key_exists('score', $row) ? (float) $row['score'] : 1
+                array_key_exists('score', $row) ? (float) $row['score'] : null
             );
         }
 

@@ -48,10 +48,11 @@ abstract class ComparisonTestCase extends KernelTestCase
      * Normalizes result from client.
      *
      * @param array $hits
+     * @param float $maxScore
      *
      * @return array
      */
-    protected function normalize($hits)
+    protected function normalize(array $hits, float $maxScore = null)
     {
         $result = [];
         $position = 0;
@@ -59,7 +60,16 @@ abstract class ComparisonTestCase extends KernelTestCase
             $score = $hit['_score'];
             unset($hit['_score']);
             unset($hit['sort']);
-            $result[$hit['_id']] = ['position' => $position++, '_score' => $score, 'document' => $hit];
+            $result[$hit['_id']] = [
+                'position' => $position++,
+                '_score' => $score,
+                '_relativeScore' => null,
+                'document' => $hit,
+            ];
+
+            if ($maxScore) {
+                $result[$hit['_id']]['_relativeScore'] = $score / $maxScore;
+            }
         }
 
         return $result;
@@ -76,19 +86,16 @@ abstract class ComparisonTestCase extends KernelTestCase
         $puceneResult = $this->puceneIndex->search($search, 'my_type');
 
         $this->assertEquals(count($elasticsearchResult['hits']), count($puceneResult['hits']));
+        // TODO total
 
-        $elasticsearchHits = $this->normalize($elasticsearchResult['hits']);
-        $puceneHits = $this->normalize($puceneResult['hits']);
+        $elasticsearchHits = $this->normalize($elasticsearchResult['hits'], $elasticsearchResult['max_score']);
+        $puceneHits = $this->normalize($puceneResult['hits'], $puceneResult['max_score']);
 
         foreach ($puceneHits as $id => $puceneHit) {
             $this->assertArrayHasKey($id, $elasticsearchHits, $id);
             $this->assertEquals($elasticsearchHits[$id]['document'], $puceneHit['document']);
 
-            // if position matches: OK
-            // else score has to be equals
-            if ($elasticsearchHits[$id]['position'] !== $puceneHit['position']) {
-                $this->assertEquals($elasticsearchHits[$id]['_score'], $puceneHit['_score'], $id, 0.02);
-            }
+            $this->assertEquals($elasticsearchHits[$id]['_relativeScore'], $puceneHit['_relativeScore'], '', 0.1);
         }
     }
 }
