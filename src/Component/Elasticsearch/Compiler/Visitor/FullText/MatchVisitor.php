@@ -15,6 +15,11 @@ class MatchVisitor implements VisitorInterface
      */
     public function visit(QueryInterface $query)
     {
-        return ['match' => [$query->getField() => $query->getQuery()]];
+        $parameters = ['query' => $query->getQuery()];
+        if ($query->getFuzzy()) {
+            $parameters['fuzziness'] = $query->getFuzzy();
+        }
+
+        return ['match' => [$query->getField() => $parameters]];
     }
 }

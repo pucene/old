@@ -36,7 +36,7 @@ class Document
      * @param string $document
      * @param int $score
      */
-    public function __construct($id, $type, $index, $document, $score = 1)
+    public function __construct($id, $type, $index, $document, $score = null)
     {
         $this->id = $id;
         $this->type = $type;

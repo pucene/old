@@ -4,24 +4,13 @@ namespace Pucene\Component\Pucene\Dbal\Math;
 
 use Pucene\Component\Math\ExpressionInterface;
 use Pucene\Component\Math\MathExpressionBuilder;
-use Pucene\Component\Pucene\Dbal\Interpreter\PuceneQueryBuilder;
 
 class TermFrequency implements ExpressionInterface
 {
     /**
      * @var string
      */
-    private $field;
-
-    /**
-     * @var string
-     */
-    private $term;
-
-    /**
-     * @var PuceneQueryBuilder
-     */
-    private $queryBuilder;
+    private $alias;
 
     /**
      * @var MathExpressionBuilder
@@ -29,19 +18,13 @@ class TermFrequency implements ExpressionInterface
     private $expr;
 
     /**
-     * @param string $field
-     * @param string $term
-     * @param PuceneQueryBuilder $queryBuilder
+     * @param string $alias
+     * @param MathExpressionBuilder $expr
      */
-    public function __construct(
-        string $field,
-        string $term,
-        PuceneQueryBuilder $queryBuilder
-    ) {
-        $this->field = $field;
-        $this->term = $term;
-        $this->queryBuilder = $queryBuilder;
-        $this->expr = $queryBuilder->math();
+    public function __construct(string $alias, MathExpressionBuilder $expr)
+    {
+        $this->alias = $alias;
+        $this->expr = $expr;
     }
 
     /**
@@ -50,7 +33,7 @@ class TermFrequency implements ExpressionInterface
     public function __toString(): string
     {
         return $this->expr->coalesce(
-            $this->expr->sqrt($this->expr->variable($this->queryBuilder->joinTerm($this->field, $this->term) . '.term_frequency')),
+            $this->expr->sqrt($this->expr->variable($this->alias . '.term_frequency')),
             $this->expr->value(0)
         );
     }

@@ -2,7 +2,6 @@
 
 namespace Pucene\Component\Pucene\Dbal\Interpreter\Element;
 
-use Pucene\Component\Math\MathExpressionBuilder;
 use Pucene\Component\Pucene\Compiler\Element\TermElement;
 use Pucene\Component\Pucene\Compiler\ElementInterface;
 use Pucene\Component\Pucene\Dbal\Interpreter\InterpreterInterface;
@@ -28,6 +27,6 @@ class MatchAllInterpreter implements InterpreterInterface
      */
     public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, $queryNorm = null)
     {
-        return (new MathExpressionBuilder())->value(1);
+        return null;
     }
 }

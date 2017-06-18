@@ -17,6 +17,11 @@ class MatchQuery implements QueryInterface
     private $query;
 
     /**
+     * @var int|string
+     */
+    private $fuzzy;
+
+    /**
      * @param string $field
      * @param string $query
      */
@@ -70,6 +75,30 @@ class MatchQuery implements QueryInterface
     public function setQuery($query)
     {
         $this->query = $query;
+
+        return $this;
+    }
+
+    /**
+     * Returns fuzzy.
+     *
+     * @return int|string
+     */
+    public function getFuzzy()
+    {
+        return $this->fuzzy;
+    }
+
+    /**
+     * Set fuzzy.
+     *
+     * @param int|string $fuzzy
+     *
+     * @return $this
+     */
+    public function setFuzzy($fuzzy)
+    {
+        $this->fuzzy = $fuzzy;
 
         return $this;
     }

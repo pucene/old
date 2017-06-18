@@ -79,13 +79,22 @@ class PuceneIndex implements IndexInterface
 
         $documents = $this->storage->search($search, $type);
 
+        $hits = [];
+        $maxScore = null;
+        foreach ($documents as $document) {
+            $hits[] = $document->toArray();
+
+            if ($document->getScore() && $maxScore < $document->getScore()) {
+                $maxScore = $document->getScore();
+            }
+        }
+
+        // TODO total
+
         return [
-            'hits' => array_map(
-                function (Document $document) {
-                    return $document->toArray();
-                },
-                $documents
-            ),
+            'total' => '?',
+            'hits' => $hits,
+            'max_score' => $maxScore,
         ];
     }
 

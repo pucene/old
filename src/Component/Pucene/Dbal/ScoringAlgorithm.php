@@ -2,12 +2,12 @@
 
 namespace Pucene\Component\Pucene\Dbal;
 
-use Doctrine\DBAL\Connection;
 use Pucene\Component\Math\MathExpressionBuilder;
 use Pucene\Component\Pucene\Compiler\Element\TermElement;
 use Pucene\Component\Pucene\Compiler\ElementInterface;
 use Pucene\Component\Pucene\Dbal\Interpreter\PuceneQueryBuilder;
 use Pucene\Component\Pucene\Dbal\Math\FieldLengthNorm;
+use Pucene\Component\Pucene\Dbal\Math\IfCondition;
 use Pucene\Component\Pucene\Dbal\Math\TermFrequency;
 use Pucene\Component\Symfony\Pool\PoolInterface;
 
@@ -56,15 +56,31 @@ class ScoringAlgorithm
     {
         $idf = $this->inverseDocumentFrequency($element);
 
-        $factor = $idf * $boost;
+        $factor = $idf * $element->getBoost();
         if ($queryNorm) {
             $factor *= $idf * $queryNorm;
         }
 
-        return $this->math->multiply(
-            new TermFrequency($element->getField(), $element->getTerm(), $this->queryBuilder),
-            new FieldLengthNorm($element->getField(), $element->getTerm(), $this->queryBuilder, $this->math),
+        if (!$element->getFuzzy()) {
+            $alias = $this->queryBuilder->joinTerm($element->getField(), $element->getTerm());
+        } else {
+            $alias = $this->queryBuilder->joinTermFuzzy($element->getField(), $element->getTerm());
+        }
+
+        $expression = $this->math->multiply(
+            new TermFrequency($alias, $this->math),
+            new FieldLengthNorm($alias, $this->math),
             $this->math->value($factor)
+        );
+
+        if (!$element->getFuzzy()) {
+            return $expression;
+        }
+
+        return new IfCondition(
+            sprintf('%s.term=\'%s\'', $alias, $element->getTerm()),
+            $expression,
+            $this->math->multiply($this->math->value(0.6), $expression)
         );
     }
 
@@ -88,16 +104,6 @@ class ScoringAlgorithm
         return 1.0 / sqrt($sum);
     }
 
-    public function getSchema(): PuceneSchema
-    {
-        return $this->schema;
-    }
-
-    public function getConnection(): Connection
-    {
-        return $this->queryBuilder->getConnection();
-    }
-
     private function inverseDocumentFrequency(ElementInterface $element): float
     {
         return $this->calculateInverseDocumentFrequency($this->getDocCountForElement($element));
@@ -108,8 +114,12 @@ class ScoringAlgorithm
      *
      * @return float
      */
-    private function calculateInverseDocumentFrequency($docCount)
+    private function calculateInverseDocumentFrequency(int $docCount)
     {
+        if ($docCount === 0) {
+            return 0;
+        }
+
         return 1 + log((float) $this->getDocCount() / ($docCount + 1));
     }
 
