@@ -42,8 +42,6 @@ class DbalInterpreter
             ->select('document.*')
             ->from($schema->getDocumentsTableName(), 'document')
             ->where('document.type IN (?)')
-            ->setMaxResults($search->getSize())
-            ->setFirstResult($search->getFrom())
             ->setParameter(0, implode(',', $types));
 
         /** @var InterpreterInterface $interpreter */
@@ -57,7 +55,7 @@ class DbalInterpreter
         $expression = $interpreter->scoring($element, $scoringAlgorithm);
 
         if ($expression) {
-            $queryBuilder->addSelect('(' . $expression . ') as score')->orderBy('score', 'desc');
+            $queryBuilder->addSelect('(' . $expression . ') as score'); // ->orderBy('score', 'desc');
         }
 
         if (0 < count($search->getSorts())) {
@@ -93,6 +91,6 @@ class DbalInterpreter
             }
         );
 
-        return $result;
+        return array_slice($result, $search->getFrom(), $search->getSize());
     }
 }
