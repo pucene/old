@@ -79,6 +79,20 @@ class DbalInterpreter
             );
         }
 
+        usort(
+            $result,
+            function (Document $aDocument, Document $bDocument) {
+                $a = $aDocument->getScore();
+                $b = $bDocument->getScore();
+
+                if ($a === $b) {
+                    return 0;
+                }
+
+                return ($a < $b) ? 1 : -1;
+            }
+        );
+
         return $result;
     }
 }
