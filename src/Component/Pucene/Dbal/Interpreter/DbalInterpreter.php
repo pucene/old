@@ -42,6 +42,8 @@ class DbalInterpreter
             ->select('document.*')
             ->from($schema->getDocumentsTableName(), 'document')
             ->where('document.type IN (?)')
+            ->setMaxResults($search->getSize())
+            ->setFirstResult($search->getFrom())
             ->setParameter(0, implode(',', $types));
 
         /** @var InterpreterInterface $interpreter */
@@ -77,20 +79,6 @@ class DbalInterpreter
             );
         }
 
-        usort(
-            $result,
-            function (Document $aDocument, Document $bDocument) {
-                $a = $aDocument->getScore();
-                $b = $bDocument->getScore();
-
-                if ($a === $b) {
-                    return 0;
-                }
-
-                return ($a < $b) ? 1 : -1;
-            }
-        );
-
-        return array_slice($result, $search->getFrom(), $search->getSize());
+        return $result;
     }
 }
