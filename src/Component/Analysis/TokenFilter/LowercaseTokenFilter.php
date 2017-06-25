@@ -13,7 +13,7 @@ class LowercaseTokenFilter implements TokenFilterInterface
     {
         return [
             new Token(
-                strtolower($token->getTerm()),
+                mb_strtolower($token->getTerm()),
                 $token->getStartOffset(),
                 $token->getEndOffset(),
                 $token->getType(),
