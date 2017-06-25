@@ -15,23 +15,16 @@ class TermElement extends BaseElement
     private $term;
 
     /**
-     * @var int|string
-     */
-    private $fuzzy;
-
-    /**
      * @param string $field
      * @param string $term
      * @param float $boost
-     * @param int|string $fuzzy
      */
-    public function __construct(string $field, string $term, float $boost = 1, $fuzzy = null)
+    public function __construct(string $field, string $term, float $boost = 1)
     {
         parent::__construct($boost);
 
         $this->field = $field;
         $this->term = $term;
-        $this->fuzzy = $fuzzy;
     }
 
     /**
@@ -52,15 +45,5 @@ class TermElement extends BaseElement
     public function getTerm(): string
     {
         return $this->term;
-    }
-
-    /**
-     * Returns fuzzy.
-     *
-     * @return int|string
-     */
-    public function getFuzzy()
-    {
-        return $this->fuzzy;
     }
 }

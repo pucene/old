@@ -62,26 +62,6 @@ class PuceneQueryBuilder extends QueryBuilder
         return $this->joins[] = $termName;
     }
 
-    public function joinTermFuzzy(string $field, string $term)
-    {
-        $termName = $this->escape('termFuzzy' . ucfirst($field) . ucfirst($term));
-        if (in_array($termName, $this->joins)) {
-            return $termName;
-        }
-
-        $condition = sprintf(
-            '%1$s.document_id = %2$s.id AND %1$s.field_name = \'%3$s\'',
-            $termName,
-            $this->documentAlias,
-            $field,
-            $term
-        );
-
-        $this->leftJoin($this->documentAlias, $this->schema->getDocumentTermsTableName(), $termName, $condition);
-
-        return $this->joins[] = $termName;
-    }
-
     private function escape($name)
     {
         return trim(preg_replace('/\W/', '_', $name), '_');

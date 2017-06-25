@@ -61,21 +61,13 @@ class ScoringAlgorithm
             $factor *= $idf * $queryNorm;
         }
 
-        if (!$element->getFuzzy()) {
-            $alias = $this->queryBuilder->joinTerm($element->getField(), $element->getTerm());
-        } else {
-            $alias = $this->queryBuilder->joinTermFuzzy($element->getField(), $element->getTerm());
-        }
+        $alias = $this->queryBuilder->joinTerm($element->getField(), $element->getTerm());
 
         $expression = $this->math->multiply(
             new TermFrequency($alias, $this->math),
             new FieldLengthNorm($alias, $this->math),
             $this->math->value($factor)
         );
-
-        if (!$element->getFuzzy()) {
-            return $expression;
-        }
 
         return new IfCondition(
             sprintf('%s.term=\'%s\'', $alias, $element->getTerm()),
