@@ -82,11 +82,20 @@ class MatchVisitor implements VisitorInterface
     {
         $queryBuilder = (new QueryBuilder($storage->getConnection()))
             ->select('DISTINCT term.term')
-            ->from($storage->getSchema()->getDocumentTermsTableName(), 'term');
+            ->from($storage->getSchema()->getDocumentTermsTableName(), 'term')
+            ->where(
+                sprintf(
+                    '(LENGTH(term.term) - %1$s) BETWEEN -%2$s AND %2$s',
+                    strlen($term),
+                    Fuzzy::getFuzzyDistance($term, $query->getFuzzy())
+                )
+            );
 
+        $orX = $queryBuilder->expr()->orX();
         foreach (Fuzzy::getFuzzyTerms($term, $query->getFuzzy()) as $term) {
-            $queryBuilder->orWhere($queryBuilder->expr()->like('term.term', "'" . $term . "'"));
+            $orX->add($queryBuilder->expr()->like('term.term', "'" . $term . "'"));
         }
+        $queryBuilder->andWhere($orX);
 
         return array_map(
             function ($item) use ($query) {
