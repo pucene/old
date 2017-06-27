@@ -9,6 +9,31 @@ class Fuzzy
     const MODE_AUTO = 'auto';
 
     /**
+     * Returns distance for given mode.
+     *
+     * @param string $term
+     * @param mixed $mode
+     *
+     * @return int
+     */
+    public static function getFuzzyDistance(string $term, $mode): int
+    {
+        if ($mode === self::MODE_1) {
+            return 1;
+        }
+
+        if ($mode === self::MODE_2) {
+            return 2;
+        }
+
+        if (strlen($term) < 3) {
+            return 1;
+        }
+
+        return 2;
+    }
+
+    /**
      * Returns fuzzy terms.
      *
      * @param string $term
@@ -18,17 +43,8 @@ class Fuzzy
      */
     public static function getFuzzyTerms(string $term, $mode): array
     {
-        if ($mode === self::MODE_1) {
-            return self::generateFuzzyTerms($term);
-        }
-
-        if ($mode === self::MODE_1) {
-            return self::generateFuzzyTermsTwice($term);
-        }
-
-        if (strlen($term) < 3) {
-            return [$term];
-        } elseif (strlen($term) < 5) {
+        $distance = self::getFuzzyDistance($term, $mode);
+        if ($distance === 1) {
             return self::generateFuzzyTerms($term);
         }
 
