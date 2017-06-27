@@ -17,16 +17,23 @@ class BoolElement extends BaseElement
     private $scoringElements;
 
     /**
+     * @var bool
+     */
+    private $coord;
+
+    /**
      * @param ElementInterface $element
      * @param ElementInterface[] $scoringElements
      * @param float $boost
+     * @param bool $coord
      */
-    public function __construct(ElementInterface $element, array $scoringElements, float $boost = 1)
+    public function __construct(ElementInterface $element, array $scoringElements, float $boost = 1, bool $coord = true)
     {
         parent::__construct($boost);
 
         $this->element = $element;
         $this->scoringElements = $scoringElements;
+        $this->coord = $coord;
     }
 
     /**
@@ -47,5 +54,15 @@ class BoolElement extends BaseElement
     public function getScoringElements(): array
     {
         return $this->scoringElements;
+    }
+
+    /**
+     * Returns coord.
+     *
+     * @return bool
+     */
+    public function getCoord(): bool
+    {
+        return $this->coord;
     }
 }

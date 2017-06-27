@@ -62,10 +62,11 @@ class MatchVisitor implements VisitorInterface
     {
         $terms = [];
         foreach ($tokens as $token) {
+            $terms[] = new TermElement($query->getField(), $token->getTerm());
             $terms = array_merge($terms, $this->findFuzzyTerms($token->getEncodedTerm(), $query, $storage));
         }
 
-        return new CompositeElement(CompositeElement::OR, $terms);
+        return new CompositeElement(CompositeElement::OR, $terms, 1, false);
     }
 
     /**

@@ -68,6 +68,10 @@ class BoolInterpreter implements InterpreterInterface
             $expression->add($interpreter->scoring($innerElement, $scoring, $queryNorm));
         }
 
+        if (!$element->getCoord()) {
+            return $expression;
+        }
+
         return $math->multiply(
             $expression,
             new Coord($element->getScoringElements(), $this->interpreterPool, $scoring->getQueryBuilder(), $math)
