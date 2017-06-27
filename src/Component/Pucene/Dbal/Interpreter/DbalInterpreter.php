@@ -57,7 +57,7 @@ class DbalInterpreter
         $expression = $interpreter->scoring($element, $scoringAlgorithm);
 
         if ($expression) {
-            $queryBuilder->addSelect('(' . $expression . ') as score'); // ->orderBy('score', 'desc');
+            $queryBuilder->addSelect('(' . $expression . ') as score')->orderBy('score', 'desc');
         }
 
         if (0 < count($search->getSorts())) {
