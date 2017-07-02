@@ -82,7 +82,7 @@ class MatchVisitor implements VisitorInterface
     {
         $queryBuilder = (new QueryBuilder($storage->getConnection()))
             ->select('DISTINCT term.term')
-            ->from($storage->getSchema()->getDocumentTermsTableName(), 'term')
+            ->from($storage->getSchema()->getTermsTableName(), 'term')
             ->where(
                 sprintf(
                     '(LENGTH(term.term) - %1$s) BETWEEN -%2$s AND %2$s',

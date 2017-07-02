@@ -29,6 +29,7 @@ class PuceneSchema
         $this->schema = new Schema();
 
         $this->createDocumentsTable();
+        $this->createTermsTable();
         $this->createDocumentTermsTable();
         $this->createDocumentFieldsTables();
     }
@@ -68,7 +69,19 @@ class PuceneSchema
             ['id'],
             ['onDelete' => 'CASCADE']
         );
+        $fields->addForeignKeyConstraint($this->tableNames['terms'], ['term'], ['term']);
         $fields->addIndex(['field_name', 'term']);
+    }
+
+    private function createTermsTable()
+    {
+        $this->tableNames['terms'] = sprintf('pu_%s_terms', $this->prefix);
+
+        $fields = $this->schema->createTable($this->tableNames['terms']);
+        $fields->addColumn('term', 'string', ['length' => 255]);
+
+        $fields->setPrimaryKey(['term']);
+        $fields->addIndex(['term']);
     }
 
     /**
@@ -147,5 +160,10 @@ class PuceneSchema
     public function getDocumentTermsTableName()
     {
         return $this->tableNames['document_terms'];
+    }
+
+    public function getTermsTableName()
+    {
+        return $this->tableNames['terms'];
     }
 }
