@@ -50,6 +50,7 @@ class DocumentPersister
                     continue;
                 }
 
+                $this->insertTerm($token->getEncodedTerm());
                 $this->insertToken(
                     $document->getId(),
                     $field->getName(),
@@ -108,6 +109,27 @@ class DocumentPersister
                 'field_name' => $fieldName,
                 'term' => $term,
                 'field_norm' => $fieldNorm,
+            ]
+        );
+    }
+
+    protected function insertTerm(string $term)
+    {
+        $result = $this->connection->createQueryBuilder()
+            ->select('term.term')
+            ->from($this->schema->getTermsTableName(), 'term')
+            ->where('term.term = :term')
+            ->setParameter('term', $term)
+            ->execute();
+
+        if ($result->fetch()) {
+            return;
+        }
+
+        $this->connection->insert(
+            $this->schema->getTermsTableName(),
+            [
+                'term' => $term,
             ]
         );
     }
