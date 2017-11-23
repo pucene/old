@@ -189,4 +189,34 @@ class PuceneSchema
     {
         return $this->tableNames['terms'];
     }
+
+    public function getFieldTableName(string $type): string
+    {
+        if (in_array($type, Types::getFloatTypes())) {
+            $type = Types::FLOAT;
+        } elseif (in_array($type, Types::getIntegerTypes())) {
+            $type = Types::INTEGER;
+        }
+
+        $tableName = sprintf('document_field_%ss', $type);
+
+        return $this->tableNames[$tableName];
+    }
+
+    public function getColumnType(string $type)
+    {
+        if (in_array($type, Types::getStringTypes())) {
+            return 'text';
+        } elseif (in_array($type, Types::getFloatTypes())) {
+            return 'float';
+        } elseif (in_array($type, Types::getIntegerTypes())) {
+            return 'bigint';
+        } elseif ($type === Types::BOOLEAN) {
+            return 'boolean';
+        } elseif ($type === Types::DATE) {
+            return 'datetime';
+        }
+
+        throw new \Exception('Type not found');
+    }
 }

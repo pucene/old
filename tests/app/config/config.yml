@@ -31,3 +31,8 @@ test:
                 my_type:
                     properties:
                         title: ~
+                        rawTitle:
+                            type: keyword
+                        description: ~
+                        pageId: ~
+                        modified: ~

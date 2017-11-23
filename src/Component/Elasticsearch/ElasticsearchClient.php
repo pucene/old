@@ -35,12 +35,10 @@ class ElasticsearchClient implements ClientInterface
         return new ElasticsearchIndex($name, $this->client, $this->compiler);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create(string $name, array $parameters): IndexInterface
     {
         $parameters['settings']['index'] = $this->adapterConfig['settings'];
+        $parameters = $this->filterArray($parameters);
         $response = $this->client->indices()->create(['index' => $name, 'body' => $parameters]);
 
         if (!$response['acknowledged']) {
@@ -50,11 +48,19 @@ class ElasticsearchClient implements ClientInterface
         return $this->get($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function delete(string $name): void
     {
         $this->client->indices()->delete(['index' => $name]);
+    }
+
+    private function filterArray(array $input): array
+    {
+        foreach ($input as &$value) {
+            if (is_array($value)) {
+                $value = $this->filterArray($value);
+            }
+        }
+
+        return array_filter($input);
     }
 }

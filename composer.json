@@ -31,7 +31,8 @@
         "symfony/yaml": "^3.0",
         "jeroen/json-dump-reader": "^1.4",
         "phpunit/phpunit": "^6.0",
-        "symfony/dotenv": "^3.0"
+        "symfony/dotenv": "^3.0",
+        "guzzlehttp/guzzle": "^6.3"
     },
     "autoload": {
         "psr-4": {

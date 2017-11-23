@@ -2,9 +2,9 @@
 
 namespace Pucene\Component\Pucene;
 
-use Pucene\Component\Analysis\AnalyzerInterface;
 use Pucene\Component\Client\ClientInterface;
 use Pucene\Component\Client\IndexInterface;
+use Pucene\Component\Pucene\Mapping\Mapping;
 
 class PuceneClient implements ClientInterface
 {
@@ -14,19 +14,19 @@ class PuceneClient implements ClientInterface
     private $storageFactory;
 
     /**
-     * @var AnalyzerInterface
+     * @var Mapping
      */
-    private $analyzer;
+    private $mapping;
 
-    public function __construct(StorageFactoryInterface $storageFactory, AnalyzerInterface $analyzer)
+    public function __construct(StorageFactoryInterface $storageFactory, Mapping $mapping)
     {
         $this->storageFactory = $storageFactory;
-        $this->analyzer = $analyzer;
+        $this->mapping = $mapping;
     }
 
     public function get(string $name): IndexInterface
     {
-        return new PuceneIndex($name, $this->storageFactory->create($name), $this->analyzer);
+        return new PuceneIndex($name, $this->storageFactory->create($name), $this->mapping);
     }
 
     public function create(string $name, array $parameters): IndexInterface

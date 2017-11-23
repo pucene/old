@@ -3,6 +3,7 @@
 namespace Pucene\Component\Pucene\Model;
 
 use Pucene\Component\Analysis\Token;
+use Pucene\Component\Mapping\Types;
 
 class Field
 {
@@ -17,12 +18,25 @@ class Field
     private $tokens;
 
     /**
-     * @param Token[] $tokens
+     * @var mixed
      */
-    public function __construct(string $name, array $tokens)
+    private $value;
+
+    /**
+     * @var string
+     */
+    private $type;
+
+    /**
+     * @param Token[] $tokens
+     * @param mixed $value
+     */
+    public function __construct($name, array $tokens, $value, string $type = Types::TEXT)
     {
         $this->name = $name;
         $this->tokens = $tokens;
+        $this->value = $value;
+        $this->type = $type;
     }
 
     public function getName(): string
@@ -38,11 +52,21 @@ class Field
         return $this->tokens;
     }
 
-    /**
-     * @return int
-     */
     public function getNumberOfTerms(): int
     {
         return count($this->tokens);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
     }
 }
