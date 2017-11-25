@@ -22,7 +22,7 @@
         "symfony/dependency-injection": "^3.0",
         "symfony/framework-bundle": "^3.0",
 
-        "elasticsearch/elasticsearch": "^2.0",
+        "elasticsearch/elasticsearch": "^6.0",
         "ramsey/uuid": "^3.5",
         "doctrine/dbal": "^2.5"
     },

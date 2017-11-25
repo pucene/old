@@ -9,8 +9,8 @@ env:
   global:
     - COMPOSER_FLAGS="--prefer-lowest --prefer-dist --no-interaction"
     - CODE_COVERAGE="--coverage-clover=coverage.clover"
-    - ES_VERSION=2.4.4
-    - ES_DOWNLOAD_URL=https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/${ES_VERSION}/elasticsearch-${ES_VERSION}.tar.gz
+    - ES_VERSION=6.0.0
+    - ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz
 
 cache:
   directories:
