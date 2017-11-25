@@ -34,9 +34,6 @@ class Coord implements ExpressionInterface
 
     /**
      * @param ElementInterface[] $elements
-     * @param PoolInterface $interpreterPool
-     * @param PuceneQueryBuilder $queryBuilder
-     * @param MathExpressionBuilder $expr
      */
     public function __construct(
         array $elements,

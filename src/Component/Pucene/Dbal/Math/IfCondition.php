@@ -21,11 +21,6 @@ class IfCondition implements ExpressionInterface
      */
     private $falseResult;
 
-    /**
-     * @param string $condition
-     * @param string $trueResult
-     * @param string $falseResult
-     */
     public function __construct(string $condition, string $trueResult, string $falseResult)
     {
         $this->condition = $condition;
@@ -33,9 +28,6 @@ class IfCondition implements ExpressionInterface
         $this->falseResult = $falseResult;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __toString(): string
     {
         return sprintf('(IF(%s, %s, %s))', $this->condition, $this->trueResult, $this->falseResult);

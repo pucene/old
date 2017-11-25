@@ -22,11 +22,6 @@ class CollectorCompilerPass implements CompilerPassInterface
      */
     private $aliasAttribute;
 
-    /**
-     * @param string $tagName
-     * @param string $poolServiceId
-     * @param string $aliasAttribute
-     */
     public function __construct(string $tagName, string $poolServiceId, string $aliasAttribute = 'alias')
     {
         $this->tagName = $tagName;
@@ -34,9 +29,6 @@ class CollectorCompilerPass implements CompilerPassInterface
         $this->aliasAttribute = $aliasAttribute;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container)
     {
         if (!$container->has($this->poolServiceId)) {

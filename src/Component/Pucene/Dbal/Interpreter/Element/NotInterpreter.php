@@ -17,17 +17,12 @@ class NotInterpreter implements InterpreterInterface
      */
     private $interpreterPool;
 
-    /**
-     * @param PoolInterface $interpreterPool
-     */
     public function __construct(PoolInterface $interpreterPool)
     {
         $this->interpreterPool = $interpreterPool;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param NotElement $element
      */
     public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder)
@@ -38,8 +33,6 @@ class NotInterpreter implements InterpreterInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param NotElement $element
      */
     public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, $queryNorm = null)
@@ -53,14 +46,7 @@ class NotInterpreter implements InterpreterInterface
         );
     }
 
-    /**
-     * Returns interpreter for element.
-     *
-     * @param ElementInterface $element
-     *
-     * @return InterpreterInterface
-     */
-    private function getInterpreter(ElementInterface $element)
+    private function getInterpreter(ElementInterface $element): InterpreterInterface
     {
         return $this->interpreterPool->get(get_class($element));
     }

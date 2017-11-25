@@ -12,8 +12,6 @@ use Pucene\Component\Pucene\Dbal\ScoringAlgorithm;
 class TypeInterpreter implements InterpreterInterface
 {
     /**
-     * {@inheritdoc}
-     *
      * @param TypeElement $element
      */
     public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder)
@@ -23,9 +21,6 @@ class TypeInterpreter implements InterpreterInterface
         return $expr->eq('document.type', "'" . $element->getType() . "'");
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, $queryNorm = null)
     {
         return (new MathExpressionBuilder())->value(1);

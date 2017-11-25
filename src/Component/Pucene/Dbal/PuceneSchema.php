@@ -23,7 +23,7 @@ class PuceneSchema
      */
     private $tableNames;
 
-    public function __construct($prefix)
+    public function __construct(string $prefix)
     {
         $this->prefix = $prefix;
         $this->schema = new Schema();
@@ -34,7 +34,7 @@ class PuceneSchema
         $this->createDocumentFieldsTables();
     }
 
-    private function createDocumentsTable()
+    private function createDocumentsTable(): void
     {
         $this->tableNames['documents'] = sprintf('pu_%s_documents', $this->prefix);
 
@@ -50,7 +50,7 @@ class PuceneSchema
         $documents->addUniqueIndex(['number']);
     }
 
-    private function createDocumentTermsTable()
+    private function createDocumentTermsTable(): void
     {
         $this->tableNames['document_terms'] = sprintf('pu_%s_document_terms', $this->prefix);
 
@@ -73,7 +73,7 @@ class PuceneSchema
         $fields->addIndex(['field_name', 'term']);
     }
 
-    private function createTermsTable()
+    private function createTermsTable(): void
     {
         $this->tableNames['terms'] = sprintf('pu_%s_terms', $this->prefix);
 
@@ -89,7 +89,7 @@ class PuceneSchema
      *
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html
      */
-    private function createDocumentFieldsTables()
+    private function createDocumentFieldsTables(): void
     {
         // Text types
         $this->createDocumentFieldsTable(Types::TEXT, 'text');
@@ -104,12 +104,9 @@ class PuceneSchema
 
         // Boolean types
         $this->createDocumentFieldsTable(Types::BOOLEAN, 'boolean');
-
-        // Binary types
-        $this->createDocumentFieldsTable(Types::BINARY, 'blob');
     }
 
-    private function createDocumentFieldsTable($type, $columnType, $options = [])
+    private function createDocumentFieldsTable($type, $columnType, $options = []): void
     {
         $tableName = sprintf('document_field_%ss', $type);
         $this->tableNames[$tableName] = sprintf('pu_%s_' . $tableName, $this->prefix);
@@ -142,27 +139,27 @@ class PuceneSchema
         }
     }
 
-    public function toSql(AbstractPlatform $platform)
+    public function toSql(AbstractPlatform $platform): array
     {
         return $this->schema->toSql($platform);
     }
 
-    public function toDropSql(AbstractPlatform $platform)
+    public function toDropSql(AbstractPlatform $platform): array
     {
         return $this->schema->toDropSql($platform);
     }
 
-    public function getDocumentsTableName()
+    public function getDocumentsTableName(): string
     {
         return $this->tableNames['documents'];
     }
 
-    public function getDocumentTermsTableName()
+    public function getDocumentTermsTableName(): string
     {
         return $this->tableNames['document_terms'];
     }
 
-    public function getTermsTableName()
+    public function getTermsTableName(): string
     {
         return $this->tableNames['terms'];
     }

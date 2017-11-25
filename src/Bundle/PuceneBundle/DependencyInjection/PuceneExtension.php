@@ -16,9 +16,6 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class PuceneExtension extends Extension
 {
-    /**
-     * {@inheritdoc}
-     */
     public function load(array $configs, ContainerBuilder $container)
     {
         $configuration = new Configuration();
@@ -42,9 +39,9 @@ class PuceneExtension extends Extension
         $loader->import($fileLocator->locate($adapter . '/'));
         $loader->import($fileLocator->locate('commands.xml'));
 
-        if ($adapter === 'pucene') {
+        if ('pucene' === $adapter) {
             $this->loadPucene($config, $container);
-        } elseif ($adapter === 'elasticsearch') {
+        } elseif ('elasticsearch' === $adapter) {
             $this->loadElasticsearch($config, $container);
         }
 
@@ -53,11 +50,8 @@ class PuceneExtension extends Extension
 
     /**
      * Load specific configuration for pucene.
-     *
-     * @param array $config
-     * @param ContainerBuilder $container
      */
-    private function loadPucene(array $config, ContainerBuilder $container)
+    private function loadPucene(array $config, ContainerBuilder $container): void
     {
         $serviceIds = [];
         foreach ($config['indices'] as $name => $options) {
@@ -86,11 +80,8 @@ class PuceneExtension extends Extension
 
     /**
      * Load specific configuration for elasticsearch.
-     *
-     * @param array $config
-     * @param ContainerBuilder $container
      */
-    private function loadElasticsearch($config, $container)
+    private function loadElasticsearch(array $config, ContainerBuilder $container): void
     {
         $pass = new CollectorCompilerPass('pucene.elasticsearch.visitor', 'pucene.elasticsearch.visitor_pool', 'query');
         $pass->process($container);

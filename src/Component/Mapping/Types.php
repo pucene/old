@@ -29,15 +29,10 @@ class Types
     // Boolean types
     const BOOLEAN = 'boolean';
 
-    // Binary types
-    const BINARY = 'binary';
-
     /**
-     * Get types.
-     *
      * @return string[]
      */
-    public static function getTypes()
+    public static function getTypes(): array
     {
         return [
             self::TEXT,
@@ -52,16 +47,13 @@ class Types
             self::SCALED_FLOAT,
             self::DATE,
             self::BOOLEAN,
-            self::BINARY,
         ];
     }
 
     /**
-     * Get string types.
-     *
      * @return string[]
      */
-    public static function getStringTypes()
+    public static function getStringTypes(): array
     {
         return [
             self::TEXT,
@@ -70,11 +62,9 @@ class Types
     }
 
     /**
-     * Get numeric types.
-     *
      * @return string[]
      */
-    public static function getNumericTypes()
+    public static function getNumericTypes(): array
     {
         return [
             self::LONG,
@@ -89,11 +79,9 @@ class Types
     }
 
     /**
-     * Get integer types.
-     *
      * @return string[]
      */
-    public static function getIntegerTypes()
+    public static function getIntegerTypes(): array
     {
         return [
             self::LONG,
@@ -104,11 +92,9 @@ class Types
     }
 
     /**
-     * Get float types.
-     *
      * @return array
      */
-    public static function getFloatTypes()
+    public static function getFloatTypes(): array
     {
         return [
             self::DOUBLE,

@@ -9,14 +9,10 @@ final class ElasticsearchPrecision
      *
      * See lucene issue:
      * https://issues.apache.org/jira/browse/LUCENE-5005
-     *
-     * @param int $length
-     *
-     * @return float
      */
-    public static function fieldNorm($length)
+    public static function fieldNorm(int $length): float
     {
-        if ($length === 1 || $length === 0) {
+        if (1 === $length || 0 === $length) {
             return $length;
         }
 

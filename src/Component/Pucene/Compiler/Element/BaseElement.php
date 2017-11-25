@@ -11,18 +11,12 @@ abstract class BaseElement implements ElementInterface
      */
     private $boost;
 
-    /**
-     * @param float $boost
-     */
     public function __construct(float $boost = 1.0)
     {
         $this->boost = $boost;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBoost()
+    public function getBoost(): float
     {
         return $this->boost;
     }

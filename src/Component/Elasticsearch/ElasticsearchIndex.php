@@ -25,22 +25,14 @@ class ElasticsearchIndex implements IndexInterface
      */
     private $compiler;
 
-    /**
-     * @param string $name
-     * @param Client $client
-     * @param Compiler $compiler
-     */
-    public function __construct($name, Client $client, Compiler $compiler)
+    public function __construct(string $name, Client $client, Compiler $compiler)
     {
         $this->name = $name;
         $this->client = $client;
         $this->compiler = $compiler;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function index(array $document, $type, $id = null)
+    public function index(array $document, string $type, ?string $id = null): array
     {
         $parameters = ['type' => $type, 'index' => $this->name, 'body' => $document];
         if ($id) {
@@ -50,18 +42,12 @@ class ElasticsearchIndex implements IndexInterface
         return $this->client->index($parameters);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function delete($type, $id)
+    public function delete(string $type, string $id): void
     {
-        return $this->client->delete(['id' => $id, 'index' => $this->name, 'type' => $type]);
+        $this->client->delete(['id' => $id, 'index' => $this->name, 'type' => $type]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function search(Search $search, $type)
+    public function search(Search $search, $type): array
     {
         $parameter = [
             'index' => $this->name,
@@ -87,10 +73,7 @@ class ElasticsearchIndex implements IndexInterface
         return $response['hits'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get($type, $id)
+    public function get(string $type, string $id): array
     {
         $response = $this->client->get(
             [

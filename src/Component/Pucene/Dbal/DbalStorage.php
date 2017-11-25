@@ -8,6 +8,7 @@ use Pucene\Component\Pucene\Compiler\Compiler;
 use Pucene\Component\Pucene\Dbal\Interpreter\DbalInterpreter;
 use Pucene\Component\Pucene\Model\Analysis;
 use Pucene\Component\Pucene\StorageInterface;
+use Pucene\Component\Pucene\TermStatisticsInterface;
 use Pucene\Component\QueryBuilder\Search;
 
 class DbalStorage implements StorageInterface
@@ -42,12 +43,6 @@ class DbalStorage implements StorageInterface
      */
     private $schema;
 
-    /**
-     * @param string $name
-     * @param Connection $connection
-     * @param Compiler $compiler
-     * @param DbalInterpreter $interpreter
-     */
     public function __construct($name, Connection $connection, Compiler $compiler, DbalInterpreter $interpreter)
     {
         $this->name = $name;
@@ -58,10 +53,7 @@ class DbalStorage implements StorageInterface
         $this->persister = new DocumentPersister($connection, $this->getSchema());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createIndex(array $parameters)
+    public function createIndex(array $parameters): void
     {
         $this->connection->beginTransaction();
         foreach ($this->getSchema()->toSql($this->connection->getDatabasePlatform()) as $sql) {
@@ -70,10 +62,7 @@ class DbalStorage implements StorageInterface
         $this->connection->commit();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function deleteIndex()
+    public function deleteIndex(): void
     {
         $this->connection->beginTransaction();
         foreach ($this->getSchema()->toDropSql($this->connection->getDatabasePlatform()) as $sql) {
@@ -82,10 +71,7 @@ class DbalStorage implements StorageInterface
         $this->connection->commit();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function saveDocument(Analysis $analysis)
+    public function saveDocument(Analysis $analysis): void
     {
         $this->connection->transactional(
             function() use ($analysis) {
@@ -94,31 +80,22 @@ class DbalStorage implements StorageInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function deleteDocument($id)
+    public function deleteDocument(string $id): void
     {
         $this->connection->delete($this->getSchema()->getDocumentsTableName(), ['id' => $id]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function search(Search $search, $types)
+    public function search(Search $search, array $types): array
     {
         $element = $this->compiler->compile($search->getQuery(), $this);
-        if ($element === null) {
+        if (null === $element) {
             return [];
         }
 
         return $this->interpreter->interpret($types, $search, $this, $element);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get($type, $id)
+    public function get(string $type, string $id): array
     {
         $schema = $this->getSchema();
         $queryBuilder = (new QueryBuilder($this->connection))
@@ -139,17 +116,17 @@ class DbalStorage implements StorageInterface
         ];
     }
 
-    public function termStatistics()
+    public function termStatistics(): TermStatisticsInterface
     {
         return new DbalTermStatistics($this->connection, $this->getSchema());
     }
 
-    public function getConnection()
+    public function getConnection(): Connection
     {
         return $this->connection;
     }
 
-    public function getSchema()
+    public function getSchema(): PuceneSchema
     {
         if ($this->schema) {
             return $this->schema;
@@ -158,7 +135,7 @@ class DbalStorage implements StorageInterface
         return $this->schema = new PuceneSchema($this->name);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }

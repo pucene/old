@@ -23,11 +23,6 @@ class Analyzer implements AnalyzerInterface
      */
     protected $tokenFilter;
 
-    /**
-     * @param $characterFilter
-     * @param TokenizerInterface $tokenizer
-     * @param TokenFilterInterface $tokenFilter
-     */
     public function __construct(
         CharacterFilterInterface $characterFilter,
         TokenizerInterface $tokenizer,
@@ -38,10 +33,7 @@ class Analyzer implements AnalyzerInterface
         $this->tokenFilter = $tokenFilter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function analyze($fieldContent)
+    public function analyze(string $fieldContent): array
     {
         $input = $this->characterFilter->filter($fieldContent);
         $tokens = $this->tokenizer->tokenize($input);

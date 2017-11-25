@@ -19,43 +19,23 @@ class ArtificialDocumentLike
      */
     private $document;
 
-    /**
-     * @param string $index
-     * @param string $type
-     * @param array $document
-     */
-    public function __construct($index, $type, array $document)
+    public function __construct(string $index, string $type, array $document)
     {
         $this->index = $index;
         $this->type = $type;
         $this->document = $document;
     }
 
-    /**
-     * Returns index.
-     *
-     * @return string
-     */
     public function getIndex(): string
     {
         return $this->index;
     }
 
-    /**
-     * Returns type.
-     *
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * Returns document.
-     *
-     * @return array
-     */
     public function getDocument(): array
     {
         return $this->document;

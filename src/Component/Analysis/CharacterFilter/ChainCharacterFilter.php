@@ -20,7 +20,7 @@ class ChainCharacterFilter implements CharacterFilterInterface
     /**
      * {@inheritdoc}
      */
-    public function filter($input)
+    public function filter(string $input): string
     {
         foreach ($this->filters as $filter) {
             $input = $filter->filter($input);

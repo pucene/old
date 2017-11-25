@@ -17,10 +17,6 @@ class CompositeExpression implements CompositeExpressionInterface
      */
     private $glue;
 
-    /**
-     * @param ExpressionInterface[] $parts
-     * @param string $glue
-     */
     public function __construct(array $parts, string $glue)
     {
         $this->parts = $parts;

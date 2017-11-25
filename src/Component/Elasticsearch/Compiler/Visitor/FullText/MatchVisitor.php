@@ -9,11 +9,9 @@ use Pucene\Component\QueryBuilder\Query\QueryInterface;
 class MatchVisitor implements VisitorInterface
 {
     /**
-     * {@inheritdoc}
-     *
      * @param MatchQuery $query
      */
-    public function visit(QueryInterface $query)
+    public function visit(QueryInterface $query): array
     {
         $parameters = ['query' => $query->getQuery()];
         if ($query->getFuzzy()) {

@@ -9,11 +9,9 @@ use Pucene\Component\QueryBuilder\Query\TermLevel\TermQuery;
 class TermVisitor implements VisitorInterface
 {
     /**
-     * {@inheritdoc}
-     *
      * @param TermQuery $query
      */
-    public function visit(QueryInterface $query)
+    public function visit(QueryInterface $query): array
     {
         return ['term' => [$query->getField() => $query->getTerm()]];
     }

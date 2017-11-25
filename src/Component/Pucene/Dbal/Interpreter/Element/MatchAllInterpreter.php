@@ -11,8 +11,6 @@ use Pucene\Component\Pucene\Dbal\ScoringAlgorithm;
 class MatchAllInterpreter implements InterpreterInterface
 {
     /**
-     * {@inheritdoc}
-     *
      * @param TermElement $element
      */
     public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder)
@@ -21,8 +19,6 @@ class MatchAllInterpreter implements InterpreterInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param TermElement $element
      */
     public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, $queryNorm = null)

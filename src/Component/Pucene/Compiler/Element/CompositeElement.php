@@ -24,12 +24,6 @@ class CompositeElement extends BaseElement
      */
     private $coord;
 
-    /**
-     * @param string $operator
-     * @param ElementInterface[] $elements
-     * @param float $boost
-     * @param bool $coord
-     */
     public function __construct(string $operator, array $elements = [], float $boost = 1, bool $coord = true)
     {
         parent::__construct($boost);
@@ -39,19 +33,12 @@ class CompositeElement extends BaseElement
         $this->coord = $coord;
     }
 
-    /**
-     * Returns operator.
-     *
-     * @return string
-     */
     public function getOperator(): string
     {
         return $this->operator;
     }
 
     /**
-     * Returns elements.
-     *
      * @return ElementInterface[]
      */
     public function getElements(): array
@@ -59,11 +46,6 @@ class CompositeElement extends BaseElement
         return $this->elements;
     }
 
-    /**
-     * Returns coord.
-     *
-     * @return bool
-     */
     public function getCoord(): bool
     {
         return $this->coord;

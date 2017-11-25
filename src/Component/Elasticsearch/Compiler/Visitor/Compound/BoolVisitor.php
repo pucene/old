@@ -14,20 +14,15 @@ class BoolVisitor implements VisitorInterface
      */
     private $interpreterPool;
 
-    /**
-     * @param PoolInterface $interpreterPool
-     */
     public function __construct(PoolInterface $interpreterPool)
     {
         $this->interpreterPool = $interpreterPool;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param BoolQuery $query
      */
-    public function visit(QueryInterface $query)
+    public function visit(QueryInterface $query): array
     {
         $parameter = [];
 

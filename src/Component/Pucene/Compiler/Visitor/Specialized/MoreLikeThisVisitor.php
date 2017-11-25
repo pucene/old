@@ -8,6 +8,7 @@ use Pucene\Component\Pucene\Compiler\Element\CompositeElement;
 use Pucene\Component\Pucene\Compiler\Element\IdsElement;
 use Pucene\Component\Pucene\Compiler\Element\NotElement;
 use Pucene\Component\Pucene\Compiler\Element\TermElement;
+use Pucene\Component\Pucene\Compiler\ElementInterface;
 use Pucene\Component\Pucene\Compiler\VisitorInterface;
 use Pucene\Component\Pucene\PuceneClient;
 use Pucene\Component\Pucene\StorageInterface;
@@ -30,10 +31,6 @@ class MoreLikeThisVisitor implements VisitorInterface
      */
     private $client;
 
-    /**
-     * @param AnalyzerInterface $analyzer
-     * @param PuceneClient $client
-     */
     public function __construct(AnalyzerInterface $analyzer, PuceneClient $client)
     {
         $this->analyzer = $analyzer;
@@ -41,11 +38,9 @@ class MoreLikeThisVisitor implements VisitorInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param MoreLikeThisQuery $query
      */
-    public function visit(QueryInterface $query, StorageInterface $storage)
+    public function visit(QueryInterface $query, StorageInterface $storage): ?ElementInterface
     {
         $terms = $this->getTerms($query, $storage->termStatistics());
 
@@ -57,7 +52,7 @@ class MoreLikeThisVisitor implements VisitorInterface
         }
 
         if (0 === count($elements)) {
-            return;
+            return null;
         }
 
         $mustNotElements = $this->getMustNotElements($query->getLike());
@@ -77,7 +72,7 @@ class MoreLikeThisVisitor implements VisitorInterface
         );
     }
 
-    private function getTerms(MoreLikeThisQuery $query, TermStatisticsInterface $termStatistics)
+    private function getTerms(MoreLikeThisQuery $query, TermStatisticsInterface $termStatistics): array
     {
         $terms = [];
         foreach ($query->getLike() as $like) {
@@ -120,14 +115,14 @@ class MoreLikeThisVisitor implements VisitorInterface
         return $result;
     }
 
-    private function likeText(MoreLikeThisQuery $query, TextLike $like, array &$terms)
+    private function likeText(MoreLikeThisQuery $query, TextLike $like, array &$terms): void
     {
         foreach ($query->getFields() as $field) {
             $this->analyzeText($field, $like->getText(), $terms);
         }
     }
 
-    private function likeDocument(MoreLikeThisQuery $query, DocumentLike $like, array &$terms)
+    private function likeDocument(MoreLikeThisQuery $query, DocumentLike $like, array &$terms): void
     {
         $index = $this->client->get($like->getIndex());
         $document = $index->get($like->getType(), $like->getId());
@@ -137,14 +132,14 @@ class MoreLikeThisVisitor implements VisitorInterface
         }
     }
 
-    private function likeArtificialDocument(MoreLikeThisQuery $query, ArtificialDocumentLike $like, array &$terms)
+    private function likeArtificialDocument(MoreLikeThisQuery $query, ArtificialDocumentLike $like, array &$terms): void
     {
         foreach ($query->getFields() as $field) {
             $this->analyzeText($field, $like->getDocument()[$field], $terms);
         }
     }
 
-    private function analyzeText(string $field, string $text, array &$terms)
+    private function analyzeText(string $field, string $text, array &$terms): void
     {
         $tokens = $this->analyzer->analyze($text);
 
@@ -161,7 +156,7 @@ class MoreLikeThisVisitor implements VisitorInterface
         }
     }
 
-    private function getMustNotElements(array $likes)
+    private function getMustNotElements(array $likes): array
     {
         $ids = [];
         foreach ($likes as $like) {

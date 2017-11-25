@@ -27,22 +27,14 @@ class PuceneIndex implements IndexInterface
      */
     private $analyzer;
 
-    /**
-     * @param string $name
-     * @param StorageInterface $storage
-     * @param AnalyzerInterface $analyzer
-     */
-    public function __construct($name, StorageInterface $storage, AnalyzerInterface $analyzer)
+    public function __construct(string $name, StorageInterface $storage, AnalyzerInterface $analyzer)
     {
         $this->name = $name;
         $this->storage = $storage;
         $this->analyzer = $analyzer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function index(array $document, $type, $id = null)
+    public function index(array $document, string $type, ?string $id = null): array
     {
         if ($id) {
             $this->delete($type, $id);
@@ -60,18 +52,12 @@ class PuceneIndex implements IndexInterface
         return $analysis->getDocument()->toArray();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function delete($type, $id)
+    public function delete(string $type, string $id): void
     {
         $this->storage->deleteDocument($id);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function search(Search $search, $type)
+    public function search(Search $search, $type): array
     {
         if (is_string($type)) {
             $type = [$type];
@@ -98,10 +84,7 @@ class PuceneIndex implements IndexInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get($type, $id)
+    public function get(string $type, string $id): array
     {
         return $this->storage->get($type, $id);
     }

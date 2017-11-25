@@ -4,23 +4,9 @@ namespace Pucene\Component\Client;
 
 interface ClientInterface
 {
-    /**
-     * @param string $name
-     *
-     * @return IndexInterface
-     */
-    public function get($name);
+    public function get(string $name): IndexInterface;
 
-    /**
-     * @param string $name
-     * @param array $parameters
-     *
-     * @return IndexInterface
-     */
-    public function create($name, array $parameters);
+    public function create(string $name, array $parameters): IndexInterface;
 
-    /**
-     * @param string $name
-     */
-    public function delete($name);
+    public function delete(string $name): void;
 }

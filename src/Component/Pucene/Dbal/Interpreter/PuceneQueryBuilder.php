@@ -24,11 +24,6 @@ class PuceneQueryBuilder extends QueryBuilder
      */
     private $joins = [];
 
-    /**
-     * @param Connection $connection
-     * @param PuceneSchema $schema
-     * @param string $documentAlias
-     */
     public function __construct(Connection $connection, PuceneSchema $schema, string $documentAlias = 'document')
     {
         parent::__construct($connection);
@@ -37,12 +32,12 @@ class PuceneQueryBuilder extends QueryBuilder
         $this->schema = $schema;
     }
 
-    public function math()
+    public function math(): MathExpressionBuilder
     {
         return new MathExpressionBuilder();
     }
 
-    public function joinTerm(string $field, string $term)
+    public function joinTerm(string $field, string $term): string
     {
         $termName = $this->escape('term' . ucfirst($field) . ucfirst($term));
         if (in_array($termName, $this->joins)) {
@@ -62,7 +57,7 @@ class PuceneQueryBuilder extends QueryBuilder
         return $this->joins[] = $termName;
     }
 
-    private function escape($name)
+    private function escape($name): string
     {
         return trim(preg_replace('/\W/', '_', $name), '_');
     }

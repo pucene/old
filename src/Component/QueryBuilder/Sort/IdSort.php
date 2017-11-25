@@ -9,17 +9,11 @@ class IdSort implements SortInterface
      */
     private $order;
 
-    /**
-     * @param string $order
-     */
     public function __construct(string $order = self::ASC)
     {
         $this->order = $order;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOrder(): string
     {
         return $this->order;

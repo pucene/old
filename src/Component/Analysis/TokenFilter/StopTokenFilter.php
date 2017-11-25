@@ -17,15 +17,12 @@ class StopTokenFilter implements TokenFilterInterface
     /**
      * @param string[] $stopWords
      */
-    public function __construct($stopWords = StopWords::ENGLISH)
+    public function __construct(array $stopWords = StopWords::ENGLISH)
     {
         $this->stopWords = $stopWords;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function filter(Token $token)
+    public function filter(Token $token): array
     {
         if (in_array($token->getTerm(), $this->stopWords)) {
             return [];

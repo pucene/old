@@ -17,19 +17,12 @@ class TermFrequency implements ExpressionInterface
      */
     private $expr;
 
-    /**
-     * @param string $alias
-     * @param MathExpressionBuilder $expr
-     */
     public function __construct(string $alias, MathExpressionBuilder $expr)
     {
         $this->alias = $alias;
         $this->expr = $expr;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __toString(): string
     {
         return $this->expr->coalesce(

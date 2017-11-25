@@ -17,23 +17,15 @@ class DbalInterpreter
      */
     private $interpreterPool;
 
-    /**
-     * @param PoolInterface $interpreterPool
-     */
     public function __construct(PoolInterface $interpreterPool)
     {
         $this->interpreterPool = $interpreterPool;
     }
 
     /**
-     * @param array $types
-     * @param Search $search
-     * @param ElementInterface $element
-     * @param DbalStorage $storage
-     *
      * @return Document[]
      */
-    public function interpret(array $types, Search $search, DbalStorage $storage, ElementInterface $element)
+    public function interpret(array $types, Search $search, DbalStorage $storage, ElementInterface $element): array
     {
         $connection = $storage->getConnection();
         $schema = $storage->getSchema();

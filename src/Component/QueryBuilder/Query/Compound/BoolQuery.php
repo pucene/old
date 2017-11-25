@@ -55,8 +55,6 @@ class BoolQuery implements QueryInterface
     }
 
     /**
-     * Returns shouldQueries.
-     *
      * @return QueryInterface[]
      */
     public function getShouldQueries(): array
@@ -65,8 +63,6 @@ class BoolQuery implements QueryInterface
     }
 
     /**
-     * Returns mustQueries.
-     *
      * @return QueryInterface[]
      */
     public function getMustQueries(): array
@@ -75,8 +71,6 @@ class BoolQuery implements QueryInterface
     }
 
     /**
-     * Returns mustNotQueries.
-     *
      * @return QueryInterface[]
      */
     public function getMustNotQueries(): array
@@ -85,8 +79,6 @@ class BoolQuery implements QueryInterface
     }
 
     /**
-     * Returns filterQueries.
-     *
      * @return QueryInterface[]
      */
     public function getFilterQueries(): array

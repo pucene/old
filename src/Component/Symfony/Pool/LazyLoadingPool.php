@@ -18,7 +18,6 @@ class LazyLoadingPool implements PoolInterface
 
     /**
      * @param string[] $serviceIds
-     * @param ContainerInterface $serviceContainer
      */
     public function __construct(array $serviceIds, ContainerInterface $serviceContainer)
     {
@@ -26,7 +25,7 @@ class LazyLoadingPool implements PoolInterface
         $this->serviceContainer = $serviceContainer;
     }
 
-    public function get($alias)
+    public function get(string $alias)
     {
         return $this->serviceContainer->get($this->serviceIds[$alias]);
     }

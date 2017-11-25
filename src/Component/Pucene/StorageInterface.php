@@ -7,17 +7,17 @@ use Pucene\Component\QueryBuilder\Search;
 
 interface StorageInterface
 {
-    public function createIndex(array $parameters);
+    public function createIndex(array $parameters): void;
 
-    public function deleteIndex();
+    public function deleteIndex(): void;
 
-    public function saveDocument(Analysis $analysis);
+    public function saveDocument(Analysis $analysis): void;
 
-    public function deleteDocument($id);
+    public function deleteDocument(string $id): void;
 
-    public function search(Search $search, $type);
+    public function search(Search $search, array $types): array;
 
-    public function get($type, $id);
+    public function get(string $type, string $id): array;
 
-    public function termStatistics();
+    public function termStatistics(): TermStatisticsInterface;
 }
