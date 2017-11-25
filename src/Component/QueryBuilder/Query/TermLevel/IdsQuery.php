@@ -16,32 +16,18 @@ class IdsQuery implements QueryInterface
      */
     private $type;
 
-    /**
-     * @param string[] $values
-     * @param string $type
-     */
     public function __construct(array $values, string $type = null)
     {
         $this->values = $values;
         $this->type = $type;
     }
 
-    /**
-     * Returns values.
-     *
-     * @return \string[]
-     */
     public function getValues(): array
     {
         return $this->values;
     }
 
-    /**
-     * Returns type.
-     *
-     * @return string
-     */
-    public function getType()
+    public function getType(): ?string
     {
         return $this->type;
     }

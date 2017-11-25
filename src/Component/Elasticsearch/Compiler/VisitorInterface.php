@@ -6,10 +6,5 @@ use Pucene\Component\QueryBuilder\Query\QueryInterface;
 
 interface VisitorInterface
 {
-    /**
-     * @param QueryInterface $query
-     *
-     * @return ElementInterface
-     */
-    public function visit(QueryInterface $query);
+    public function visit(QueryInterface $query): array;
 }

@@ -20,23 +20,16 @@ class Document
     private $index;
 
     /**
-     * @var string
+     * @var array
      */
     private $document;
 
     /**
-     * @var int
+     * @var float
      */
     private $score;
 
-    /**
-     * @param string $id
-     * @param string $type
-     * @param string $index
-     * @param string $document
-     * @param int $score
-     */
-    public function __construct($id, $type, $index, $document, $score = null)
+    public function __construct(string $id, string $type, string $index, array $document, ?float $score = null)
     {
         $this->id = $id;
         $this->type = $type;
@@ -45,61 +38,31 @@ class Document
         $this->score = $score;
     }
 
-    /**
-     * Returns id.
-     *
-     * @return string
-     */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * Returns type.
-     *
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * Returns index.
-     *
-     * @return string
-     */
-    public function getIndex()
+    public function getIndex(): string
     {
         return $this->index;
     }
 
-    /**
-     * Returns document.
-     *
-     * @return string
-     */
-    public function getDocument()
+    public function getDocument(): array
     {
         return $this->document;
     }
 
-    /**
-     * Returns score.
-     *
-     * @return int
-     */
-    public function getScore()
+    public function getScore(): ?float
     {
         return $this->score;
     }
 
-    /**
-     * Converts document to array.
-     *
-     * @return array
-     */
     public function toArray()
     {
         return [

@@ -13,25 +13,17 @@ class Compiler
      */
     private $visitors;
 
-    /**
-     * @param PoolInterface $visitors
-     */
     public function __construct(PoolInterface $visitors)
     {
         $this->visitors = $visitors;
     }
 
-    public function compile(QueryInterface $query, StorageInterface $storage)
+    public function compile(QueryInterface $query, StorageInterface $storage): ElementInterface
     {
         return $this->getVisitor($query)->visit($query, $storage);
     }
 
-    /**
-     * @param QueryInterface $query
-     *
-     * @return VisitorInterface
-     */
-    private function getVisitor(QueryInterface $query)
+    private function getVisitor(QueryInterface $query): VisitorInterface
     {
         return $this->visitors->get(get_class($query));
     }

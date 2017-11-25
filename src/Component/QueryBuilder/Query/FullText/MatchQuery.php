@@ -25,54 +25,30 @@ class MatchQuery implements QueryInterface
      * @param string $field
      * @param string $query
      */
-    public function __construct($field, $query)
+    public function __construct(string $field, string $query)
     {
         $this->field = $field;
         $this->query = $query;
     }
 
-    /**
-     * Returns field.
-     *
-     * @return string
-     */
-    public function getField()
+    public function getField(): string
     {
         return $this->field;
     }
 
-    /**
-     * Set field.
-     *
-     * @param string $field
-     *
-     * @return $this
-     */
-    public function setField($field)
+    public function setField($field): string
     {
         $this->field = $field;
 
         return $this;
     }
 
-    /**
-     * Returns query.
-     *
-     * @return string
-     */
-    public function getQuery()
+    public function getQuery(): string
     {
         return $this->query;
     }
 
-    /**
-     * Set query.
-     *
-     * @param string $query
-     *
-     * @return $this
-     */
-    public function setQuery($query)
+    public function setQuery(string $query): self
     {
         $this->query = $query;
 
@@ -80,8 +56,6 @@ class MatchQuery implements QueryInterface
     }
 
     /**
-     * Returns fuzzy.
-     *
      * @return int|string
      */
     public function getFuzzy()
@@ -90,13 +64,9 @@ class MatchQuery implements QueryInterface
     }
 
     /**
-     * Set fuzzy.
-     *
      * @param int|string $fuzzy
-     *
-     * @return $this
      */
-    public function setFuzzy($fuzzy)
+    public function setFuzzy($fuzzy): self
     {
         $this->fuzzy = $fuzzy;
 

@@ -20,17 +20,12 @@ class BoolInterpreter implements InterpreterInterface
      */
     protected $interpreterPool;
 
-    /**
-     * @param PoolInterface $interpreterPool
-     */
     public function __construct(PoolInterface $interpreterPool)
     {
         $this->interpreterPool = $interpreterPool;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param BoolElement $element
      */
     public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder)
@@ -39,15 +34,13 @@ class BoolInterpreter implements InterpreterInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param BoolElement $element
      */
     public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, $queryNorm = null)
     {
-        if (count($element->getScoringElements()) === 0) {
+        if (0 === count($element->getScoringElements())) {
             return 0;
-        } elseif (count($element->getScoringElements()) === 1) {
+        } elseif (1 === count($element->getScoringElements())) {
             $innerElement = $element->getScoringElements()[0];
             $interpreter = $this->interpreterPool->get(get_class($innerElement));
 
@@ -92,14 +85,7 @@ class BoolInterpreter implements InterpreterInterface
         return $terms;
     }
 
-    /**
-     * Returns interpreter for element.
-     *
-     * @param ElementInterface $element
-     *
-     * @return InterpreterInterface
-     */
-    private function getInterpreter(ElementInterface $element)
+    private function getInterpreter(ElementInterface $element): InterpreterInterface
     {
         return $this->interpreterPool->get(get_class($element));
     }

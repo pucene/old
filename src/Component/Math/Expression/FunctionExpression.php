@@ -16,11 +16,7 @@ class FunctionExpression implements ExpressionInterface
      */
     private $parameter;
 
-    /**
-     * @param string $function
-     * @param ExpressionInterface[] $parameter
-     */
-    public function __construct($function, array $parameter)
+    public function __construct(string $function, array $parameter)
     {
         $this->parameter = $parameter;
         $this->function = $function;

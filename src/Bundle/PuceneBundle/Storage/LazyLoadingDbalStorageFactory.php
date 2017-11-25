@@ -18,22 +18,13 @@ class LazyLoadingDbalStorageFactory implements StorageFactoryInterface
      */
     private $serviceIds;
 
-    /**
-     * @param ContainerInterface $container
-     * @param \string[] $serviceIds
-     */
     public function __construct(ContainerInterface $container, array $serviceIds)
     {
         $this->container = $container;
         $this->serviceIds = $serviceIds;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return StorageInterface
-     */
-    public function create(string $name)
+    public function create(string $name): StorageInterface
     {
         return $this->container->get($this->serviceIds[$name]);
     }

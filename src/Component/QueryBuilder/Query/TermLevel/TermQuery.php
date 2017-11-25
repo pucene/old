@@ -18,58 +18,30 @@ class TermQuery implements QueryInterface
      */
     private $term;
 
-    /**
-     * @param string $field
-     * @param string $term
-     */
-    public function __construct($field, $term)
+    public function __construct(string $field, string $term)
     {
         $this->field = $field;
         $this->term = $term;
     }
 
-    /**
-     * Returns field.
-     *
-     * @return string
-     */
-    public function getField()
+    public function getField(): string
     {
         return $this->field;
     }
 
-    /**
-     * Set field.
-     *
-     * @param string $field
-     *
-     * @return $this
-     */
-    public function setField($field)
+    public function setField(string $field): self
     {
         $this->field = $field;
 
         return $this;
     }
 
-    /**
-     * Returns term.
-     *
-     * @return string
-     */
-    public function getTerm()
+    public function getTerm(): string
     {
         return $this->term;
     }
 
-    /**
-     * Set term.
-     *
-     * @param string $term
-     *
-     * @return $this
-     */
-    public function setTerm($term)
+    public function setTerm(string $term): self
     {
         $this->term = $term;
 

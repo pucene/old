@@ -20,17 +20,12 @@ class Compiler
         $this->visitors = $visitors;
     }
 
-    public function compile(QueryInterface $query)
+    public function compile(QueryInterface $query): array
     {
         return $this->getVisitor($query)->visit($query);
     }
 
-    /**
-     * @param QueryInterface $query
-     *
-     * @return VisitorInterface
-     */
-    private function getVisitor(QueryInterface $query)
+    private function getVisitor(QueryInterface $query): VisitorInterface
     {
         return $this->visitors->get(get_class($query));
     }

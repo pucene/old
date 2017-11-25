@@ -11,25 +11,22 @@ use Pucene\Component\Pucene\Dbal\ScoringAlgorithm;
 class CompositeInterpreter extends BoolInterpreter
 {
     /**
-     * {@inheritdoc}
-     *
      * @param CompositeElement $element
      */
     public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder)
     {
-        if (count($element->getElements()) === 0) {
+        $expr = $queryBuilder->expr();
+        if (0 === count($element->getElements())) {
             return 1;
-        } elseif (count($element->getElements()) === 1) {
+        } elseif (1 === count($element->getElements())) {
             $innerElement = $element->getElements()[0];
             $interpreter = $this->interpreterPool->get(get_class($innerElement));
 
             return $interpreter->interpret($innerElement, $queryBuilder);
         }
 
-        $expr = $queryBuilder->expr();
-
         $expression = $expr->orX();
-        if ($element->getOperator() === CompositeElement:: AND) {
+        if (CompositeElement:: AND === $element->getOperator()) {
             $expression = $expr->andX();
         }
 
@@ -45,8 +42,6 @@ class CompositeInterpreter extends BoolInterpreter
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param CompositeElement $element
      */
     public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, $queryNorm = null)

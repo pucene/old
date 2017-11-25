@@ -19,12 +19,7 @@ class CreateIndicesCommand extends Command
      */
     private $client;
 
-    /**
-     * @param string $name
-     * @param array $indices
-     * @param ClientInterface $client
-     */
-    public function __construct($name, array $indices, ClientInterface $client)
+    public function __construct(string $name, array $indices, ClientInterface $client)
     {
         parent::__construct($name);
 
@@ -32,17 +27,11 @@ class CreateIndicesCommand extends Command
         $this->client = $client;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure()
     {
         $this->addArgument('name');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $name = $input->getArgument('name');
@@ -55,7 +44,7 @@ class CreateIndicesCommand extends Command
         }
     }
 
-    private function createIndex($name)
+    private function createIndex(string $name): void
     {
         $this->client->create(
             $name,

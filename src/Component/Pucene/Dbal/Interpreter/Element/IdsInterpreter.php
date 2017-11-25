@@ -12,8 +12,6 @@ use Pucene\Component\Pucene\Dbal\ScoringAlgorithm;
 class IdsInterpreter implements InterpreterInterface
 {
     /**
-     * {@inheritdoc}
-     *
      * @param IdsElement $element
      */
     public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder)
@@ -31,9 +29,6 @@ class IdsInterpreter implements InterpreterInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, $queryNorm = null)
     {
         return (new MathExpressionBuilder())->value(1);

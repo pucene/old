@@ -11,9 +11,6 @@ class Value implements ExpressionInterface
      */
     private $value;
 
-    /**
-     * @param float $value
-     */
     public function __construct(float $value)
     {
         $this->value = $value;

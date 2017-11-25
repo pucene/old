@@ -19,10 +19,6 @@ class DocumentPersister
      */
     private $schema;
 
-    /**
-     * @param Connection $connection
-     * @param PuceneSchema $schema
-     */
     public function __construct(Connection $connection, PuceneSchema $schema)
     {
         $this->connection = $connection;
@@ -30,10 +26,9 @@ class DocumentPersister
     }
 
     /**
-     * @param Document $document
      * @param Field[] $fields
      */
-    public function persist(Document $document, array $fields)
+    public function persist(Document $document, array $fields): void
     {
         $this->insertDocument($document);
 
@@ -72,10 +67,7 @@ class DocumentPersister
         }
     }
 
-    /**
-     * @param Document $document
-     */
-    protected function insertDocument(Document $document)
+    protected function insertDocument(Document $document): void
     {
         $this->connection->insert(
             $this->schema->getDocumentsTableName(),
@@ -94,13 +86,7 @@ class DocumentPersister
         );
     }
 
-    /**
-     * @param string $documentId
-     * @param string $fieldName
-     * @param string $term
-     * @param float $fieldNorm
-     */
-    protected function insertToken(string $documentId, string $fieldName, $term, $fieldNorm)
+    protected function insertToken(string $documentId, string $fieldName, string $term, float $fieldNorm): void
     {
         $this->connection->insert(
             $this->schema->getDocumentTermsTableName(),
@@ -113,7 +99,7 @@ class DocumentPersister
         );
     }
 
-    protected function insertTerm(string $term)
+    protected function insertTerm(string $term): void
     {
         $result = $this->connection->createQueryBuilder()
             ->select('term.term')

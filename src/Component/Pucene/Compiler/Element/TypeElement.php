@@ -9,22 +9,13 @@ class TypeElement extends BaseElement
      */
     private $type;
 
-    /**
-     * @param string $type
-     * @param float $boost
-     */
-    public function __construct($type, float $boost = 1)
+    public function __construct(string $type, float $boost = 1)
     {
         parent::__construct($boost);
 
         $this->type = $type;
     }
 
-    /**
-     * Returns type.
-     *
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;

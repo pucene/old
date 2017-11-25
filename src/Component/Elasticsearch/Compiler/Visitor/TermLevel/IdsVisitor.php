@@ -9,11 +9,9 @@ use Pucene\Component\QueryBuilder\Query\TermLevel\IdsQuery;
 class IdsVisitor implements VisitorInterface
 {
     /**
-     * {@inheritdoc}
-     *
      * @param IdsQuery $query
      */
-    public function visit(QueryInterface $query)
+    public function visit(QueryInterface $query): array
     {
         return ['ids' => ['values' => $query->getValues(), 'type' => $query->getType()]];
     }

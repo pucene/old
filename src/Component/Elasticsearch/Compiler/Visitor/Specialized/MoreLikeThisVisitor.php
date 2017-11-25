@@ -12,11 +12,9 @@ use Pucene\Component\QueryBuilder\Query\Specialized\MoreLikeThis\TextLike;
 class MoreLikeThisVisitor implements VisitorInterface
 {
     /**
-     * {@inheritdoc}
-     *
      * @param MoreLikeThisQuery $query
      */
-    public function visit(QueryInterface $query)
+    public function visit(QueryInterface $query): array
     {
         $like = [];
         foreach ($query->getLike() as $item) {

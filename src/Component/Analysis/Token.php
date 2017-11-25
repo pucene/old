@@ -29,14 +29,7 @@ class Token
      */
     protected $position;
 
-    /**
-     * @param string $term
-     * @param int $startOffset
-     * @param int $endOffset
-     * @param string $type
-     * @param int $position
-     */
-    public function __construct($term, $startOffset, $endOffset, $type, $position)
+    public function __construct(string $term, int $startOffset, int $endOffset, string $type, int $position)
     {
         $this->term = $term;
         $this->startOffset = $startOffset;
@@ -45,62 +38,32 @@ class Token
         $this->position = $position;
     }
 
-    /**
-     * Returns term.
-     *
-     * @return mixed
-     */
-    public function getTerm()
+    public function getTerm(): string
     {
         return $this->term;
     }
 
-    /**
-     * Returns encoded term.
-     *
-     * @return string
-     */
-    public function getEncodedTerm()
+    public function getEncodedTerm(): string
     {
         return utf8_encode($this->term);
     }
 
-    /**
-     * Returns startOffset.
-     *
-     * @return mixed
-     */
-    public function getStartOffset()
+    public function getStartOffset(): int
     {
         return $this->startOffset;
     }
 
-    /**
-     * Returns endOffset.
-     *
-     * @return mixed
-     */
-    public function getEndOffset()
+    public function getEndOffset(): int
     {
         return $this->endOffset;
     }
 
-    /**
-     * Returns type.
-     *
-     * @return mixed
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * Returns position.
-     *
-     * @return mixed
-     */
-    public function getPosition()
+    public function getPosition(): int
     {
         return $this->position;
     }

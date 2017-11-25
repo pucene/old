@@ -6,34 +6,14 @@ use Pucene\Component\QueryBuilder\Search;
 
 interface IndexInterface
 {
-    /**
-     * @param array $document
-     * @param string $type
-     * @param string|null $id
-     *
-     * @return array
-     */
-    public function index(array $document, $type, $id = null);
+    public function index(array $document, string $type, ?string $id = null): array;
+
+    public function delete(string $type, string $id): void;
 
     /**
-     * @param string $type
-     * @param string $id
-     */
-    public function delete($type, $id);
-
-    /**
-     * @param Search $search
      * @param string|string[] $type
-     *
-     * @return array
      */
-    public function search(Search $search, $type);
+    public function search(Search $search, $type): array;
 
-    /**
-     * @param $type
-     * @param $id
-     *
-     * @return array
-     */
-    public function get($type, $id);
+    public function get(string $type, string $id): array;
 }

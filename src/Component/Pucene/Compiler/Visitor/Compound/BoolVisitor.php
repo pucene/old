@@ -19,20 +19,15 @@ class BoolVisitor implements VisitorInterface
      */
     private $interpreterPool;
 
-    /**
-     * @param PoolInterface $interpreterPool
-     */
     public function __construct(PoolInterface $interpreterPool)
     {
         $this->interpreterPool = $interpreterPool;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param BoolQuery $query
      */
-    public function visit(QueryInterface $query, StorageInterface $storage)
+    public function visit(QueryInterface $query, StorageInterface $storage): ?ElementInterface
     {
         $shouldElements = $this->getElements($query->getShouldQueries(), $storage);
         $mustElements = $this->getElements($query->getMustQueries(), $storage);
@@ -44,7 +39,7 @@ class BoolVisitor implements VisitorInterface
             $andElements[] = new NotElement($element);
         }
 
-        if (count($andElements) === 0) {
+        if (0 === count($andElements)) {
             return new CompositeElement(CompositeElement:: OR, $shouldElements);
         }
 

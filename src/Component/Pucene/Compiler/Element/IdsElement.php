@@ -9,10 +9,6 @@ class IdsElement extends BaseElement
      */
     private $ids;
 
-    /**
-     * @param string[] $ids
-     * @param float $boost
-     */
     public function __construct(array $ids, float $boost = 1)
     {
         parent::__construct($boost);
@@ -21,8 +17,6 @@ class IdsElement extends BaseElement
     }
 
     /**
-     * Returns ids.
-     *
      * @return \string[]
      */
     public function getIds(): array

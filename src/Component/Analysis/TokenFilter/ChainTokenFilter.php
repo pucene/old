@@ -19,12 +19,7 @@ class ChainTokenFilter implements TokenFilterInterface
         $this->filters = $filters;
     }
 
-    /**
-     * @param Token $token
-     *
-     * @return Token[]
-     */
-    public function filter(Token $token)
+    public function filter(Token $token): array
     {
         $tokens = [$token];
         foreach ($this->filters as $filter) {
@@ -35,12 +30,11 @@ class ChainTokenFilter implements TokenFilterInterface
     }
 
     /**
-     * @param TokenFilterInterface $filter
      * @param Token[] $tokens
      *
      * @return Token[]
      */
-    private function doFilter(TokenFilterInterface $filter, array $tokens)
+    private function doFilter(TokenFilterInterface $filter, array $tokens): array
     {
         $result = [];
         foreach ($tokens as $token) {

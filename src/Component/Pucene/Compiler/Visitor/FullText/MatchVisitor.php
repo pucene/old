@@ -7,6 +7,7 @@ use Pucene\Component\Analysis\AnalyzerInterface;
 use Pucene\Component\Analysis\Token;
 use Pucene\Component\Pucene\Compiler\Element\CompositeElement;
 use Pucene\Component\Pucene\Compiler\Element\TermElement;
+use Pucene\Component\Pucene\Compiler\ElementInterface;
 use Pucene\Component\Pucene\Compiler\VisitorInterface;
 use Pucene\Component\Pucene\Dbal\DbalStorage;
 use Pucene\Component\Pucene\Dbal\Interpreter\Fuzzy;
@@ -21,20 +22,15 @@ class MatchVisitor implements VisitorInterface
      */
     private $analyzer;
 
-    /**
-     * @param AnalyzerInterface $analyzer
-     */
     public function __construct(AnalyzerInterface $analyzer)
     {
         $this->analyzer = $analyzer;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param MatchQuery $query
      */
-    public function visit(QueryInterface $query, StorageInterface $storage)
+    public function visit(QueryInterface $query, StorageInterface $storage): ?ElementInterface
     {
         $tokens = $this->analyzer->analyze($query->getQuery());
         if ($query->getFuzzy()) {
@@ -43,22 +39,16 @@ class MatchVisitor implements VisitorInterface
 
         $terms = [];
         foreach ($tokens as $token) {
-            $terms[] = new TermElement($query->getField(), $token->getEncodedTerm(), 1, $query->getFuzzy());
+            $terms[] = new TermElement($query->getField(), $token->getEncodedTerm());
         }
 
         return new CompositeElement(CompositeElement::OR, $terms);
     }
 
     /**
-     * Visit fuzzy match.
-     *
      * @param Token[] $tokens
-     * @param MatchQuery $query
-     * @param DbalStorage $storage
-     *
-     * @return CompositeElement
      */
-    private function visitFuzzy(array $tokens, MatchQuery $query, DbalStorage $storage)
+    private function visitFuzzy(array $tokens, MatchQuery $query, DbalStorage $storage): ElementInterface
     {
         $terms = [];
         foreach ($tokens as $token) {
@@ -70,15 +60,9 @@ class MatchVisitor implements VisitorInterface
     }
 
     /**
-     * Find fuzzy terms.
-     *
-     * @param string $term
-     * @param MatchQuery $query
-     * @param DbalStorage $storage
-     *
      * @return TermElement[]
      */
-    private function findFuzzyTerms(string $term, MatchQuery $query, DbalStorage $storage)
+    private function findFuzzyTerms(string $term, MatchQuery $query, DbalStorage $storage): array
     {
         $queryBuilder = (new QueryBuilder($storage->getConnection()))
             ->select('DISTINCT term.term')

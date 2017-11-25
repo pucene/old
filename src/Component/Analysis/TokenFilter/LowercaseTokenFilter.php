@@ -6,10 +6,7 @@ use Pucene\Component\Analysis\Token;
 
 class LowercaseTokenFilter implements TokenFilterInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function filter(Token $token)
+    public function filter(Token $token): array
     {
         return [
             new Token(

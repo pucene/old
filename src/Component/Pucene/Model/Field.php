@@ -17,41 +17,31 @@ class Field
     private $tokens;
 
     /**
-     * @param string $name
      * @param Token[] $tokens
      */
-    public function __construct($name, array $tokens)
+    public function __construct(string $name, array $tokens)
     {
         $this->name = $name;
         $this->tokens = $tokens;
     }
 
-    /**
-     * Returns name.
-     *
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * Returns tokens.
-     *
      * @return Token[]
      */
-    public function getTokens()
+    public function getTokens(): array
     {
         return $this->tokens;
     }
 
     /**
-     * Returns number of tokens.
-     *
      * @return int
      */
-    public function getNumberOfTerms()
+    public function getNumberOfTerms(): int
     {
         return count($this->tokens);
     }

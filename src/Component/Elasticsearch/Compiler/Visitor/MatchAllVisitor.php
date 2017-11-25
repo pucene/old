@@ -9,11 +9,9 @@ use Pucene\Component\QueryBuilder\Query\QueryInterface;
 class MatchAllVisitor implements VisitorInterface
 {
     /**
-     * {@inheritdoc}
-     *
      * @param MatchAllQuery $query
      */
-    public function visit(QueryInterface $query)
+    public function visit(QueryInterface $query): array
     {
         return ['match_all' => []];
     }

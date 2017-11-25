@@ -7,7 +7,7 @@ class StandardCharacterFilter implements CharacterFilterInterface
     /**
      * {@inheritdoc}
      */
-    public function filter($input)
+    public function filter(string $input): string
     {
         return $input;
     }

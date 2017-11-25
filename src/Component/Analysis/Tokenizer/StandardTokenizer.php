@@ -11,7 +11,7 @@ class StandardTokenizer implements TokenizerInterface
     /**
      * {@inheritdoc}
      */
-    public function tokenize($input)
+    public function tokenize(string $input): array
     {
         $tokens = [];
 

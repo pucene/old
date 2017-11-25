@@ -11,10 +11,6 @@ class NotElement extends BaseElement
      */
     private $element;
 
-    /**
-     * @param ElementInterface $element
-     * @param float $boost
-     */
     public function __construct(ElementInterface $element, float $boost = 1)
     {
         parent::__construct($boost);
@@ -22,11 +18,6 @@ class NotElement extends BaseElement
         $this->element = $element;
     }
 
-    /**
-     * Returns element.
-     *
-     * @return ElementInterface
-     */
     public function getElement(): ElementInterface
     {
         return $this->element;

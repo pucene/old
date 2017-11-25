@@ -4,6 +4,7 @@ namespace Pucene\Component\Pucene;
 
 use Pucene\Component\Analysis\AnalyzerInterface;
 use Pucene\Component\Client\ClientInterface;
+use Pucene\Component\Client\IndexInterface;
 
 class PuceneClient implements ClientInterface
 {
@@ -17,37 +18,26 @@ class PuceneClient implements ClientInterface
      */
     private $analyzer;
 
-    /**
-     * @param StorageFactoryInterface $storageFactory
-     * @param AnalyzerInterface $analyzer
-     */
     public function __construct(StorageFactoryInterface $storageFactory, AnalyzerInterface $analyzer)
     {
         $this->storageFactory = $storageFactory;
         $this->analyzer = $analyzer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get($name)
+    public function get(string $name): IndexInterface
     {
         return new PuceneIndex($name, $this->storageFactory->create($name), $this->analyzer);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function create($name, array $parameters)
+    public function create(string $name, array $parameters): IndexInterface
     {
-        return $this->storageFactory->create($name)->createIndex($parameters);
+        $this->storageFactory->create($name)->createIndex($parameters);
+
+        return $this->get($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function delete($name)
+    public function delete(string $name): void
     {
-        return $this->storageFactory->create($name)->deleteIndex();
+        $this->storageFactory->create($name)->deleteIndex();
     }
 }

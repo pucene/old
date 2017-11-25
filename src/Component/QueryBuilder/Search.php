@@ -33,84 +33,43 @@ class Search
      */
     private $sorts = [];
 
-    /**
-     * @param QueryInterface $query
-     */
     public function __construct(QueryInterface $query = null)
     {
         $this->query = $query;
     }
 
-    /**
-     * Returns from.
-     *
-     * @return int
-     */
-    public function getFrom()
+    public function getFrom(): int
     {
         return $this->from;
     }
 
-    /**
-     * Set from.
-     *
-     * @param int $from
-     *
-     * @return $this
-     */
-    public function setFrom($from)
+    public function setFrom(int $from): self
     {
         $this->from = $from;
 
         return $this;
     }
 
-    /**
-     * Returns sizer.
-     *
-     * @return int
-     */
-    public function getSize()
+    public function getSize(): int
     {
         return $this->size;
     }
 
-    /**
-     * Set size.
-     *
-     * @param int $size
-     *
-     * @return $this
-     */
-    public function setSize($size)
+    public function setSize(int $size): self
     {
         $this->size = $size;
 
         return $this;
     }
 
-    /**
-     * Set query.
-     *
-     * @param QueryInterface $query
-     *
-     * @return $this
-     */
-    public function setQuery(QueryInterface $query)
+    public function setQuery(QueryInterface $query): self
     {
         $this->query = $query;
 
         return $this;
     }
 
-    /**
-     * Add sort.
-     *
-     * @param SortInterface $sort
-     *
-     * @return $this
-     */
-    public function addSort(SortInterface $sort)
+    public function addSort(SortInterface $sort): self
     {
         $this->sorts[] = $sort;
 
@@ -118,8 +77,6 @@ class Search
     }
 
     /**
-     * Returns sorts.
-     *
      * @return SortInterface[]
      */
     public function getSorts(): array
@@ -127,12 +84,7 @@ class Search
         return $this->sorts;
     }
 
-    /**
-     * Returns queries.
-     *
-     * @return QueryInterface
-     */
-    public function getQuery()
+    public function getQuery(): QueryInterface
     {
         return $this->query;
     }

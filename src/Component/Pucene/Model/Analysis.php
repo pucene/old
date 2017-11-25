@@ -15,7 +15,6 @@ class Analysis
     private $fields;
 
     /**
-     * @param Document $document
      * @param Field[] $fields
      */
     public function __construct(Document $document, array $fields)
@@ -24,22 +23,15 @@ class Analysis
         $this->fields = $fields;
     }
 
-    /**
-     * Returns document.
-     *
-     * @return Document
-     */
-    public function getDocument()
+    public function getDocument(): Document
     {
         return $this->document;
     }
 
     /**
-     * Returns fields.
-     *
      * @return Field[]
      */
-    public function getFields()
+    public function getFields(): array
     {
         return $this->fields;
     }

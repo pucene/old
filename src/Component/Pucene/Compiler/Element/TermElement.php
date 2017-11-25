@@ -14,11 +14,6 @@ class TermElement extends BaseElement
      */
     private $term;
 
-    /**
-     * @param string $field
-     * @param string $term
-     * @param float $boost
-     */
     public function __construct(string $field, string $term, float $boost = 1)
     {
         parent::__construct($boost);
@@ -27,21 +22,11 @@ class TermElement extends BaseElement
         $this->term = $term;
     }
 
-    /**
-     * Returns field.
-     *
-     * @return string
-     */
     public function getField(): string
     {
         return $this->field;
     }
 
-    /**
-     * Returns term.
-     *
-     * @return string
-     */
     public function getTerm(): string
     {
         return $this->term;
