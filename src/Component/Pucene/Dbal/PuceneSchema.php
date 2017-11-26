@@ -29,6 +29,7 @@ class PuceneSchema
         $this->schema = new Schema();
 
         $this->createDocumentsTable();
+        $this->createFieldsTable();
         $this->createTermsTable();
         $this->createDocumentTermsTable();
         $this->createDocumentFieldsTables();
@@ -48,6 +49,26 @@ class PuceneSchema
         $documents->setPrimaryKey(['id']);
         $documents->addIndex(['type']);
         $documents->addUniqueIndex(['number']);
+    }
+
+    private function createFieldsTable(): void
+    {
+        $this->tableNames['fields'] = sprintf('pu_%s_fields', $this->prefix);
+
+        $table = $this->schema->createTable($this->tableNames['fields']);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('document_id', 'string', ['length' => 255]);
+        $table->addColumn('field_name', 'string', ['length' => 255]);
+        $table->addColumn('field_length', 'float', ['default' => 0]);
+
+        $table->setPrimaryKey(['id']);
+        $table->addForeignKeyConstraint(
+            $this->tableNames['documents'],
+            ['document_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE']
+        );
+        $table->addIndex(['field_name']);
     }
 
     private function createDocumentTermsTable(): void
@@ -152,6 +173,11 @@ class PuceneSchema
     public function getDocumentsTableName(): string
     {
         return $this->tableNames['documents'];
+    }
+
+    public function getFieldsTableName(): string
+    {
+        return $this->tableNames['fields'];
     }
 
     public function getDocumentTermsTableName(): string

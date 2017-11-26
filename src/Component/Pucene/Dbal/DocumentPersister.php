@@ -32,6 +32,12 @@ class DocumentPersister
         $this->insertDocument($document);
 
         foreach ($fields as $field) {
+            $this->insertField(
+                $document->getId(),
+                $field->getName(),
+                $field->getNumberOfTerms()
+            );
+
             $fieldTerms = [];
             foreach ($field->getTokens() as $token) {
                 if (!array_key_exists($token->getEncodedTerm(), $fieldTerms)) {
@@ -81,6 +87,18 @@ class DocumentPersister
                 \PDO::PARAM_STR,
                 \PDO::PARAM_STR,
                 'datetime',
+            ]
+        );
+    }
+
+    protected function insertField(string $documentId, string $fieldName, int $fieldLength): void
+    {
+        $this->connection->insert(
+            $this->schema->getFieldsTableName(),
+            [
+                'document_id' => $documentId,
+                'field_name' => $fieldName,
+                'field_length' => $fieldLength,
             ]
         );
     }

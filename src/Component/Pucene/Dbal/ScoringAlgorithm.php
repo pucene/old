@@ -51,57 +51,40 @@ class ScoringAlgorithm
         $this->math = new MathExpressionBuilder();
     }
 
-    public function scoreTerm(TermElement $element, float $queryNorm = null): ExpressionInterface
+    public function scoreTerm(TermElement $element): ExpressionInterface
     {
-        $avgFieldLength = 1.9895256; // TODO
+        $avgFieldLength = $this->averageFieldLength($element->getField());
         $idf = $this->inverseDocumentFrequency($element);
 
         $alias = $this->queryBuilder->joinTerm($element->getField(), $element->getTerm());
 
-        $expression = $this->math->devide(
-            $this->math->multiply(
-                new TermFrequency($alias, $this->math),
-                $this->math->value(self::K1 + 1)
-            ),
-            $this->math->add(
-                new TermFrequency($alias, $this->math),
+        $expression = $this->math->multiply(
+            $this->math->devide(
                 $this->math->multiply(
-                    $this->math->value(self::K1),
-                    $this->math->add(
-                        $this->math->value(1 - self::B),
-                        $this->math->multiply(
-                            $this->math->value(self::B),
-                            $this->math->devide(
-                                new FieldLength($alias, $this->math),
-                                $avgFieldLength
+                    new TermFrequency($alias, $this->math),
+                    $this->math->value(self::K1 + 1)
+                ),
+                $this->math->add(
+                    new TermFrequency($alias, $this->math),
+                    $this->math->multiply(
+                        $this->math->value(self::K1),
+                        $this->math->add(
+                            $this->math->value(1 - self::B),
+                            $this->math->multiply(
+                                $this->math->value(self::B),
+                                $this->math->devide(
+                                    new FieldLength($alias, $this->math),
+                                    $avgFieldLength
+                                )
                             )
                         )
                     )
                 )
-            )
+            ),
+            $this->math->value($idf)
         );
 
-        $expression = $this->math->multiply($this->math->value($idf), $expression);
-
         return new IfCondition(sprintf('%s.term=\'%s\'', $alias, $element->getTerm()), $expression, 0);
-    }
-
-    /**
-     * @param TermElement[] $termElements
-     */
-    public function queryNorm(array $termElements): float
-    {
-        $sum = 0;
-        foreach ($termElements as $element) {
-            $docCount = $this->getDocCountForElement($element);
-            $sum += pow($this->calculateInverseDocumentFrequency($docCount), 2);
-        }
-
-        if (0 === $sum) {
-            return 0;
-        }
-
-        return 1.0 / sqrt($sum);
     }
 
     private function inverseDocumentFrequency(ElementInterface $element): float
@@ -119,6 +102,17 @@ class ScoringAlgorithm
         }
 
         return log(1.0 + ($this->getDocCount() - $docCount + 0.5) / ($docCount + 0.5));
+    }
+
+    private function averageFieldLength(string $fieldName)
+    {
+        $queryBuilder = (new PuceneQueryBuilder($this->queryBuilder->getConnection(), $this->schema))
+            ->select('SUM(field.field_length)/COUNT(*)')
+            ->from($this->schema->getFieldsTableName(), 'field')
+            ->where('field.field_name = :fieldName')
+            ->setParameter('fieldName', $fieldName);
+
+        return (float) $queryBuilder->execute()->fetchColumn();
     }
 
     private function getDocCountForElement(ElementInterface $element): int
