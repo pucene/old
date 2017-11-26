@@ -15,18 +15,18 @@ env:
 
 cache:
   directories:
-    - "vendor"
     - "$HOME/.composer/cache"
 
 before_install:
   - chmod a+w -R docker/data
   - cp .env.dist .env
-  - docker-compose up &
+  - docker-compose up -d
   - if [[ -z $CODE_COVERAGE ]]; then phpenv config-rm xdebug.ini ; fi
   - composer self-update
 
 install:
   - travis_retry composer update
+  - wget -q --waitretry=2 --retry-connrefused -T 10 -O - http://127.0.0.1:19200
   - ./tests/bin/console elasticsearch:indices:create -e prod
   - ./tests/bin/console test:import:json my_index ./tests/app/data.json --adapter elasticsearch -e prod
   - ./tests/bin/console pucene:indices:create -e prod
