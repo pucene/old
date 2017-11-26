@@ -9,7 +9,6 @@ use Pucene\Component\Pucene\Compiler\Element\TermElement;
 use Pucene\Component\Pucene\Compiler\ElementInterface;
 use Pucene\Component\Pucene\Dbal\Interpreter\InterpreterInterface;
 use Pucene\Component\Pucene\Dbal\Interpreter\PuceneQueryBuilder;
-use Pucene\Component\Pucene\Dbal\Math\Coord;
 use Pucene\Component\Pucene\Dbal\ScoringAlgorithm;
 use Pucene\Component\Symfony\Pool\PoolInterface;
 
@@ -36,7 +35,7 @@ class BoolInterpreter implements InterpreterInterface
     /**
      * @param BoolElement $element
      */
-    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, $queryNorm = null)
+    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring)
     {
         if (0 === count($element->getScoringElements())) {
             return 0;
@@ -47,10 +46,6 @@ class BoolInterpreter implements InterpreterInterface
             return $interpreter->scoring($innerElement, $scoring);
         }
 
-        if (!$queryNorm) {
-            $queryNorm = $scoring->queryNorm($this->getTerms($element->getScoringElements()));
-        }
-
         $math = new MathExpressionBuilder();
 
         $expression = $math->add();
@@ -58,17 +53,10 @@ class BoolInterpreter implements InterpreterInterface
             /** @var InterpreterInterface $interpreter */
             $interpreter = $this->interpreterPool->get(get_class($innerElement));
 
-            $expression->add($interpreter->scoring($innerElement, $scoring, $queryNorm));
+            $expression->add($interpreter->scoring($innerElement, $scoring));
         }
 
-        if (!$element->getCoord()) {
-            return $expression;
-        }
-
-        return $math->multiply(
-            $expression,
-            new Coord($element->getScoringElements(), $this->interpreterPool, $scoring->getQueryBuilder(), $math)
-        );
+        return $expression;
     }
 
     private function getTerms(array $elements)

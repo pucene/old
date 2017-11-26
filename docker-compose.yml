@@ -1,0 +1,28 @@
+version: '2'
+
+services:
+    mysql:
+        build: docker/mysql
+        ports:
+            - ${PORT_MYSQL}:3306
+        volumes:
+            - ./docker/data/mysql:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    elasticsearch:
+        build: docker/elasticsearch
+        ports:
+            - ${PORT_ELASTICSEARCH}:9200
+        volumes:
+            - ./docker/data/elasticsearch:/usr/share/elasticsearch/data
+        environment:
+            ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+    kibana:
+        build: docker/kibana
+        ports:
+            - ${PORT_KIBANA}:5601
+        depends_on:
+            - elasticsearch

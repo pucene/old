@@ -87,7 +87,7 @@ class Configuration implements ConfigurationInterface
                                         ->children()
                                             ->enumNode('type')
                                                 ->values(Types::getTypes())
-                                                ->defaultValue('text')
+                                                ->defaultValue(Types::TEXT)
                                             ->end()
                                             ->scalarNode('analyzer')->defaultValue('standard')->end()
                                         ->end()

@@ -23,8 +23,8 @@ class TermInterpreter implements InterpreterInterface
     /**
      * @param TermElement $element
      */
-    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, $queryNorm = null)
+    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring)
     {
-        return $scoring->scoreTerm($element, $queryNorm);
+        return $scoring->scoreTerm($element);
     }
 }

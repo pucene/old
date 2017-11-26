@@ -9,5 +9,5 @@ interface InterpreterInterface
 {
     public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder);
 
-    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, $queryNorm = null);
+    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring);
 }

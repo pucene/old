@@ -13,6 +13,6 @@ class IdsVisitor implements VisitorInterface
      */
     public function visit(QueryInterface $query): array
     {
-        return ['ids' => ['values' => $query->getValues(), 'type' => $query->getType()]];
+        return ['ids' => array_filter(['values' => $query->getValues(), 'type' => $query->getType()])];
     }
 }

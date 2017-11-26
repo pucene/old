@@ -1,4 +1,7 @@
-sudo: false
+sudo: required
+
+services:
+  - docker
 
 language: php
 
@@ -9,27 +12,23 @@ env:
   global:
     - COMPOSER_FLAGS="--prefer-lowest --prefer-dist --no-interaction"
     - CODE_COVERAGE="--coverage-clover=coverage.clover"
-    - ES_VERSION=2.4.4
-    - ES_DOWNLOAD_URL=https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/${ES_VERSION}/elasticsearch-${ES_VERSION}.tar.gz
 
 cache:
   directories:
-    - "vendor"
     - "$HOME/.composer/cache"
 
 before_install:
+  - chmod a+w -R docker/data
+  - cp .env.dist .env
+  - docker-compose up -d
   - if [[ -z $CODE_COVERAGE ]]; then phpenv config-rm xdebug.ini ; fi
   - composer self-update
-  - wget ${ES_DOWNLOAD_URL}
-  - tar -xzf elasticsearch-${ES_VERSION}.tar.gz
-  - ./elasticsearch-${ES_VERSION}/bin/elasticsearch > elasticsearch.log 2>&1 &
-  - wget -q --waitretry=1 --retry-connrefused -T 10 -O - http://127.0.0.1:9200
 
 install:
   - travis_retry composer update
+  - wget -q --waitretry=2 --retry-connrefused -T 10 -O - http://127.0.0.1:19200
   - ./tests/bin/console elasticsearch:indices:create -e prod
   - ./tests/bin/console test:import:json my_index ./tests/app/data.json --adapter elasticsearch -e prod
-  - ./tests/bin/console doctrine:database:create -e prod
   - ./tests/bin/console pucene:indices:create -e prod
   - ./tests/bin/console test:import:json my_index ./tests/app/data.json --adapter pucene -e prod
 

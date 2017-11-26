@@ -44,8 +44,8 @@ class CompositeInterpreter extends BoolInterpreter
     /**
      * @param CompositeElement $element
      */
-    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, $queryNorm = null)
+    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring)
     {
-        return parent::scoring(new BoolElement($element, $element->getElements(), $element->getBoost(), $element->getCoord()), $scoring, $queryNorm);
+        return parent::scoring(new BoolElement($element, $element->getElements(), $element->getBoost()), $scoring);
     }
 }

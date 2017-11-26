@@ -14,7 +14,7 @@
     "type": "library",
     "license": "MIT",
     "require": {
-        "php": "^7.2",
+        "php": "^7.1",
 
         "symfony/config": "^3.0",
         "symfony/console": "^3.0",
@@ -22,7 +22,7 @@
         "symfony/dependency-injection": "^3.0",
         "symfony/framework-bundle": "^3.0",
 
-        "elasticsearch/elasticsearch": "^2.0",
+        "elasticsearch/elasticsearch": "^6.0",
         "ramsey/uuid": "^3.5",
         "doctrine/dbal": "^2.5"
     },
@@ -30,7 +30,8 @@
         "doctrine/doctrine-bundle": "^1.6",
         "symfony/yaml": "^3.0",
         "jeroen/json-dump-reader": "^1.4",
-        "phpunit/phpunit": "^6.0"
+        "phpunit/phpunit": "^6.0",
+        "symfony/dotenv": "^3.0"
     },
     "autoload": {
         "psr-4": {

@@ -35,14 +35,14 @@ class NotInterpreter implements InterpreterInterface
     /**
      * @param NotElement $element
      */
-    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, $queryNorm = null)
+    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring)
     {
         $math = new MathExpressionBuilder();
         $interpreter = $this->getInterpreter($element->getElement());
 
         return $math->multiply(
             $math->value($element->getBoost()),
-            $interpreter->scoring($element->getElement(), $scoring, $queryNorm)
+            $interpreter->scoring($element->getElement(), $scoring)
         );
     }
 

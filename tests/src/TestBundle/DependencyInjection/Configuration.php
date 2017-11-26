@@ -2,6 +2,7 @@
 
 namespace Pucene\Tests\TestBundle\DependencyInjection;
 
+use Pucene\Component\Mapping\Types;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -83,7 +84,10 @@ class Configuration implements ConfigurationInterface
                                     ->useAttributeAsKey('name')
                                     ->prototype('array')
                                         ->children()
-                                            ->scalarNode('type')->defaultValue('string')->end()
+                                            ->enumNode('type')
+                                                ->values(Types::getTypes())
+                                                ->defaultValue(Types::TEXT)
+                                            ->end()
                                             ->scalarNode('analyzer')->defaultValue('standard')->end()
                                         ->end()
                                     ->end()

@@ -12,9 +12,6 @@ use Wikibase\JsonDumpReader\JsonDumpFactory;
 
 class ImportWikidataCommand extends ContainerAwareCommand
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function configure()
     {
         $this->setName('test:import:wikidata')
@@ -24,9 +21,6 @@ class ImportWikidataCommand extends ContainerAwareCommand
             ->addOption('count', null, InputOption::VALUE_REQUIRED, '', 1000);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $factory = new JsonDumpFactory();

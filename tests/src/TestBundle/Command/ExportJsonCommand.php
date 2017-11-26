@@ -9,14 +9,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * TODO add description here.
- */
 class ExportJsonCommand extends ContainerAwareCommand
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function configure()
     {
         $this->setName('test:export')
@@ -24,9 +18,6 @@ class ExportJsonCommand extends ContainerAwareCommand
             ->addArgument('file', InputArgument::REQUIRED);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $connection = $this->getContainer()->get('doctrine.dbal.default_connection');

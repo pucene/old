@@ -29,7 +29,7 @@ class IdsInterpreter implements InterpreterInterface
         );
     }
 
-    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, $queryNorm = null)
+    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring)
     {
         return (new MathExpressionBuilder())->value(1);
     }

@@ -3,7 +3,6 @@
 namespace Pucene\Component\Pucene\Dbal;
 
 use Doctrine\DBAL\Connection;
-use Pucene\Component\Pucene\Math\ElasticsearchPrecision;
 use Pucene\Component\Pucene\Model\Document;
 use Pucene\Component\Pucene\Model\Field;
 
@@ -33,6 +32,12 @@ class DocumentPersister
         $this->insertDocument($document);
 
         foreach ($fields as $field) {
+            $this->insertField(
+                $document->getId(),
+                $field->getName(),
+                $field->getNumberOfTerms()
+            );
+
             $fieldTerms = [];
             foreach ($field->getTokens() as $token) {
                 if (!array_key_exists($token->getEncodedTerm(), $fieldTerms)) {
@@ -50,7 +55,7 @@ class DocumentPersister
                     $document->getId(),
                     $field->getName(),
                     $token->getEncodedTerm(),
-                    ElasticsearchPrecision::fieldNorm($field->getNumberOfTerms())
+                    $field->getNumberOfTerms()
                 );
             }
 
@@ -86,7 +91,19 @@ class DocumentPersister
         );
     }
 
-    protected function insertToken(string $documentId, string $fieldName, string $term, float $fieldNorm): void
+    protected function insertField(string $documentId, string $fieldName, int $fieldLength): void
+    {
+        $this->connection->insert(
+            $this->schema->getFieldsTableName(),
+            [
+                'document_id' => $documentId,
+                'field_name' => $fieldName,
+                'field_length' => $fieldLength,
+            ]
+        );
+    }
+
+    protected function insertToken(string $documentId, string $fieldName, string $term, int $fieldLength): void
     {
         $this->connection->insert(
             $this->schema->getDocumentTermsTableName(),
@@ -94,7 +111,7 @@ class DocumentPersister
                 'document_id' => $documentId,
                 'field_name' => $fieldName,
                 'term' => $term,
-                'field_norm' => $fieldNorm,
+                'field_length' => $fieldLength,
             ]
         );
     }
