@@ -7,13 +7,16 @@ use Pucene\Component\Math\MathExpressionBuilder;
 use Pucene\Component\Pucene\Compiler\Element\TermElement;
 use Pucene\Component\Pucene\Compiler\ElementInterface;
 use Pucene\Component\Pucene\Dbal\Interpreter\PuceneQueryBuilder;
-use Pucene\Component\Pucene\Dbal\Math\FieldLengthNorm;
+use Pucene\Component\Pucene\Dbal\Math\FieldLength;
 use Pucene\Component\Pucene\Dbal\Math\IfCondition;
 use Pucene\Component\Pucene\Dbal\Math\TermFrequency;
 use Pucene\Component\Symfony\Pool\PoolInterface;
 
 class ScoringAlgorithm
 {
+    const K1 = 1.2;
+    const B = 0.75;
+
     /**
      * @var MathExpressionBuilder
      */
@@ -48,28 +51,39 @@ class ScoringAlgorithm
         $this->math = new MathExpressionBuilder();
     }
 
-    public function scoreTerm(TermElement $element, float $queryNorm = null, float $boost = 1): ExpressionInterface
+    public function scoreTerm(TermElement $element, float $queryNorm = null): ExpressionInterface
     {
+        $avgFieldLength = 1.9895256; // TODO
         $idf = $this->inverseDocumentFrequency($element);
-
-        $factor = $idf * $element->getBoost();
-        if ($queryNorm) {
-            $factor *= $idf * $queryNorm;
-        }
 
         $alias = $this->queryBuilder->joinTerm($element->getField(), $element->getTerm());
 
-        $expression = $this->math->multiply(
-            new TermFrequency($alias, $this->math),
-            new FieldLengthNorm($alias, $this->math),
-            $this->math->value($factor)
+        $expression = $this->math->devide(
+            $this->math->multiply(
+                new TermFrequency($alias, $this->math),
+                $this->math->value(self::K1 + 1)
+            ),
+            $this->math->add(
+                new TermFrequency($alias, $this->math),
+                $this->math->multiply(
+                    $this->math->value(self::K1),
+                    $this->math->add(
+                        $this->math->value(1 - self::B),
+                        $this->math->multiply(
+                            $this->math->value(self::B),
+                            $this->math->devide(
+                                new FieldLength($alias, $this->math),
+                                $avgFieldLength
+                            )
+                        )
+                    )
+                )
+            )
         );
 
-        return new IfCondition(
-            sprintf('%s.term=\'%s\'', $alias, $element->getTerm()),
-            $expression,
-            $this->math->multiply($this->math->value(0.6), $expression)
-        );
+        $expression = $this->math->multiply($this->math->value($idf), $expression);
+
+        return new IfCondition(sprintf('%s.term=\'%s\'', $alias, $element->getTerm()), $expression, 0);
     }
 
     /**
@@ -104,7 +118,7 @@ class ScoringAlgorithm
             return 0;
         }
 
-        return 1 + log((float) $this->getDocCount() / ($docCount + 1));
+        return log(1.0 + ($this->getDocCount() - $docCount + 0.5) / ($docCount + 0.5));
     }
 
     private function getDocCountForElement(ElementInterface $element): int

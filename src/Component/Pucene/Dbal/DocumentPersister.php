@@ -3,7 +3,6 @@
 namespace Pucene\Component\Pucene\Dbal;
 
 use Doctrine\DBAL\Connection;
-use Pucene\Component\Pucene\Math\ElasticsearchPrecision;
 use Pucene\Component\Pucene\Model\Document;
 use Pucene\Component\Pucene\Model\Field;
 
@@ -50,7 +49,7 @@ class DocumentPersister
                     $document->getId(),
                     $field->getName(),
                     $token->getEncodedTerm(),
-                    ElasticsearchPrecision::fieldNorm($field->getNumberOfTerms())
+                    $field->getNumberOfTerms()
                 );
             }
 
@@ -86,7 +85,7 @@ class DocumentPersister
         );
     }
 
-    protected function insertToken(string $documentId, string $fieldName, string $term, float $fieldNorm): void
+    protected function insertToken(string $documentId, string $fieldName, string $term, int $fieldLength): void
     {
         $this->connection->insert(
             $this->schema->getDocumentTermsTableName(),
@@ -94,7 +93,7 @@ class DocumentPersister
                 'document_id' => $documentId,
                 'field_name' => $fieldName,
                 'term' => $term,
-                'field_norm' => $fieldNorm,
+                'field_length' => $fieldLength,
             ]
         );
     }

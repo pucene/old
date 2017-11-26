@@ -19,18 +19,12 @@ class CompositeElement extends BaseElement
      */
     private $elements = [];
 
-    /**
-     * @var bool
-     */
-    private $coord;
-
-    public function __construct(string $operator, array $elements = [], float $boost = 1, bool $coord = true)
+    public function __construct(string $operator, array $elements = [], float $boost = 1)
     {
         parent::__construct($boost);
 
         $this->operator = $operator;
         $this->elements = $elements;
-        $this->coord = $coord;
     }
 
     public function getOperator(): string
@@ -44,10 +38,5 @@ class CompositeElement extends BaseElement
     public function getElements(): array
     {
         return $this->elements;
-    }
-
-    public function getCoord(): bool
-    {
-        return $this->coord;
     }
 }

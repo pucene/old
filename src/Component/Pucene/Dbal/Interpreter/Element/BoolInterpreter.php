@@ -9,7 +9,6 @@ use Pucene\Component\Pucene\Compiler\Element\TermElement;
 use Pucene\Component\Pucene\Compiler\ElementInterface;
 use Pucene\Component\Pucene\Dbal\Interpreter\InterpreterInterface;
 use Pucene\Component\Pucene\Dbal\Interpreter\PuceneQueryBuilder;
-use Pucene\Component\Pucene\Dbal\Math\Coord;
 use Pucene\Component\Pucene\Dbal\ScoringAlgorithm;
 use Pucene\Component\Symfony\Pool\PoolInterface;
 
@@ -61,14 +60,7 @@ class BoolInterpreter implements InterpreterInterface
             $expression->add($interpreter->scoring($innerElement, $scoring, $queryNorm));
         }
 
-        if (!$element->getCoord()) {
-            return $expression;
-        }
-
-        return $math->multiply(
-            $expression,
-            new Coord($element->getScoringElements(), $this->interpreterPool, $scoring->getQueryBuilder(), $math)
-        );
+        return $expression;
     }
 
     private function getTerms(array $elements)

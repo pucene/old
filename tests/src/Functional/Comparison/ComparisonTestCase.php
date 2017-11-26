@@ -95,7 +95,7 @@ abstract class ComparisonTestCase extends KernelTestCase
             $this->assertArrayHasKey($id, $elasticsearchHits, $id);
             $this->assertEquals($elasticsearchHits[$id]['document'], $puceneHit['document']);
 
-            $this->assertEquals($elasticsearchHits[$id]['_relativeScore'], $puceneHit['_relativeScore'], '', 0.1);
+            $this->assertEquals($elasticsearchHits[$id]['_relativeScore'], $puceneHit['_relativeScore'], '', 0.15);
         }
     }
 }

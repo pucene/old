@@ -13,6 +13,6 @@ class MatchAllVisitor implements VisitorInterface
      */
     public function visit(QueryInterface $query): array
     {
-        return ['match_all' => []];
+        return ['match_all' => new \stdClass()];
     }
 }

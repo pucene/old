@@ -5,7 +5,7 @@ namespace Pucene\Component\Pucene\Dbal\Math;
 use Pucene\Component\Math\ExpressionInterface;
 use Pucene\Component\Math\MathExpressionBuilder;
 
-class FieldLengthNorm implements ExpressionInterface
+class FieldLength implements ExpressionInterface
 {
     /**
      * @var string
@@ -26,7 +26,7 @@ class FieldLengthNorm implements ExpressionInterface
     public function __toString(): string
     {
         return $this->expr->coalesce(
-            $this->expr->variable($this->alias . '.field_norm'),
+            $this->expr->variable($this->alias . '.field_length'),
             $this->expr->value(0)
         );
     }
