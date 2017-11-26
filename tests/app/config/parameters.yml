@@ -2,7 +2,8 @@ parameters:
     locale: en
     secret: ThisTokenIsNotSoSecretChangeIt
     database_host: 127.0.0.1
-    database_port: null
-    database_name: pucene_test
-    database_user: root
-    database_password: null
+    database_port: "%env(PORT_MYSQL)%"
+    database_name: "%env(MYSQL_DATABASE)%"
+    database_user: "%env(MYSQL_USER)%"
+    database_password: "%env(MYSQL_PASSWORD)%"
+    elasticsearch_host: "127.0.0.1:%env(PORT_ELASTICSEARCH)%"

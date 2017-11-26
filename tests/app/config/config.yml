@@ -22,7 +22,9 @@ doctrine:
 test:
     adapters:
         pucene: ~
-        elasticsearch: ~
+        elasticsearch:
+            hosts:
+                - "%elasticsearch_host%"
     indices:
         my_index:
             mappings:

@@ -8,3 +8,8 @@ composer.lock
 
 # testsuite
 tests/var
+
+# docker
+.env
+docker/data/*
+!docker/data/.gitkeep
