@@ -5,6 +5,7 @@ namespace Pucene\Component\Pucene\Dbal\Interpreter\Element;
 use Pucene\Component\Pucene\Compiler\Element\BoolElement;
 use Pucene\Component\Pucene\Compiler\Element\CompositeElement;
 use Pucene\Component\Pucene\Compiler\ElementInterface;
+use Pucene\Component\Pucene\Dbal\Interpreter\InterpreterInterface;
 use Pucene\Component\Pucene\Dbal\Interpreter\PuceneQueryBuilder;
 use Pucene\Component\Pucene\Dbal\ScoringAlgorithm;
 
@@ -13,16 +14,17 @@ class CompositeInterpreter extends BoolInterpreter
     /**
      * @param CompositeElement $element
      */
-    public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder)
+    public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder, string $index)
     {
         $expr = $queryBuilder->expr();
         if (0 === count($element->getElements())) {
             return 1;
         } elseif (1 === count($element->getElements())) {
             $innerElement = $element->getElements()[0];
+            /** @var InterpreterInterface $interpreter */
             $interpreter = $this->interpreterPool->get(get_class($innerElement));
 
-            return $interpreter->interpret($innerElement, $queryBuilder);
+            return $interpreter->interpret($innerElement, $queryBuilder, $index);
         }
 
         $expression = $expr->orX();
@@ -33,9 +35,7 @@ class CompositeInterpreter extends BoolInterpreter
         // TODO optimization (e.g. or terms can use the same join)
 
         foreach ($element->getElements() as $innerElement) {
-            $interpreter = $this->interpreterPool->get(get_class($innerElement));
-
-            $expression->add($interpreter->interpret($innerElement, $queryBuilder));
+            $expression->add($this->getInterpreter($innerElement)->interpret($innerElement, $queryBuilder, $index));
         }
 
         return $expression;
@@ -44,8 +44,21 @@ class CompositeInterpreter extends BoolInterpreter
     /**
      * @param CompositeElement $element
      */
-    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring)
+    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, string $index)
     {
-        return parent::scoring(new BoolElement($element, $element->getElements(), $element->getBoost()), $scoring);
+        if (!$element->isScoring()) {
+            return $scoring->getQueryBuilder()->math()->value(1);
+        }
+
+        return parent::scoring(
+            new BoolElement($element, $element->getElements(), $element->getBoost()),
+            $scoring,
+            $index
+        );
+    }
+
+    private function getInterpreter(ElementInterface $element): InterpreterInterface
+    {
+        return $this->interpreterPool->get(get_class($element));
     }
 }

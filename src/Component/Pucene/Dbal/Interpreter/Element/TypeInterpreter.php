@@ -14,12 +14,12 @@ class TypeInterpreter implements InterpreterInterface
     /**
      * @param TypeElement $element
      */
-    public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder)
+    public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder, string $index)
     {
         return $queryBuilder->expr()->eq('document.type', "'" . $element->getType() . "'");
     }
 
-    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring)
+    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, string $index)
     {
         return (new MathExpressionBuilder())->value(1);
     }

@@ -31,3 +31,14 @@ test:
                 my_type:
                     properties:
                         title: ~
+                        rawTitle:
+                            type: keyword
+                        description: ~
+                        pageId:
+                            type: integer
+                        modified:
+                            type: date
+                        seed:
+                            type: float
+                        enabled:
+                            type: boolean

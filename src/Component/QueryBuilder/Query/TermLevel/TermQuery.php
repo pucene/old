@@ -14,11 +14,11 @@ class TermQuery implements QueryInterface
     private $field;
 
     /**
-     * @var string
+     * @var mixed
      */
     private $term;
 
-    public function __construct(string $field, string $term)
+    public function __construct(string $field, $term)
     {
         $this->field = $field;
         $this->term = $term;
@@ -36,7 +36,10 @@ class TermQuery implements QueryInterface
         return $this;
     }
 
-    public function getTerm(): string
+    /**
+     * @return mixed
+     */
+    public function getTerm()
     {
         return $this->term;
     }

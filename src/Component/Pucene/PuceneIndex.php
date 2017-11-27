@@ -2,8 +2,8 @@
 
 namespace Pucene\Component\Pucene;
 
-use Pucene\Component\Analysis\AnalyzerInterface;
 use Pucene\Component\Client\IndexInterface;
+use Pucene\Component\Pucene\Mapping\Mapping;
 use Pucene\Component\Pucene\Model\Analysis;
 use Pucene\Component\Pucene\Model\Document;
 use Pucene\Component\Pucene\Model\Field;
@@ -23,15 +23,15 @@ class PuceneIndex implements IndexInterface
     private $storage;
 
     /**
-     * @var AnalyzerInterface
+     * @var Mapping
      */
-    private $analyzer;
+    private $mapping;
 
-    public function __construct(string $name, StorageInterface $storage, AnalyzerInterface $analyzer)
+    public function __construct(string $name, StorageInterface $storage, Mapping $mapping)
     {
         $this->name = $name;
         $this->storage = $storage;
-        $this->analyzer = $analyzer;
+        $this->mapping = $mapping;
     }
 
     public function index(array $document, string $type, ?string $id = null): array
@@ -42,7 +42,15 @@ class PuceneIndex implements IndexInterface
 
         $fields = [];
         foreach ($document as $fieldName => $fieldContent) {
-            $fields[$fieldName] = new Field($fieldName, $this->analyzer->analyze($fieldContent));
+            $fieldType = $this->mapping->getTypeForField($this->name, $fieldName);
+            if (!$fieldType) {
+                continue;
+            }
+
+            $analyzer = $this->mapping->getAnalyzerForField($this->name, $fieldType);
+            $tokens = $analyzer ? $analyzer->analyze($fieldContent) : [];
+
+            $fields[$fieldName] = new Field($fieldName, $tokens, $fieldContent, $fieldType);
         }
 
         $id = $id ?: Uuid::uuid4()->toString();

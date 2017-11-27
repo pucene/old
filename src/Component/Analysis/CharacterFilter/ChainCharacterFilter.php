@@ -17,9 +17,6 @@ class ChainCharacterFilter implements CharacterFilterInterface
         $this->filters = $filters;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function filter(string $input): string
     {
         foreach ($this->filters as $filter) {

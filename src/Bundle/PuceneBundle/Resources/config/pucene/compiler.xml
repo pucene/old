@@ -20,6 +20,11 @@
             <tag name="pucene.pucene.visitor" query="Pucene\Component\QueryBuilder\Query\TermLevel\TermQuery"/>
         </service>
 
+        <service id="pucene.pucene.visitor.range"
+                 class="Pucene\Component\Pucene\Compiler\Visitor\TermLevel\RangeVisitor">
+            <tag name="pucene.pucene.visitor" query="Pucene\Component\QueryBuilder\Query\TermLevel\RangeQuery"/>
+        </service>
+
         <service id="pucene.pucene.visitor.ids" class="Pucene\Component\Pucene\Compiler\Visitor\TermLevel\IdsVisitor">
             <tag name="pucene.pucene.visitor" query="Pucene\Component\QueryBuilder\Query\TermLevel\IdsQuery"/>
         </service>

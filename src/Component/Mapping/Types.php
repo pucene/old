@@ -25,6 +25,7 @@ class Types
 
     // Date types
     const DATE = 'date';
+    // TODO date formats
 
     // Boolean types
     const BOOLEAN = 'boolean';

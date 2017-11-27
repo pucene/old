@@ -26,7 +26,7 @@ before_install:
 
 install:
   - travis_retry composer update
-  - wget -q --waitretry=2 --retry-connrefused -T 10 -O - http://127.0.0.1:19200
+  - wget -q --waitretry=2 --retry-connrefused -T 20 -O - http://127.0.0.1:19200
   - ./tests/bin/console elasticsearch:indices:create -e prod
   - ./tests/bin/console test:import:json my_index ./tests/app/data.json --adapter elasticsearch -e prod
   - ./tests/bin/console pucene:indices:create -e prod
@@ -36,7 +36,6 @@ script:
   - ./vendor/bin/phpunit $CODE_COVERAGE
 
 after_script:
-  - cat elasticsearch.log
   - if [[ -n $CODE_COVERAGE ]]; then wget https://scrutinizer-ci.com/ocular.phar ; fi
   - if [[ -n $CODE_COVERAGE ]]; then php ocular.phar code-coverage:upload --format=php-clover coverage.clover ; fi
 

@@ -3,14 +3,15 @@
 namespace Pucene\Component\Pucene\Dbal\Interpreter\Element;
 
 use Pucene\Component\Mapping\Types;
-use Pucene\Component\Pucene\Compiler\Element\TermElement;
+use Pucene\Component\Pucene\Compiler\Element\BoolElement;
+use Pucene\Component\Pucene\Compiler\Element\RangeElement;
 use Pucene\Component\Pucene\Compiler\ElementInterface;
 use Pucene\Component\Pucene\Dbal\Interpreter\InterpreterInterface;
 use Pucene\Component\Pucene\Dbal\Interpreter\PuceneQueryBuilder;
 use Pucene\Component\Pucene\Dbal\ScoringAlgorithm;
 use Pucene\Component\Pucene\Mapping\Mapping;
 
-class TermInterpreter implements InterpreterInterface
+class RangeInterpreter implements InterpreterInterface
 {
     /**
      * @var Mapping
@@ -23,32 +24,30 @@ class TermInterpreter implements InterpreterInterface
     }
 
     /**
-     * @param TermElement $element
+     * @param RangeElement $element
      */
     public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder, string $index)
     {
         $expr = $queryBuilder->expr();
-
         $type = $this->mapping->getTypeForField($index, $element->getField());
-        if (Types::TEXT === $type) {
-            return $expr->isNotNull($queryBuilder->joinTerm($element->getField(), $element->getTerm()) . '.id');
+        $alias = $queryBuilder->joinValue($element->getField(), $type);
+        $value = $element->getValue();
+
+        if (Types::DATE === $type) {
+            $date = new \DateTime($value);
+            $value = $date ? $date->format('Y-m-d H:i:s') : null;
+        } elseif (Types::BOOLEAN === $type) {
+            $value = $value ? 1 : 0;
         }
 
-        $alias = $queryBuilder->joinValue($element->getField(), $type);
-
-        return $expr->eq($alias . '.value', "'" . $element->getTerm() . "'");
+        return $expr->{$element->getOperator()}($alias . '.value', "'" . $value . "'");
     }
 
     /**
-     * @param TermElement $element
+     * @param BoolElement $element
      */
     public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, string $index)
     {
-        $type = $this->mapping->getTypeForField($index, $element->getField());
-        if (Types::TEXT !== $type) {
-            return $scoring->getQueryBuilder()->math()->value(1);
-        }
-
-        return $scoring->scoreTerm($element, $index);
+        return $scoring->getQueryBuilder()->math()->value(1);
     }
 }

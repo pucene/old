@@ -19,6 +19,11 @@ class CompositeElement extends BaseElement
      */
     private $elements = [];
 
+    /**
+     * @var bool
+     */
+    private $scoring = true;
+
     public function __construct(string $operator, array $elements = [], float $boost = 1)
     {
         parent::__construct($boost);
@@ -38,5 +43,15 @@ class CompositeElement extends BaseElement
     public function getElements(): array
     {
         return $this->elements;
+    }
+
+    public function disableScoring()
+    {
+        $this->scoring = false;
+    }
+
+    public function isScoring(): bool
+    {
+        return $this->scoring;
     }
 }
