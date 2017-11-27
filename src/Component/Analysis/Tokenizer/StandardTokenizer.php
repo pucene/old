@@ -8,9 +8,6 @@ class StandardTokenizer implements TokenizerInterface
 {
     private static $accentedCharacters = 'àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ';
 
-    /**
-     * {@inheritdoc}
-     */
     public function tokenize(string $input): array
     {
         $tokens = [];

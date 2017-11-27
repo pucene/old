@@ -25,24 +25,24 @@ class NotInterpreter implements InterpreterInterface
     /**
      * @param NotElement $element
      */
-    public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder)
+    public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder, string $index)
     {
         $interpreter = $this->getInterpreter($element->getElement());
 
-        return 'NOT (' . $interpreter->interpret($element->getElement(), $queryBuilder) . ')';
+        return 'NOT (' . $interpreter->interpret($element->getElement(), $queryBuilder, $index) . ')';
     }
 
     /**
      * @param NotElement $element
      */
-    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring)
+    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, string $index)
     {
         $math = new MathExpressionBuilder();
         $interpreter = $this->getInterpreter($element->getElement());
 
         return $math->multiply(
             $math->value($element->getBoost()),
-            $interpreter->scoring($element->getElement(), $scoring)
+            $interpreter->scoring($element->getElement(), $scoring, $index)
         );
     }
 

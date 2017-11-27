@@ -58,9 +58,9 @@ class DownloadWikidataCommand extends ContainerAwareCommand
                 'rawTitle' => $title,
                 'description' => $description,
                 'modified' => $response['modified'],
-                'pageId' => (int)$response['pageid'],
+                'pageId' => (int) $response['pageid'],
                 'seed' => rand(0, 100) / 100.0,
-                'enabled' => rand(0, 1) === 1 ? true : false,
+                'enabled' => 1 === rand(0, 1) ? true : false,
             ];
 
             $progressBar->advance();

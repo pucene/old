@@ -13,7 +13,7 @@ class TermInterpreter implements InterpreterInterface
     /**
      * @param TermElement $element
      */
-    public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder)
+    public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder, string $index)
     {
         $expr = $queryBuilder->expr();
 
@@ -23,8 +23,8 @@ class TermInterpreter implements InterpreterInterface
     /**
      * @param TermElement $element
      */
-    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring)
+    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, string $index)
     {
-        return $scoring->scoreTerm($element);
+        return $scoring->scoreTerm($element, $index);
     }
 }

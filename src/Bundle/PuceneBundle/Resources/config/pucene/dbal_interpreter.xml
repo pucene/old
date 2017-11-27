@@ -52,5 +52,12 @@
 
             <tag name="pucene.pucene.interpreter" element="Pucene\Component\Pucene\Compiler\Element\BoolElement"/>
         </service>
+
+        <service id="pucene.pucene.interpreter.range"
+                 class="Pucene\Component\Pucene\Dbal\Interpreter\Element\RangeInterpreter">
+            <argument type="service" id="pucene.pucene.mapping"/>
+
+            <tag name="pucene.pucene.interpreter" element="Pucene\Component\Pucene\Compiler\Element\RangeElement"/>
+        </service>
     </services>
 </container>

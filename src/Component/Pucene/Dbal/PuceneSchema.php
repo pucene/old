@@ -211,9 +211,9 @@ class PuceneSchema
             return 'float';
         } elseif (in_array($type, Types::getIntegerTypes())) {
             return 'bigint';
-        } elseif ($type === Types::BOOLEAN) {
+        } elseif (Types::BOOLEAN === $type) {
             return 'boolean';
-        } elseif ($type === Types::DATE) {
+        } elseif (Types::DATE === $type) {
             return 'datetime';
         }
 

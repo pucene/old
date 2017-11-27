@@ -42,7 +42,11 @@ class PuceneIndex implements IndexInterface
 
         $fields = [];
         foreach ($document as $fieldName => $fieldContent) {
-            $fieldType = $this->mapping->getTypeForField($this->name, $type, $fieldName, $fieldContent);
+            $fieldType = $this->mapping->getTypeForField($this->name, $fieldName);
+            if (!$fieldType) {
+                continue;
+            }
+
             $analyzer = $this->mapping->getAnalyzerForField($this->name, $fieldType);
             $tokens = $analyzer ? $analyzer->analyze($fieldContent) : [];
 

@@ -57,7 +57,26 @@ class PuceneQueryBuilder extends QueryBuilder
         return $this->joins[] = $termName;
     }
 
-    private function escape($name): string
+    public function joinValue(string $field, string $type)
+    {
+        $valueName = $this->escape('value' . ucfirst($field) . ucfirst($type));
+        if (in_array($valueName, $this->joins)) {
+            return $valueName;
+        }
+
+        $condition = sprintf(
+            '%1$s.document_id = %2$s.id AND %1$s.field_name = \'%3$s\'',
+            $valueName,
+            $this->documentAlias,
+            $field
+        );
+
+        $this->leftJoin($this->documentAlias, $this->schema->getFieldTableName($type), $valueName, $condition);
+
+        return $this->joins[] = $valueName;
+    }
+
+    private function escape(string $name): string
     {
         return trim(preg_replace('/\W/', '_', $name), '_');
     }

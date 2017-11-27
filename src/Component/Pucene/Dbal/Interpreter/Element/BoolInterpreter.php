@@ -27,23 +27,24 @@ class BoolInterpreter implements InterpreterInterface
     /**
      * @param BoolElement $element
      */
-    public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder)
+    public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder, string $index)
     {
-        return $this->getInterpreter($element->getElement())->interpret($element->getElement(), $queryBuilder);
+        return $this->getInterpreter($element->getElement())->interpret($element->getElement(), $queryBuilder, $index);
     }
 
     /**
      * @param BoolElement $element
      */
-    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring)
+    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, string $index)
     {
         if (0 === count($element->getScoringElements())) {
             return 0;
         } elseif (1 === count($element->getScoringElements())) {
             $innerElement = $element->getScoringElements()[0];
+            /** @var InterpreterInterface $interpreter */
             $interpreter = $this->interpreterPool->get(get_class($innerElement));
 
-            return $interpreter->scoring($innerElement, $scoring);
+            return $interpreter->scoring($innerElement, $scoring, $index);
         }
 
         $math = new MathExpressionBuilder();
@@ -53,7 +54,7 @@ class BoolInterpreter implements InterpreterInterface
             /** @var InterpreterInterface $interpreter */
             $interpreter = $this->interpreterPool->get(get_class($innerElement));
 
-            $expression->add($interpreter->scoring($innerElement, $scoring));
+            $expression->add($interpreter->scoring($innerElement, $scoring, $index));
         }
 
         return $expression;

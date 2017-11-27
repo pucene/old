@@ -8,6 +8,11 @@
             <tag name="pucene.elasticsearch.visitor"
                  query="Pucene\Component\QueryBuilder\Query\TermLevel\TermQuery"/>
         </service>
+        <service id="pucene.elasticsearch.visitor.range"
+                 class="Pucene\Component\Elasticsearch\Compiler\Visitor\TermLevel\RangeVisitor">
+            <tag name="pucene.elasticsearch.visitor"
+                 query="Pucene\Component\QueryBuilder\Query\TermLevel\RangeQuery"/>
+        </service>
         <service id="pucene.elasticsearch.visitor.match_all"
                  class="Pucene\Component\Elasticsearch\Compiler\Visitor\MatchAllVisitor">
             <tag name="pucene.elasticsearch.visitor"

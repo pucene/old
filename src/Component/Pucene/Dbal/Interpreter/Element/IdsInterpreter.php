@@ -14,7 +14,7 @@ class IdsInterpreter implements InterpreterInterface
     /**
      * @param IdsElement $element
      */
-    public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder)
+    public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder, string $index)
     {
         $expr = $queryBuilder->expr();
 
@@ -29,7 +29,7 @@ class IdsInterpreter implements InterpreterInterface
         );
     }
 
-    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring)
+    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, string $index)
     {
         return (new MathExpressionBuilder())->value(1);
     }

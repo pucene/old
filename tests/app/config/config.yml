@@ -34,5 +34,11 @@ test:
                         rawTitle:
                             type: keyword
                         description: ~
-                        pageId: ~
-                        modified: ~
+                        pageId:
+                            type: integer
+                        modified:
+                            type: date
+                        seed:
+                            type: float
+                        enabled:
+                            type: boolean

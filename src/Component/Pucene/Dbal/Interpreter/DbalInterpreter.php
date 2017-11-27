@@ -40,13 +40,13 @@ class DbalInterpreter
 
         /** @var InterpreterInterface $interpreter */
         $interpreter = $this->interpreterPool->get(get_class($element));
-        $expression = $interpreter->interpret($element, $queryBuilder);
+        $expression = $interpreter->interpret($element, $queryBuilder, $storage->getName());
         if ($expression) {
             $queryBuilder->andWhere($expression);
         }
 
         $scoringAlgorithm = new ScoringAlgorithm($queryBuilder, $schema, $this->interpreterPool);
-        $expression = $interpreter->scoring($element, $scoringAlgorithm);
+        $expression = $interpreter->scoring($element, $scoringAlgorithm, $storage->getName());
 
         if ($expression) {
             $queryBuilder->addSelect('(' . $expression . ') as score')->orderBy('score', 'desc');

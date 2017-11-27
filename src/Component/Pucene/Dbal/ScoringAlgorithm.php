@@ -51,10 +51,10 @@ class ScoringAlgorithm
         $this->math = new MathExpressionBuilder();
     }
 
-    public function scoreTerm(TermElement $element): ExpressionInterface
+    public function scoreTerm(TermElement $element, string $index): ExpressionInterface
     {
         $avgFieldLength = $this->averageFieldLength($element->getField());
-        $idf = $this->inverseDocumentFrequency($element);
+        $idf = $this->inverseDocumentFrequency($element, $index);
 
         $alias = $this->queryBuilder->joinTerm($element->getField(), $element->getTerm());
 
@@ -87,9 +87,9 @@ class ScoringAlgorithm
         return new IfCondition(sprintf('%s.term=\'%s\'', $alias, $element->getTerm()), $expression, 0);
     }
 
-    private function inverseDocumentFrequency(ElementInterface $element): float
+    private function inverseDocumentFrequency(ElementInterface $element, string $index): float
     {
-        return $this->calculateInverseDocumentFrequency($this->getDocCountForElement($element));
+        return $this->calculateInverseDocumentFrequency($this->getDocCountForElement($element, $index));
     }
 
     /**
@@ -115,13 +115,13 @@ class ScoringAlgorithm
         return (float) $queryBuilder->execute()->fetchColumn();
     }
 
-    private function getDocCountForElement(ElementInterface $element): int
+    private function getDocCountForElement(ElementInterface $element, string $index): int
     {
         $queryBuilder = (new PuceneQueryBuilder($this->queryBuilder->getConnection(), $this->schema))
             ->select('count(document.id) as count')
             ->from($this->schema->getDocumentsTableName(), 'document');
 
-        $expression = $this->interpreterPool->get(get_class($element))->interpret($element, $queryBuilder);
+        $expression = $this->interpreterPool->get(get_class($element))->interpret($element, $queryBuilder, $index);
         if ($expression) {
             $queryBuilder->where($expression);
         }

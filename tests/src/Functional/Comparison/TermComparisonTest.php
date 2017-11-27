@@ -14,4 +14,24 @@ class TermComparisonTest extends ComparisonTestCase
     {
         $this->assertSearch(new Search(new TermQuery('title', 'museum')));
     }
+
+    public function testSearchTermKeyword()
+    {
+        $this->assertSearch(new Search(new TermQuery('rawTitle', 'George Washington')));
+    }
+
+    public function testSearchTermBoolean()
+    {
+        $this->assertSearch(new Search(new TermQuery('enabled', true)));
+    }
+
+    public function testSearchTermFloat()
+    {
+        $this->assertSearch(new Search(new TermQuery('seed', 0.99)));
+    }
+
+    public function testSearchTermInteger()
+    {
+        $this->assertSearch(new Search(new TermQuery('pageId', 315)));
+    }
 }

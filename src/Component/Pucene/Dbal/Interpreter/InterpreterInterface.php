@@ -7,7 +7,7 @@ use Pucene\Component\Pucene\Dbal\ScoringAlgorithm;
 
 interface InterpreterInterface
 {
-    public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder);
+    public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder, string $index);
 
-    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring);
+    public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, string $index);
 }
