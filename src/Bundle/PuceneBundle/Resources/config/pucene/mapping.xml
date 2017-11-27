@@ -6,7 +6,6 @@
         <service id="pucene.pucene.mapping" class="Pucene\Component\Pucene\Mapping\Mapping">
             <argument>%pucene.indices%</argument>
             <argument type="service" id="pucene.pucene.analysis.standard"/>
-            <argument type="service" id="pucene.pucene.analysis.keyword"/>
         </service>
     </services>
 </container>

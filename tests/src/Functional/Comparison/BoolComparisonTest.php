@@ -110,4 +110,40 @@ class BoolComparisonTest extends ComparisonTestCase
 
         $this->assertSearch(new Search($query));
     }
+
+    public function testShouldTermQueryFloat()
+    {
+        $query = new BoolQuery();
+        $query->must(new TermQuery('title', 'museum'));
+        $query->must(new TermQuery('seed', 0.19));
+
+        $this->assertSearch(new Search($query));
+    }
+
+    public function testShouldTermQueryKeyword()
+    {
+        $query = new BoolQuery();
+        $query->must(new TermQuery('title', 'museum'));
+        $query->must(new TermQuery('rawTitle', 'George Washington'));
+
+        $this->assertSearch(new Search($query));
+    }
+
+    public function testShouldTermQueryInteger()
+    {
+        $query = new BoolQuery();
+        $query->must(new TermQuery('title', 'museum'));
+        $query->must(new TermQuery('pageId', 315));
+
+        $this->assertSearch(new Search($query));
+    }
+
+    public function testShouldTermQueryDate()
+    {
+        $query = new BoolQuery();
+        $query->must(new TermQuery('title', 'museum'));
+        $query->must(new TermQuery('modified', '2017-11-21T09:39:53Z'));
+
+        $this->assertSearch(new Search($query));
+    }
 }

@@ -15,26 +15,17 @@ class Mapping
     /**
      * @var AnalyzerInterface
      */
-    private $textAnalyzer;
-
-    /**
-     * @var AnalyzerInterface
-     */
-    private $keywordAnalyzer;
+    private $analyzer;
 
     /**
      * @var array
      */
     private $fields;
 
-    public function __construct(
-        array $indexMapping,
-        AnalyzerInterface $textAnalyzer,
-        AnalyzerInterface $keywordAnalyzer
-    ) {
+    public function __construct(array $indexMapping, AnalyzerInterface $analyzer)
+    {
         $this->indexMapping = $indexMapping;
-        $this->textAnalyzer = $textAnalyzer;
-        $this->keywordAnalyzer = $keywordAnalyzer;
+        $this->analyzer = $analyzer;
 
         $this->fields = [];
         foreach ($indexMapping as $name => $index) {
@@ -59,11 +50,7 @@ class Mapping
     public function getAnalyzerForField(string $field, string $type): ?AnalyzerInterface
     {
         if (Types::TEXT === $type) {
-            return $this->textAnalyzer;
-        }
-
-        if (Types::KEYWORD === $type) {
-            return $this->keywordAnalyzer;
+            return $this->analyzer;
         }
 
         return null;

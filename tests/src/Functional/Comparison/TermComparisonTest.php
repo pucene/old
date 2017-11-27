@@ -22,16 +22,21 @@ class TermComparisonTest extends ComparisonTestCase
 
     public function testSearchTermBoolean()
     {
-        $this->assertSearch(new Search(new TermQuery('enabled', true)));
+        $this->assertSearch((new Search(new TermQuery('enabled', true)))->setSize(5000));
     }
 
     public function testSearchTermFloat()
     {
-        $this->assertSearch(new Search(new TermQuery('seed', 0.99)));
+        $this->assertSearch((new Search(new TermQuery('seed', 0.99)))->setSize(100));
     }
 
     public function testSearchTermInteger()
     {
         $this->assertSearch(new Search(new TermQuery('pageId', 315)));
+    }
+
+    public function testSearchTermDate()
+    {
+        $this->assertSearch(new Search(new TermQuery('modified', '2017-11-21T09:39:53Z')));
     }
 }
