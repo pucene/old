@@ -20,7 +20,7 @@ cache:
 before_install:
   - chmod a+w -R docker/data
   - cp .env.dist .env
-  - docker-compose up 1> docker-compose.log 2> docker-compose.log &
+  - docker-compose up -d
   - if [[ -z $CODE_COVERAGE ]]; then phpenv config-rm xdebug.ini ; fi
   - composer self-update
 
@@ -36,7 +36,6 @@ script:
   - ./vendor/bin/phpunit $CODE_COVERAGE
 
 after_script:
-  - cat docker-compose.log
   - if [[ -n $CODE_COVERAGE ]]; then wget https://scrutinizer-ci.com/ocular.phar ; fi
   - if [[ -n $CODE_COVERAGE ]]; then php ocular.phar code-coverage:upload --format=php-clover coverage.clover ; fi
 
