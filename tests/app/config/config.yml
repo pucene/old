@@ -34,6 +34,7 @@ test:
                         rawTitle:
                             type: keyword
                         description: ~
+                        aliases: ~
                         pageId:
                             type: integer
                         modified:

@@ -47,8 +47,7 @@ class PuceneIndex implements IndexInterface
                 continue;
             }
 
-            $analyzer = $this->mapping->getAnalyzerForField($this->name, $fieldType);
-            $tokens = $analyzer ? $analyzer->analyze($fieldContent) : [];
+            $tokens = $this->analyze($fieldName, $fieldContent);
 
             $fields[$fieldName] = new Field($fieldName, $tokens, $fieldContent, $fieldType);
         }
@@ -95,5 +94,24 @@ class PuceneIndex implements IndexInterface
     public function get(string $type, string $id): array
     {
         return $this->storage->get($type, $id);
+    }
+
+    private function analyze(string $fieldName, $fieldContent)
+    {
+        $analyzer = $this->mapping->getAnalyzerForField($this->name, $fieldName);
+        if (!$analyzer) {
+            return [];
+        }
+
+        if (!is_array($fieldContent)) {
+            $fieldContent = [$fieldContent];
+        }
+
+        $tokens = [];
+        foreach ($fieldContent as $content) {
+            $tokens = array_merge($tokens, $analyzer->analyze($content));
+        }
+
+        return $tokens;
     }
 }
