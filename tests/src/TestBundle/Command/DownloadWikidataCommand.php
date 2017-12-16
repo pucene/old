@@ -2,7 +2,12 @@
 
 namespace Pucene\Tests\TestBundle\Command;
 
+use Doctrine\Common\Cache\FilesystemCache;
 use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
+use Kevinrob\GuzzleCache\CacheMiddleware;
+use Kevinrob\GuzzleCache\Storage\DoctrineCacheStorage;
+use Kevinrob\GuzzleCache\Strategy\GreedyCacheStrategy;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -14,19 +19,28 @@ class DownloadWikidataCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
-        $this->setName('test:download:wikidata')->addArgument('file', InputArgument::REQUIRED)->addOption(
-            'adapter',
-            null,
-            InputOption::VALUE_REQUIRED,
-            '',
-            'pucene'
-        );
+        $this->setName('test:download:wikidata')
+            ->addArgument('file', InputArgument::REQUIRED)
+            ->addOption('adapter', null, InputOption::VALUE_REQUIRED, '', 'pucene');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $content = json_decode(file_get_contents($input->getArgument('file')), true);
-        $client = new Client(['base_uri' => 'https://www.wikidata.org']);
+
+        $stack = HandlerStack::create();
+        $stack->push(
+            new CacheMiddleware(
+                new GreedyCacheStrategy(
+                    new DoctrineCacheStorage(
+                        new FilesystemCache(__DIR__ . '/../../../var/wikidata')
+                    ),
+                    31104000
+                )
+            ),
+            'cache'
+        );
+        $client = new Client(['base_uri' => 'https://www.wikidata.org', 'stack' => $stack]);
 
         $progressBar = new ProgressBar($output, count($content));
         $progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%');
@@ -53,10 +67,25 @@ class DownloadWikidataCommand extends ContainerAwareCommand
                 $description = $response['descriptions']['en']['value'];
             }
 
+            $aliases = [];
+            if (array_key_exists('en', $response['aliases'])) {
+                $aliases = array_values(
+                    array_filter(
+                        array_map(
+                            function (array $item) {
+                                return trim(preg_replace('/[[:^print:]]/', '', $item['value']));
+                            },
+                            $response['aliases']['en']
+                        )
+                    )
+                );
+            }
+
             $newData[$response['id']] = [
                 'title' => $title,
                 'rawTitle' => $title,
                 'description' => $description,
+                'aliases' => $aliases,
                 'modified' => $response['modified'],
                 'pageId' => (int) $response['pageid'],
                 'seed' => rand(0, 100) / 100.0,
@@ -66,8 +95,15 @@ class DownloadWikidataCommand extends ContainerAwareCommand
             $progressBar->advance();
         }
 
-        file_put_contents($input->getArgument('file'), json_encode($newData));
+        file_put_contents($input->getArgument('file'), json_encode($newData, JSON_PRETTY_PRINT));
 
         $progressBar->finish();
+    }
+
+    public function hasEmojis($string)
+    {
+        preg_match('/[\x{1F600}-\x{1F64F}]/u', $string, $matches_emo);
+
+        return !empty($matches_emo[0]) ? true : false;
     }
 }

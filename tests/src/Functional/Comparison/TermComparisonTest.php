@@ -39,4 +39,9 @@ class TermComparisonTest extends ComparisonTestCase
     {
         $this->assertSearch(new Search(new TermQuery('modified', '2017-11-21T09:39:53Z')));
     }
+
+    public function testSearchTermArray()
+    {
+        $this->assertSearch(new Search(new TermQuery('aliases', 'estonia')));
+    }
 }

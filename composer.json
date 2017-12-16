@@ -24,7 +24,8 @@
 
         "elasticsearch/elasticsearch": "^6.0",
         "ramsey/uuid": "^3.5",
-        "doctrine/dbal": "^2.5"
+        "doctrine/dbal": "^2.5",
+        "kevinrob/guzzle-cache-middleware": "^3.2"
     },
     "require-dev": {
         "doctrine/doctrine-bundle": "^1.6",

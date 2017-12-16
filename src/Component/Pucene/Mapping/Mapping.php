@@ -47,8 +47,9 @@ class Mapping
         return $this->fields[$index][$field]['type'];
     }
 
-    public function getAnalyzerForField(string $field, string $type): ?AnalyzerInterface
+    public function getAnalyzerForField(string $index, string $field): ?AnalyzerInterface
     {
+        $type = $this->getTypeForField($index, $field);
         if (Types::TEXT === $type) {
             return $this->analyzer;
         }

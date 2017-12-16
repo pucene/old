@@ -78,27 +78,33 @@ class DocumentPersister
     protected function insertValue(string $documentId, Field $field): void
     {
         $value = $field->getValue();
-        if (Types::DATE === $field->getType()) {
-            $date = new \DateTime($value);
-            $value = $date ? $date->format('Y-m-d H:i:s') : null;
-        } elseif (Types::BOOLEAN === $field->getType()) {
-            $value = $value ? 1 : 0;
+        if (!is_array($value)) {
+            $value = [$value];
         }
 
-        $this->connection->insert(
-            $this->schema->getFieldTableName($field->getType()),
-            [
-                'document_id' => $documentId,
-                'field_name' => $field->getName(),
-                'value' => $value,
-            ],
-            [
-                \PDO::PARAM_STR,
-                \PDO::PARAM_STR,
-                \PDO::PARAM_STR,
-                $this->schema->getColumnType($field->getType()),
-            ]
-        );
+        foreach ($value as $item) {
+            if (Types::DATE === $field->getType()) {
+                $date = new \DateTime($item);
+                $item = $date ? $date->format('Y-m-d H:i:s') : null;
+            } elseif (Types::BOOLEAN === $field->getType()) {
+                $item = $item ? 1 : 0;
+            }
+
+            $this->connection->insert(
+                $this->schema->getFieldTableName($field->getType()),
+                [
+                    'document_id' => $documentId,
+                    'field_name' => $field->getName(),
+                    'value' => $item,
+                ],
+                [
+                    \PDO::PARAM_STR,
+                    \PDO::PARAM_STR,
+                    \PDO::PARAM_STR,
+                    $this->schema->getColumnType($field->getType()),
+                ]
+            );
+        }
     }
 
     protected function insertTokens(string $documentId, Field $field): void
