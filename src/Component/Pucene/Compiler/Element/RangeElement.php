@@ -5,8 +5,11 @@ namespace Pucene\Component\Pucene\Compiler\Element;
 class RangeElement extends BaseElement
 {
     const OPERATOR_GTE = 'gte';
+
     const OPERATOR_GT = 'gt';
+
     const OPERATOR_LTE = 'lte';
+
     const OPERATOR_LT = 'lt';
 
     /**

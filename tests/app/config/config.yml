@@ -19,6 +19,13 @@ doctrine:
         password: "%database_password%"
         charset:  UTF8
 
+monolog:
+    handlers:
+        file_log:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%.log"
+            level: debug
+
 test:
     adapters:
         pucene: ~

@@ -11,20 +11,29 @@ class Types
 {
     // String Types
     const TEXT = 'text';
+
     const KEYWORD = 'keyword';
 
     // Numeric Types
     const LONG = 'long';
+
     const INTEGER = 'integer';
+
     const SHORT = 'short';
+
     const BYTE = 'byte';
+
     const DOUBLE = 'double';
+
     const FLOAT = 'float';
+
     const HALF_FLOAT = 'half_float';
+
     const SCALED_FLOAT = 'scaled_float';
 
     // Date types
     const DATE = 'date';
+
     // TODO date formats
 
     // Boolean types
