@@ -5,7 +5,9 @@ namespace Pucene\Component\Pucene\Dbal\Interpreter;
 class Fuzzy
 {
     const MODE_1 = 1;
+
     const MODE_2 = 2;
+
     const MODE_AUTO = 'auto';
 
     /**

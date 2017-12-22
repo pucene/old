@@ -15,6 +15,7 @@ use Pucene\Component\Symfony\Pool\PoolInterface;
 class ScoringAlgorithm
 {
     const K1 = 1.2;
+
     const B = 0.75;
 
     /**

@@ -18,6 +18,7 @@ class ElasticsearchClient implements ClientInterface
      * @var Compiler
      */
     private $compiler;
+
     /**
      * @var array
      */
