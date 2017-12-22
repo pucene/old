@@ -31,9 +31,7 @@ class Mapping
         foreach ($indexMapping as $name => $index) {
             $this->fields[$name] = [];
             foreach ($index['mappings'] as $type) {
-                foreach ($type['properties'] as $fieldName => $field) {
-                    $this->fields[$name][$fieldName] = $field;
-                }
+                $this->fields[$name] = $this->prepareFields($type['properties']);
             }
         }
     }
@@ -55,5 +53,22 @@ class Mapping
         }
 
         return null;
+    }
+
+    private function prepareFields(array $properties, string $prefix = '')
+    {
+        $result = [];
+        foreach ($properties as $key => $field) {
+            $fieldName = $prefix . $key;
+            $result[$fieldName] = $field;
+            unset($result[$fieldName]['properties']);
+
+            if (0 < count($field['properties'])) {
+                $result[$fieldName]['type'] = Types::OBJECT;
+                $result = array_merge($result, $this->prepareFields($field['properties'], $fieldName . '.'));
+            }
+        }
+
+        return $result;
     }
 }

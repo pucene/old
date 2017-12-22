@@ -50,3 +50,12 @@ test:
                             type: float
                         enabled:
                             type: boolean
+                        claims:
+                            properties:
+                                id:
+                                    type: keyword
+                                mainsnak:
+                                    properties:
+                                        property:
+                                            type: keyword
+                                        datatype: ~

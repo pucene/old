@@ -44,4 +44,10 @@ class TermComparisonTest extends ComparisonTestCase
     {
         $this->assertSearch(new Search(new TermQuery('aliases', 'estonia')));
     }
+
+    public function testSearchTermEmbeddedKeyword()
+    {
+        $this->assertSearch(new Search(new TermQuery('claims.id', 'Q22$9F3A365A-26FC-4222-BAD9-FC1BB4BA279B')));
+        $this->assertSearch(new Search(new TermQuery('claims.mainsnak.datatype', 'external-id')));
+    }
 }
