@@ -33,7 +33,8 @@
         "jeroen/json-dump-reader": "^1.4",
         "phpunit/phpunit": "^6.0",
         "symfony/dotenv": "^3.0",
-        "guzzlehttp/guzzle": "^6.3"
+        "guzzlehttp/guzzle": "^6.3",
+        "symfony/monolog-bundle": "^3.1"
     },
     "autoload": {
         "psr-4": {
