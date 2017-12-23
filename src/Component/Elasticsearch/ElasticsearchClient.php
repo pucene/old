@@ -40,6 +40,7 @@ class ElasticsearchClient implements ClientInterface
     {
         $parameters['settings']['index'] = $this->adapterConfig['settings'];
         $parameters = $this->filterArray($parameters);
+        $parameters['mappings'] = $this->prepareTypes($parameters['mappings']);
         $response = $this->client->indices()->create(['index' => $name, 'body' => $parameters]);
 
         if (!$response['acknowledged']) {
@@ -63,5 +64,32 @@ class ElasticsearchClient implements ClientInterface
         }
 
         return array_filter($input);
+    }
+
+    private function prepareTypes(array $types)
+    {
+        $result = [];
+        foreach ($types as $name => $type) {
+            $result[$name] = $type;
+            $result[$name]['properties'] = $this->prepareProperties($type['properties']);
+        }
+
+        return $result;
+    }
+
+    private function prepareProperties(array $parameters)
+    {
+        $result = [];
+        foreach ($parameters as $name => $parameter) {
+            $result[$name] = $parameter;
+            if (!array_key_exists('properties', $result[$name])) {
+                continue;
+            }
+
+            unset($result[$name]['type']);
+            $result[$name]['properties'] = $this->prepareProperties($result[$name]['properties']);
+        }
+
+        return $result;
     }
 }

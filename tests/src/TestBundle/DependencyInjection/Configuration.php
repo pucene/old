@@ -80,26 +80,37 @@ class Configuration implements ConfigurationInterface
                     ->arrayNode('mappings')
                         ->prototype('array')
                             ->children()
-                                ->arrayNode('properties')
-                                    ->useAttributeAsKey('name')
-                                    ->prototype('array')
-                                        ->children()
-                                            ->enumNode('type')
-                                                ->values(Types::getTypes())
-                                                ->defaultValue(Types::TEXT)
-                                            ->end()
-                                            ->scalarNode('analyzer')
-                                                ->defaultValue(null)
-                                            ->end()
-                                        ->end()
-                                    ->end()
-                                ->end()
+                                ->append($this->getProperties())
                             ->end()
                         ->end()
                     ->end()
                 ->end()
             ->end()
         ;
+
+        return $node;
+    }
+
+    private function getProperties($i = 5)
+    {
+        $builder = new TreeBuilder();
+        $node = $builder->root('properties');
+
+        $children = $node
+            ->useAttributeAsKey('name')
+            ->prototype('array')
+                ->children()
+                    ->enumNode('type')
+                        ->values(Types::getTypes())
+                        ->defaultValue(Types::TEXT)
+                    ->end()
+                    ->scalarNode('analyzer')
+                        ->defaultValue(null)
+                    ->end();
+
+        if ($i > 0) {
+            $children->append($this->getProperties($i - 1));
+        }
 
         return $node;
     }

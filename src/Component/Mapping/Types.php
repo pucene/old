@@ -32,12 +32,13 @@ class Types
     const SCALED_FLOAT = 'scaled_float';
 
     // Date types
-    const DATE = 'date';
-
     // TODO date formats
+    const DATE = 'date';
 
     // Boolean types
     const BOOLEAN = 'boolean';
+
+    const OBJECT = 'object';
 
     /**
      * @return string[]

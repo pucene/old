@@ -41,7 +41,8 @@ class PuceneIndex implements IndexInterface
         }
 
         $fields = [];
-        foreach ($document as $fieldName => $fieldContent) {
+        $normalized = $this->normalizeObject($document);
+        foreach ($normalized as $fieldName => $fieldContent) {
             $fieldType = $this->mapping->getTypeForField($this->name, $fieldName);
             if (!$fieldType) {
                 continue;
@@ -96,15 +97,11 @@ class PuceneIndex implements IndexInterface
         return $this->storage->get($type, $id);
     }
 
-    private function analyze(string $fieldName, $fieldContent)
+    private function analyze(string $fieldName, array $fieldContent)
     {
         $analyzer = $this->mapping->getAnalyzerForField($this->name, $fieldName);
         if (!$analyzer) {
             return [];
-        }
-
-        if (!is_array($fieldContent)) {
-            $fieldContent = [$fieldContent];
         }
 
         $tokens = [];
@@ -113,5 +110,27 @@ class PuceneIndex implements IndexInterface
         }
 
         return $tokens;
+    }
+
+    private function normalizeObject(array $object, string $prefix = '')
+    {
+        $result = [];
+        foreach ($object as $key => $value) {
+            $prefixedKey = is_int($key) ? $prefix : $prefix . $key . '.';
+            if (is_scalar($value)) {
+                if (!array_key_exists(rtrim($prefixedKey, '.'), $result)) {
+                    $result[rtrim($prefixedKey, '.')] = [];
+                }
+
+                $result[rtrim($prefixedKey, '.')][] = $value;
+
+                continue;
+            }
+
+            $normalizedValue = $this->normalizeObject($value, $prefixedKey);
+            $result = array_merge_recursive($result, $normalizedValue);
+        }
+
+        return $result;
     }
 }

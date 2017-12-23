@@ -12,7 +12,6 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class DownloadWikidataCommand extends ContainerAwareCommand
@@ -20,8 +19,7 @@ class DownloadWikidataCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this->setName('test:download:wikidata')
-            ->addArgument('file', InputArgument::REQUIRED)
-            ->addOption('adapter', null, InputOption::VALUE_REQUIRED, '', 'pucene');
+            ->addArgument('file', InputArgument::OPTIONAL, '', __DIR__ . '/../../../app/data.json');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -40,7 +38,7 @@ class DownloadWikidataCommand extends ContainerAwareCommand
             ),
             'cache'
         );
-        $client = new Client(['base_uri' => 'https://www.wikidata.org', 'stack' => $stack]);
+        $client = new Client(['base_uri' => 'https://www.wikidata.org', 'handler' => $stack]);
 
         $progressBar = new ProgressBar($output, count($content));
         $progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%');
@@ -81,11 +79,24 @@ class DownloadWikidataCommand extends ContainerAwareCommand
                 );
             }
 
+            $claims = [];
+            foreach ($response['claims'] as $claim) {
+                $claim = array_values($claim)[0];
+                $claims[] = [
+                    'id' => $claim['id'],
+                    'mainsnak' => [
+                        'property' => $claim['mainsnak']['property'],
+                        'datatype' => $claim['mainsnak']['datatype'],
+                    ],
+                ];
+            }
+
             $newData[$response['id']] = [
                 'title' => $title,
                 'rawTitle' => $title,
                 'description' => $description,
                 'aliases' => $aliases,
+                'claims' => $claims,
                 'modified' => $response['modified'],
                 'pageId' => (int) $response['pageid'],
                 'seed' => rand(0, 100) / 100.0,
