@@ -93,7 +93,6 @@ class DownloadWikidataCommand extends ContainerAwareCommand
 
             $newData[$response['id']] = [
                 'title' => $title,
-                'rawTitle' => $title,
                 'description' => $description,
                 'aliases' => $aliases,
                 'claims' => $claims,

@@ -55,6 +55,18 @@ class Mapping
         return null;
     }
 
+    public function getFieldNames(string $index, string $field): array
+    {
+        $result = [];
+        foreach ($this->fields[$index] as $fieldName => $fieldMapping) {
+            if ($field === $fieldName || 0 === strpos($fieldName, $field . '.')) {
+                $result[] = $fieldName;
+            }
+        }
+
+        return $result;
+    }
+
     private function prepareFields(array $properties, string $prefix = '')
     {
         $result = [];
@@ -62,10 +74,15 @@ class Mapping
             $fieldName = $prefix . $key;
             $result[$fieldName] = $field;
             unset($result[$fieldName]['properties']);
+            unset($result[$fieldName]['fields']);
 
-            if (0 < count($field['properties'])) {
+            if (array_key_exists('properties', $field) && 0 < count($field['properties'])) {
                 $result[$fieldName]['type'] = Types::OBJECT;
                 $result = array_merge($result, $this->prepareFields($field['properties'], $fieldName . '.'));
+            }
+
+            if (array_key_exists('fields', $field) && 0 < count($field['fields'])) {
+                $result = array_merge($result, $this->prepareFields($field['fields'], $fieldName . '.'));
             }
         }
 

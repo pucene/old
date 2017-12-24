@@ -37,9 +37,10 @@ test:
             mappings:
                 my_type:
                     properties:
-                        title: ~
-                        rawTitle:
-                            type: keyword
+                        title:
+                            fields:
+                                raw:
+                                    type: keyword
                         description: ~
                         aliases: ~
                         pageId:

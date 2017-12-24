@@ -42,7 +42,7 @@ class RangeComparisonTest extends ComparisonTestCase
 
     public function testSearchRangeFloat()
     {
-        $this->assertSearch((new Search((new RangeQuery('seed'))->gte(0.90)->lte(0.91)))->setSize(200));
+        $this->assertSearch((new Search((new RangeQuery('seed'))->gte(0.90)->lte(0.91)))->setSize(300));
     }
 
     public function testSearchRangeDate()

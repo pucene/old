@@ -117,18 +117,20 @@ class PuceneIndex implements IndexInterface
         $result = [];
         foreach ($object as $key => $value) {
             $prefixedKey = is_int($key) ? $prefix : $prefix . $key . '.';
-            if (is_scalar($value)) {
-                if (!array_key_exists(rtrim($prefixedKey, '.'), $result)) {
-                    $result[rtrim($prefixedKey, '.')] = [];
-                }
-
-                $result[rtrim($prefixedKey, '.')][] = $value;
+            if (!is_scalar($value)) {
+                $normalizedValue = $this->normalizeObject($value, $prefixedKey);
+                $result = array_merge_recursive($result, $normalizedValue);
 
                 continue;
             }
 
-            $normalizedValue = $this->normalizeObject($value, $prefixedKey);
-            $result = array_merge_recursive($result, $normalizedValue);
+            foreach ($this->mapping->getFieldNames($this->name, rtrim($prefixedKey, '.')) as $fieldName) {
+                if (!array_key_exists($fieldName, $result)) {
+                    $result[$fieldName] = [];
+                }
+
+                $result[$fieldName][] = $value;
+            }
         }
 
         return $result;
