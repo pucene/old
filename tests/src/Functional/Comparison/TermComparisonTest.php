@@ -17,7 +17,7 @@ class TermComparisonTest extends ComparisonTestCase
 
     public function testSearchTermKeyword()
     {
-        $this->assertSearch(new Search(new TermQuery('rawTitle', 'George Washington')));
+        $this->assertSearch(new Search(new TermQuery('title.raw', 'George Washington')));
     }
 
     public function testSearchTermBoolean()

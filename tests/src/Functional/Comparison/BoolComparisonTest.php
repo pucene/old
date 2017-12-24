@@ -124,7 +124,7 @@ class BoolComparisonTest extends ComparisonTestCase
     {
         $query = new BoolQuery();
         $query->must(new TermQuery('title', 'museum'));
-        $query->must(new TermQuery('rawTitle', 'George Washington'));
+        $query->must(new TermQuery('title.raw', 'George Washington'));
 
         $this->assertSearch(new Search($query));
     }
