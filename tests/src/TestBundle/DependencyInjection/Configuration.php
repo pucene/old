@@ -2,14 +2,11 @@
 
 namespace Pucene\Tests\TestBundle\DependencyInjection;
 
-use Pucene\Component\Mapping\Types;
+use Pucene\Bundle\PuceneBundle\DependencyInjection\Configuration as PuceneConfiguration;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-/**
- * TODO add description here.
- */
-class Configuration implements ConfigurationInterface
+class Configuration extends PuceneConfiguration implements ConfigurationInterface
 {
     /**
      * {@inheritdoc}
@@ -56,72 +53,6 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
         ;
-
-        return $node;
-    }
-
-    private function getIndexNode()
-    {
-        $builder = new TreeBuilder();
-        $node = $builder->root('indices')
-            ->useAttributeAsKey('name')
-            ->isRequired()
-            ->prototype('array')
-                ->children()
-                    ->arrayNode('analysis')
-                        ->addDefaultsIfNotSet()
-                        ->children()
-                            ->arrayNode('character_filters')->end()
-                            ->arrayNode('token_filters')->end()
-                            ->arrayNode('tokenizers')->end()
-                            ->arrayNode('analyzers')->end()
-                        ->end()
-                    ->end()
-                    ->arrayNode('mappings')
-                        ->prototype('array')
-                            ->append($this->getProperties())
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-        ;
-
-        return $node;
-    }
-
-    private function getProperties($i = 5)
-    {
-        $builder = new TreeBuilder();
-        $node = $builder->root('properties');
-
-        $children = $node
-            ->useAttributeAsKey('name')
-            ->prototype('array')
-                ->children()
-                    ->enumNode('type')
-                        ->values(Types::getTypes())
-                        ->defaultValue(Types::TEXT)
-                    ->end()
-                    ->scalarNode('analyzer')
-                        ->defaultValue(null)
-                    ->end()
-                    ->arrayNode('fields')
-                        ->prototype('array')
-                            ->children()
-                                ->enumNode('type')
-                                    ->values(Types::getTypes())
-                                    ->defaultValue(Types::TEXT)
-                                ->end()
-                                ->scalarNode('analyzer')
-                                    ->defaultValue(null)
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end();
-
-        if ($i > 0) {
-            $children->append($this->getProperties($i - 1));
-        }
 
         return $node;
     }
