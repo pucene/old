@@ -3,6 +3,7 @@
 namespace Pucene\Component\Pucene;
 
 use Pucene\Component\Client\IndexInterface;
+use Pucene\Component\Mapping\Types;
 use Pucene\Component\Pucene\Mapping\Mapping;
 use Pucene\Component\Pucene\Model\Analysis;
 use Pucene\Component\Pucene\Model\Document;
@@ -44,7 +45,7 @@ class PuceneIndex implements IndexInterface
         $normalized = $this->normalizeObject($document);
         foreach ($normalized as $fieldName => $fieldContent) {
             $fieldType = $this->mapping->getTypeForField($this->name, $fieldName);
-            if (!$fieldType) {
+            if (!$fieldType || Types::BINARY === $fieldType) {
                 continue;
             }
 
