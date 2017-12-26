@@ -38,7 +38,10 @@ class Types
     // Boolean types
     const BOOLEAN = 'boolean';
 
+    // Special types
     const OBJECT = 'object';
+
+    const BINARY = 'binary';
 
     /**
      * @return string[]
@@ -58,6 +61,7 @@ class Types
             self::SCALED_FLOAT,
             self::DATE,
             self::BOOLEAN,
+            self::BINARY,
         ];
     }
 
