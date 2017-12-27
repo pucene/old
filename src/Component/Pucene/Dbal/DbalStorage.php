@@ -53,6 +53,11 @@ class DbalStorage implements StorageInterface
         $this->persister = new DocumentPersister($connection, $this->getSchema());
     }
 
+    public function exists(): bool
+    {
+        return $this->connection->getSchemaManager()->tablesExist([$this->getSchema()->getDocumentsTableName()]);
+    }
+
     public function createIndex(array $parameters): void
     {
         $this->connection->beginTransaction();

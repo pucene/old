@@ -31,6 +31,11 @@ class ElasticsearchClient implements ClientInterface
         $this->adapterConfig = $adapterConfig;
     }
 
+    public function exists(string $name): bool
+    {
+        return $this->client->indices()->exists(['index' => $name]);
+    }
+
     public function get(string $name): IndexInterface
     {
         return new ElasticsearchIndex($name, $this->client, $this->compiler);

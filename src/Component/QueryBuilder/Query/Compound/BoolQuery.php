@@ -85,4 +85,12 @@ class BoolQuery implements QueryInterface
     {
         return $this->filterQueries;
     }
+
+    public function isEmpty(): bool
+    {
+        return empty($this->getShouldQueries())
+            || empty($this->getMustNotQueries())
+            || empty($this->getMustQueries())
+            || empty($this->getFilterQueries());
+    }
 }
