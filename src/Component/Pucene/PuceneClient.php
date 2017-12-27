@@ -24,6 +24,11 @@ class PuceneClient implements ClientInterface
         $this->mapping = $mapping;
     }
 
+    public function exists(string $name): bool
+    {
+        return $this->storageFactory->create($name)->exists();
+    }
+
     public function get(string $name): IndexInterface
     {
         return new PuceneIndex($name, $this->storageFactory->create($name), $this->mapping);

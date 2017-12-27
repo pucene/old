@@ -7,6 +7,8 @@ use Pucene\Component\QueryBuilder\Search;
 
 interface StorageInterface
 {
+    public function exists(): bool;
+
     public function createIndex(array $parameters): void;
 
     public function deleteIndex(): void;

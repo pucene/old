@@ -107,6 +107,10 @@ class PuceneIndex implements IndexInterface
 
         $tokens = [];
         foreach ($fieldContent as $content) {
+            if (!$content) {
+                continue;
+            }
+
             $tokens = array_merge($tokens, $analyzer->analyze($content));
         }
 
@@ -118,7 +122,7 @@ class PuceneIndex implements IndexInterface
         $result = [];
         foreach ($object as $key => $value) {
             $prefixedKey = is_int($key) ? $prefix : $prefix . $key . '.';
-            if (!is_scalar($value)) {
+            if (is_array($value)) {
                 $normalizedValue = $this->normalizeObject($value, $prefixedKey);
                 $result = array_merge_recursive($result, $normalizedValue);
 
