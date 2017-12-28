@@ -36,6 +36,10 @@ class PuceneClient implements ClientInterface
 
     public function create(string $name, array $parameters): IndexInterface
     {
+        if ($this->exists($name)) {
+            throw new \Exception('Index already exists');
+        }
+
         $this->storageFactory->create($name)->createIndex($parameters);
 
         return $this->get($name);

@@ -32,6 +32,10 @@ class ImportJsonCommand extends ContainerAwareCommand
         $progressBar->setFormat('debug');
 
         foreach ($content as $id => $item) {
+            if ($index->get('my_type', $id)['found']) {
+                continue;
+            }
+
             $index->index($item, 'my_type', $id);
 
             $progressBar->advance();

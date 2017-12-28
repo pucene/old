@@ -36,16 +36,22 @@ class CreateIndicesCommand extends Command
     {
         $name = $input->getArgument('name');
         if ($name) {
-            return $this->createIndex($name);
+            return $this->createIndex($name, $output);
         }
 
         foreach ($this->indices as $name => $config) {
-            $this->createIndex($name);
+            $this->createIndex($name, $output);
         }
     }
 
-    private function createIndex(string $name): void
+    private function createIndex(string $name, OutputInterface $output): void
     {
+        if ($this->client->exists($name)) {
+            $output->writeln('Index already exists');
+
+            return;
+        }
+
         $this->client->create(
             $name,
             [

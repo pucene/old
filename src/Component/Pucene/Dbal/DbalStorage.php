@@ -112,12 +112,21 @@ class DbalStorage implements StorageInterface
             ->setParameter('id', $id);
 
         $document = json_decode($queryBuilder->execute()->fetchColumn(), true);
+        if (!$document) {
+            return [
+                '_index' => $this->name,
+                '_type' => $type,
+                '_id' => $id,
+                'found' => false,
+            ];
+        }
 
         return [
             '_index' => $this->name,
             '_type' => $type,
             '_id' => $id,
             '_source' => $document,
+            'found' => true,
         ];
     }
 

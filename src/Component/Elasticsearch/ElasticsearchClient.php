@@ -43,14 +43,14 @@ class ElasticsearchClient implements ClientInterface
 
     public function create(string $name, array $parameters): IndexInterface
     {
+        if ($this->exists($name)) {
+            throw new \Exception('Index already exists');
+        }
+
         $parameters['settings']['index'] = $this->adapterConfig['settings'];
         $parameters = $this->filterArray($parameters);
         $parameters['mappings'] = $this->prepareTypes($parameters['mappings']);
-        $response = $this->client->indices()->create(['index' => $name, 'body' => $parameters]);
-
-        if (!$response['acknowledged']) {
-            throw new \Exception();
-        }
+        $this->client->indices()->create(['index' => $name, 'body' => $parameters]);
 
         return $this->get($name);
     }

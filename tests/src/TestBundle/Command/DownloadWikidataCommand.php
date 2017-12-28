@@ -18,8 +18,12 @@ class DownloadWikidataCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
-        $this->setName('test:download:wikidata')
-            ->addArgument('file', InputArgument::OPTIONAL, '', __DIR__ . '/../../../app/data.json');
+        $this->setName('test:download:wikidata')->addArgument(
+                'file',
+                InputArgument::OPTIONAL,
+                '',
+                __DIR__ . '/../../../app/data.json'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -42,6 +46,8 @@ class DownloadWikidataCommand extends ContainerAwareCommand
 
         $progressBar = new ProgressBar($output, count($content));
         $progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s%');
+
+        $enabledCounter = 0;
 
         $newData = [];
         foreach ($content as $id => $item) {
@@ -99,8 +105,12 @@ class DownloadWikidataCommand extends ContainerAwareCommand
                 'modified' => $response['modified'],
                 'pageId' => (int) $response['pageid'],
                 'seed' => rand(0, 100) / 100.0,
-                'enabled' => 1 === rand(0, 1) ? true : false,
+                'enabled' => $enabledCounter < 100 && 1 === rand(0, 1) ? true : false,
             ];
+
+            if ($newData[$response['id']]['enabled']) {
+                ++$enabledCounter;
+            }
 
             $progressBar->advance();
         }
