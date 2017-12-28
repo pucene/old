@@ -3,6 +3,7 @@
 namespace Pucene\Component\Elasticsearch;
 
 use Elasticsearch\Client;
+use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Pucene\Component\Client\IndexInterface;
 use Pucene\Component\Elasticsearch\Compiler\Compiler;
 use Pucene\Component\QueryBuilder\Search;
@@ -75,17 +76,21 @@ class ElasticsearchIndex implements IndexInterface
 
     public function get(string $type, string $id): array
     {
-        $response = $this->client->get(
-            [
-                'index' => $this->name,
-                'type' => $type,
-                'id' => $id,
-            ]
-        );
+        try {
+            $response = $this->client->get(
+                [
+                    'index' => $this->name,
+                    'type' => $type,
+                    'id' => $id,
+                ]
+            );
 
-        // TODO pucene version
-        unset($response['_version'], $response['found']);
+            // TODO pucene version
+            unset($response['_version']);
 
-        return $response;
+            return $response;
+        } catch (Missing404Exception $exception) {
+            return ['_index' => $this->name, '_type' => $type, '_id' => $id, 'found' => false];
+        }
     }
 }

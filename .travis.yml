@@ -16,9 +16,11 @@ env:
 cache:
   directories:
     - "$HOME/.composer/cache"
+    - "docker/data/elasticsearch"
+    - "docker/data/mysql"
 
 before_install:
-  - chmod a+w -R docker/data
+  - sudo chmod a+w -R docker/data
   - cp .env.dist .env
   - docker-compose up -d
   - if [[ -z $CODE_COVERAGE ]]; then phpenv config-rm xdebug.ini ; fi
@@ -38,4 +40,3 @@ script:
 after_script:
   - if [[ -n $CODE_COVERAGE ]]; then wget https://scrutinizer-ci.com/ocular.phar ; fi
   - if [[ -n $CODE_COVERAGE ]]; then php ocular.phar code-coverage:upload --format=php-clover coverage.clover ; fi
-

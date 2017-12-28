@@ -11,4 +11,12 @@ class GetComparisonTest extends ComparisonTestCase
 
         $this->assertEquals($elasticsearchDocument, $puceneDocument);
     }
+
+    public function testGetNotFound()
+    {
+        $elasticsearchDocument = $this->elasticsearchIndex->get('my_type', 'X123');
+        $puceneDocument = $this->puceneIndex->get('my_type', 'X123');
+
+        $this->assertEquals($elasticsearchDocument, $puceneDocument);
+    }
 }
