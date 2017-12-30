@@ -60,6 +60,18 @@ class ElasticsearchClient implements ClientInterface
         $this->client->indices()->delete(['index' => $name]);
     }
 
+    public function getIndexNames(): array
+    {
+        $indices = $this->client->cat()->indices();
+
+        return array_map(
+            function (array $index) {
+                return $index['index'];
+            },
+            $indices
+        );
+    }
+
     private function filterArray(array $input): array
     {
         foreach ($input as &$value) {

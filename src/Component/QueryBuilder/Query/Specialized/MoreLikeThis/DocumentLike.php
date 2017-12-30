@@ -7,7 +7,7 @@ class DocumentLike
     /**
      * @var string
      */
-    private $index;
+    private $id;
 
     /**
      * @var string
@@ -17,27 +17,27 @@ class DocumentLike
     /**
      * @var string
      */
-    private $id;
+    private $index;
 
-    public function __construct(string $index, string $type, string $id)
+    public function __construct(string $id, ?string $type = null, ?string $index = null)
     {
-        $this->index = $index;
-        $this->type = $type;
         $this->id = $id;
-    }
-
-    public function getIndex(): string
-    {
-        return $this->index;
-    }
-
-    public function getType(): string
-    {
-        return $this->type;
+        $this->type = $type;
+        $this->index = $index;
     }
 
     public function getId(): string
     {
         return $this->id;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function getIndex(): ?string
+    {
+        return $this->index;
     }
 }

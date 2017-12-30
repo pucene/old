@@ -74,7 +74,7 @@ class ElasticsearchIndex implements IndexInterface
         return $response['hits'];
     }
 
-    public function get(string $type, string $id): array
+    public function get(?string $type, string $id): array
     {
         try {
             $response = $this->client->get(

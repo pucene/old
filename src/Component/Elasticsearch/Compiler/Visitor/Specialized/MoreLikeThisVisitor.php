@@ -21,7 +21,9 @@ class MoreLikeThisVisitor implements VisitorInterface
             if ($item instanceof TextLike) {
                 $like[] = $item->getText();
             } elseif ($item instanceof DocumentLike) {
-                $like[] = ['_index' => $item->getIndex(), '_type' => $item->getType(), '_id' => $item->getId()];
+                $like[] = array_filter(
+                    ['_index' => $item->getIndex(), '_type' => $item->getType(), '_id' => $item->getId()]
+                );
             } elseif ($item instanceof ArtificialDocumentLike) {
                 $like[] = ['_index' => $item->getIndex(), '_type' => $item->getType(), 'doc' => $item->getDocument()];
             }

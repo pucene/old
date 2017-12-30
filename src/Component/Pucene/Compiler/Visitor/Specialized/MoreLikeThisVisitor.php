@@ -57,15 +57,15 @@ class MoreLikeThisVisitor implements VisitorInterface
 
         $mustNotElements = $this->getMustNotElements($query->getLike());
         if (0 === count($mustNotElements)) {
-            return new CompositeElement(CompositeElement:: OR, $elements);
+            return new CompositeElement(CompositeElement::OR, $elements);
         }
 
         return new BoolElement(
             new CompositeElement(
-                CompositeElement:: AND,
+                CompositeElement::AND,
                 [
-                    new CompositeElement(CompositeElement:: AND, $mustNotElements),
-                    new CompositeElement(CompositeElement:: OR, $elements),
+                    new CompositeElement(CompositeElement::AND, $mustNotElements),
+                    new CompositeElement(CompositeElement::OR, $elements),
                 ]
             ),
             $elements
@@ -124,10 +124,40 @@ class MoreLikeThisVisitor implements VisitorInterface
 
     private function likeDocument(MoreLikeThisQuery $query, DocumentLike $like, array &$terms): void
     {
-        $index = $this->client->get($like->getIndex());
-        $document = $index->get($like->getType(), $like->getId());
+        if ($like->getIndex()) {
+            $this->getTermsByIndex(
+                $query->getFields(),
+                $terms,
+                $like->getIndex(),
+                $like->getId(),
+                $like->getType()
+            );
 
-        foreach ($query->getFields() as $field) {
+            return;
+        }
+
+        foreach ($this->client->getIndexNames() as $index) {
+            $this->getTermsByIndex(
+                $query->getFields(),
+                $terms,
+                $index,
+                $like->getId(),
+                $like->getType()
+            );
+        }
+    }
+
+    private function getTermsByIndex(
+        array $fields,
+        array &$terms,
+        string $index,
+        string $id,
+        ?string $type = null
+    ): void {
+        $index = $this->client->get($index);
+        $document = $index->get($type, $id);
+
+        foreach ($fields as $field) {
             $this->analyzeText($field, $document['_source'][$field], $terms);
         }
     }

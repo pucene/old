@@ -93,7 +93,7 @@ class PuceneIndex implements IndexInterface
         ];
     }
 
-    public function get(string $type, string $id): array
+    public function get(?string $type, string $id): array
     {
         return $this->storage->get($type, $id);
     }
