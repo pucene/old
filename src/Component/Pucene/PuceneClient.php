@@ -49,4 +49,9 @@ class PuceneClient implements ClientInterface
     {
         $this->storageFactory->create($name)->deleteIndex();
     }
+
+    public function getIndexNames(): array
+    {
+        return $this->mapping->getIndexNames();
+    }
 }

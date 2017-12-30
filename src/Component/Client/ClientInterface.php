@@ -11,4 +11,9 @@ interface ClientInterface
     public function create(string $name, array $parameters): IndexInterface;
 
     public function delete(string $name): void;
+
+    /**
+     * @return string[]
+     */
+    public function getIndexNames(): array;
 }

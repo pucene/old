@@ -19,7 +19,7 @@ interface StorageInterface
 
     public function search(Search $search, array $types): array;
 
-    public function get(string $type, string $id): array;
+    public function get(?string $type, string $id): array;
 
     public function termStatistics(): TermStatisticsInterface;
 }

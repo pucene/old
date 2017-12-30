@@ -100,16 +100,19 @@ class DbalStorage implements StorageInterface
         return $this->interpreter->interpret($types, $search, $this, $element);
     }
 
-    public function get(string $type, string $id): array
+    public function get(?string $type, string $id): array
     {
         $schema = $this->getSchema();
         $queryBuilder = (new QueryBuilder($this->connection))
             ->select('document')
             ->from($schema->getDocumentsTableName())
-            ->where('type = :type')
             ->andWhere('id = :id')
-            ->setParameter('type', $type)
             ->setParameter('id', $id);
+
+        if ($type) {
+            $queryBuilder->andWhere('type = :type')
+                ->setParameter('type', $type);
+        }
 
         $document = json_decode($queryBuilder->execute()->fetchColumn(), true);
         if (!$document) {

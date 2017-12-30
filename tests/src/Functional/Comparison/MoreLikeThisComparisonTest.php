@@ -26,7 +26,7 @@ class MoreLikeThisComparisonTest extends ComparisonTestCase
 
     public function testDocument()
     {
-        $query = new MoreLikeThisQuery([new DocumentLike('my_index', 'my_type', 'Q4872')], ['title']);
+        $query = new MoreLikeThisQuery([new DocumentLike('Q4872', 'my_type', 'my_index')], ['title']);
         $query->setMinTermFreq(1);
 
         $search = new Search($query);
@@ -38,7 +38,21 @@ class MoreLikeThisComparisonTest extends ComparisonTestCase
     public function testDocuments()
     {
         $query = new MoreLikeThisQuery(
-            [new DocumentLike('my_index', 'my_type', 'Q435'), new DocumentLike('my_index', 'my_type', 'Q4872')],
+            [new DocumentLike('Q435', 'my_type', 'my_index'), new DocumentLike('Q4872', 'my_type', 'my_index')],
+            ['title']
+        );
+        $query->setMinTermFreq(1);
+
+        $search = new Search($query);
+        $search->setSize(500);
+
+        $this->assertSearch($search);
+    }
+
+    public function testDocumentIds()
+    {
+        $query = new MoreLikeThisQuery(
+            [new DocumentLike('Q435', 'my_type'), new DocumentLike('Q4872')],
             ['title']
         );
         $query->setMinTermFreq(1);
@@ -103,7 +117,7 @@ class MoreLikeThisComparisonTest extends ComparisonTestCase
     public function testMaxQueryTerms()
     {
         $query = new MoreLikeThisQuery(
-            [new DocumentLike('my_index', 'my_type', 'Q435'), new DocumentLike('my_index', 'my_type', 'Q4872')],
+            [new DocumentLike('Q435', 'my_type', 'my_index'), new DocumentLike('Q4872', 'my_type', 'my_index')],
             ['title', 'description']
         );
         $query->setMinTermFreq(1);

@@ -67,6 +67,11 @@ class Mapping
         return $result;
     }
 
+    public function getIndexNames(): array
+    {
+        return array_keys($this->fields);
+    }
+
     private function prepareFields(array $properties, string $prefix = '')
     {
         $result = [];
