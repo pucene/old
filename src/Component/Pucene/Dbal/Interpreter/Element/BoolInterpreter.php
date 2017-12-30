@@ -53,8 +53,12 @@ class BoolInterpreter implements InterpreterInterface
         foreach ($element->getScoringElements() as $innerElement) {
             /** @var InterpreterInterface $interpreter */
             $interpreter = $this->interpreterPool->get(get_class($innerElement));
+            $innerExpression = $interpreter->scoring($innerElement, $scoring, $index);
+            if (!$innerExpression) {
+                continue;
+            }
 
-            $expression->add($interpreter->scoring($innerElement, $scoring, $index));
+            $expression->add($innerExpression);
         }
 
         return $expression;
