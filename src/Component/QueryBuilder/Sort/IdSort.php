@@ -2,7 +2,7 @@
 
 namespace Pucene\Component\QueryBuilder\Sort;
 
-class IdSort implements SortInterface
+class IdSort extends FieldSort implements SortInterface
 {
     /**
      * @var string
@@ -11,6 +11,8 @@ class IdSort implements SortInterface
 
     public function __construct(string $order = self::ASC)
     {
+        parent::__construct('_uid', $order);
+
         $this->order = $order;
     }
 

@@ -10,6 +10,7 @@
 
         <service id="pucene.pucene.interpreter" class="Pucene\Component\Pucene\Dbal\Interpreter\DbalInterpreter">
             <argument type="service" id="pucene.pucene.interpreter_pool"/>
+            <argument type="service" id="pucene.pucene.mapping"/>
         </service>
 
         <service id="pucene.pucene.interpreter.match_all"

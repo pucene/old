@@ -7,7 +7,6 @@ use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Pucene\Component\Client\IndexInterface;
 use Pucene\Component\Elasticsearch\Compiler\Compiler;
 use Pucene\Component\QueryBuilder\Search;
-use Pucene\Component\QueryBuilder\Sort\IdSort;
 
 class ElasticsearchIndex implements IndexInterface
 {
@@ -63,9 +62,7 @@ class ElasticsearchIndex implements IndexInterface
         if (0 < count($search->getSorts())) {
             $parameter['body']['sort'] = [];
             foreach ($search->getSorts() as $sort) {
-                if ($sort instanceof IdSort) {
-                    $parameter['body']['sort']['_uid'] = $sort->getOrder();
-                }
+                $parameter['body']['sort'][$sort->getField()] = $sort->getOrder();
             }
         }
 

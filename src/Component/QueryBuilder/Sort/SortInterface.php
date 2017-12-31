@@ -8,5 +8,7 @@ interface SortInterface
 
     const DESC = 'desc';
 
+    public function getField(): string;
+
     public function getOrder(): string;
 }
