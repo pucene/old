@@ -15,5 +15,7 @@ interface IndexInterface
      */
     public function search(Search $search, $type): array;
 
+    public function count(Search $search, $type): int;
+
     public function get(?string $type, string $id): array;
 }

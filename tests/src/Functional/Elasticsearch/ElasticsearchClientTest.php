@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 class ElasticsearchClientTest extends KernelTestCase
 {
     /**
-     * @var  ElasticsearchClient
+     * @var ElasticsearchClient
      */
     private $elasticsearchClient;
 

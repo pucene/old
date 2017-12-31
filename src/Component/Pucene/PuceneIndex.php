@@ -87,10 +87,19 @@ class PuceneIndex implements IndexInterface
         // TODO total
 
         return [
-            'total' => '?',
+            'total' => $this->storage->count($search, $type),
             'hits' => $hits,
             'max_score' => $maxScore,
         ];
+    }
+
+    public function count(Search $search, $type): int
+    {
+        if (is_string($type)) {
+            $type = [$type];
+        }
+
+        return $this->storage->count($search, $type);
     }
 
     public function get(?string $type, string $id): array

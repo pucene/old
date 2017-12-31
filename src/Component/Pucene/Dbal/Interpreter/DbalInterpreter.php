@@ -22,20 +22,18 @@ class DbalInterpreter
         $this->interpreterPool = $interpreterPool;
     }
 
-    /**
-     * @return Document[]
-     */
-    public function interpret(array $types, Search $search, DbalStorage $storage, ElementInterface $element): array
-    {
+    private function getQueryBuilder(
+        array $types,
+        DbalStorage $storage,
+        ElementInterface $element
+    ): PuceneQueryBuilder {
         $connection = $storage->getConnection();
         $schema = $storage->getSchema();
 
-        $queryBuilder = (new PuceneQueryBuilder($connection, $storage->getSchema()))
+        $queryBuilder = (new PuceneQueryBuilder($connection, $schema))
             ->select('document.*')
             ->from($schema->getDocumentsTableName(), 'document')
             ->where('document.type IN (?)')
-            ->setMaxResults($search->getSize())
-            ->setFirstResult($search->getFrom())
             ->setParameter(0, implode(',', $types));
 
         /** @var InterpreterInterface $interpreter */
@@ -45,7 +43,21 @@ class DbalInterpreter
             $queryBuilder->andWhere($expression);
         }
 
-        $scoringAlgorithm = new ScoringAlgorithm($queryBuilder, $schema, $this->interpreterPool);
+        return $queryBuilder;
+    }
+
+    /**
+     * @return Document[]
+     */
+    public function interpret(array $types, Search $search, DbalStorage $storage, ElementInterface $element): array
+    {
+        $queryBuilder = $this->getQueryBuilder($types, $storage, $element)
+            ->setMaxResults($search->getSize())
+            ->setFirstResult($search->getFrom());
+
+        /** @var InterpreterInterface $interpreter */
+        $interpreter = $this->interpreterPool->get(get_class($element));
+        $scoringAlgorithm = new ScoringAlgorithm($queryBuilder, $storage->getSchema(), $this->interpreterPool);
         $expression = $interpreter->scoring($element, $scoringAlgorithm, $storage->getName());
 
         if ($expression) {
@@ -66,11 +78,18 @@ class DbalInterpreter
                 $row['id'],
                 $row['type'],
                 $storage->getName(),
-                json_decode($row['document'], true),
-                array_key_exists('score', $row) ? (float) $row['score'] : null
+                json_decode($row['document'], true), array_key_exists('score', $row) ? (float) $row['score'] : null
             );
         }
 
         return $result;
+    }
+
+    public function count(array $types, DbalStorage $storage, ElementInterface $element): int
+    {
+        $queryBuilder = $this->getQueryBuilder($types, $storage, $element)
+            ->select('COUNT(document.id)');
+
+        return (int) $queryBuilder->execute()->fetchColumn();
     }
 }
