@@ -100,6 +100,16 @@ class DbalStorage implements StorageInterface
         return $this->interpreter->interpret($types, $search, $this, $element);
     }
 
+    public function count(Search $search, array $types): int
+    {
+        $element = $this->compiler->compile($search->getQuery(), $this);
+        if (null === $element) {
+            return 0;
+        }
+
+        return $this->interpreter->count($types, $this, $element);
+    }
+
     public function get(?string $type, string $id): array
     {
         $schema = $this->getSchema();

@@ -86,7 +86,7 @@ abstract class ComparisonTestCase extends KernelTestCase
         $puceneResult = $this->puceneIndex->search($search, 'my_type');
 
         $this->assertEquals(count($elasticsearchResult['hits']), count($puceneResult['hits']));
-        // TODO total
+        $this->assertEquals($elasticsearchResult['total'], $puceneResult['total']);
 
         $elasticsearchHits = $this->normalize($elasticsearchResult['hits'], $elasticsearchResult['max_score']);
         $puceneHits = $this->normalize($puceneResult['hits'], $puceneResult['max_score']);

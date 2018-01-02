@@ -74,6 +74,21 @@ class ElasticsearchIndex implements IndexInterface
         return $response['hits'];
     }
 
+    public function count(Search $search, $type): int
+    {
+        $parameter = [
+            'index' => $this->name,
+            'type' => $type,
+            'body' => [
+                'query' => $this->compiler->compile($search->getQuery()),
+            ],
+        ];
+
+        $response = $this->client->count($parameter);
+
+        return $response['count'];
+    }
+
     public function get(?string $type, string $id): array
     {
         try {
