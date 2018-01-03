@@ -5,9 +5,9 @@ namespace Pucene\Component\Pucene\Dbal\Interpreter;
 use Pucene\Component\Pucene\Compiler\ElementInterface;
 use Pucene\Component\Pucene\Dbal\DbalStorage;
 use Pucene\Component\Pucene\Dbal\ScoringAlgorithm;
+use Pucene\Component\Pucene\Mapping\Mapping;
 use Pucene\Component\Pucene\Model\Document;
 use Pucene\Component\QueryBuilder\Search;
-use Pucene\Component\QueryBuilder\Sort\IdSort;
 use Pucene\Component\Symfony\Pool\PoolInterface;
 
 class DbalInterpreter
@@ -17,9 +17,15 @@ class DbalInterpreter
      */
     private $interpreterPool;
 
-    public function __construct(PoolInterface $interpreterPool)
+    /**
+     * @var Mapping
+     */
+    private $mapping;
+
+    public function __construct(PoolInterface $interpreterPool, Mapping $mapping)
     {
         $this->interpreterPool = $interpreterPool;
+        $this->mapping = $mapping;
     }
 
     private function getQueryBuilder(
@@ -57,8 +63,11 @@ class DbalInterpreter
 
         /** @var InterpreterInterface $interpreter */
         $interpreter = $this->interpreterPool->get(get_class($element));
-        $scoringAlgorithm = new ScoringAlgorithm($queryBuilder, $storage->getSchema(), $this->interpreterPool);
-        $expression = $interpreter->scoring($element, $scoringAlgorithm, $storage->getName());
+        $expression = null;
+        if (0 === count($search->getSorts())) {
+            $scoringAlgorithm = new ScoringAlgorithm($queryBuilder, $storage->getSchema(), $this->interpreterPool);
+            $expression = $interpreter->scoring($element, $scoringAlgorithm, $storage->getName());
+        }
 
         if ($expression) {
             $queryBuilder->addSelect('(' . $expression . ') as score')->orderBy('score', 'desc');
@@ -66,9 +75,15 @@ class DbalInterpreter
 
         if (0 < count($search->getSorts())) {
             foreach ($search->getSorts() as $sort) {
-                if ($sort instanceof IdSort) {
+                if ('_uid' === $sort->getField()) {
                     $queryBuilder->addOrderBy('id', $sort->getOrder());
+
+                    continue;
                 }
+
+                $type = $this->mapping->getTypeForField($storage->getName(), $sort->getField());
+                $field = $queryBuilder->joinValue($sort->getField(), $type);
+                $queryBuilder->addOrderBy($field . '.value', $sort->getOrder());
             }
         }
 
