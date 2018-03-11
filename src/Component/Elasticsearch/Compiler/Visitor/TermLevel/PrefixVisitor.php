@@ -4,15 +4,15 @@ namespace Pucene\Component\Elasticsearch\Compiler\Visitor\TermLevel;
 
 use Pucene\Component\Elasticsearch\Compiler\VisitorInterface;
 use Pucene\Component\QueryBuilder\Query\QueryInterface;
-use Pucene\Component\QueryBuilder\Query\TermLevel\TermQuery;
+use Pucene\Component\QueryBuilder\Query\TermLevel\PrefixQuery;
 
-class TermVisitor implements VisitorInterface
+class PrefixVisitor implements VisitorInterface
 {
     /**
-     * @param TermQuery $query
+     * @param PrefixQuery $query
      */
     public function visit(QueryInterface $query): array
     {
-        return [TermQuery::NAME => [$query->getField() => $query->getTerm()]];
+        return [PrefixQuery::NAME => [$query->getField() => $query->getPrefix()]];
     }
 }

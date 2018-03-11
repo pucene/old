@@ -4,6 +4,7 @@ namespace Pucene\Tests\Functional\Comparison;
 
 use Pucene\Component\QueryBuilder\Query\Compound\BoolQuery;
 use Pucene\Component\QueryBuilder\Query\FullText\MatchQuery;
+use Pucene\Component\QueryBuilder\Query\TermLevel\PrefixQuery;
 use Pucene\Component\QueryBuilder\Query\TermLevel\TermQuery;
 use Pucene\Component\QueryBuilder\Search;
 
@@ -17,6 +18,7 @@ class BoolComparisonTest extends ComparisonTestCase
         return [
             [[new TermQuery('title', 'museum')]],
             [[new TermQuery('title', 'museum'), new TermQuery('title', 'arts')]],
+            [[new TermQuery('title', 'museum'), new PrefixQuery('title', 'art')]],
             [[new MatchQuery('title', 'Museum Lyon')]],
             [[new MatchQuery('title', 'Museum Lyon'), new MatchQuery('title', 'Art Museum')]],
             [[new MatchQuery('title', 'Museum Lyon'), new TermQuery('title', 'arts')]],
