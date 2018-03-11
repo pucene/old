@@ -20,6 +20,14 @@
             <tag name="pucene.pucene.visitor" query="Pucene\Component\QueryBuilder\Query\TermLevel\TermQuery"/>
         </service>
 
+        <service id="pucene.pucene.visitor.prefix" class="Pucene\Component\Pucene\Compiler\Visitor\TermLevel\PrefixVisitor">
+            <tag name="pucene.pucene.visitor" query="Pucene\Component\QueryBuilder\Query\TermLevel\PrefixQuery"/>
+        </service>
+
+        <service id="pucene.pucene.visitor.match_phrase_prefix" class="Pucene\Component\Pucene\Compiler\Visitor\FullText\MatchPhrasePrefixVisitor">
+            <tag name="pucene.pucene.visitor" query="Pucene\Component\QueryBuilder\Query\FullText\MatchPhrasePrefixQuery"/>
+        </service>
+
         <service id="pucene.pucene.visitor.range"
                  class="Pucene\Component\Pucene\Compiler\Visitor\TermLevel\RangeVisitor">
             <tag name="pucene.pucene.visitor" query="Pucene\Component\QueryBuilder\Query\TermLevel\RangeQuery"/>

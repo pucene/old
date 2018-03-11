@@ -8,6 +8,16 @@
             <tag name="pucene.elasticsearch.visitor"
                  query="Pucene\Component\QueryBuilder\Query\TermLevel\TermQuery"/>
         </service>
+        <service id="pucene.elasticsearch.visitor.prefix"
+                 class="Pucene\Component\Elasticsearch\Compiler\Visitor\TermLevel\PrefixVisitor">
+            <tag name="pucene.elasticsearch.visitor"
+                 query="Pucene\Component\QueryBuilder\Query\TermLevel\PrefixQuery"/>
+        </service>
+        <service id="pucene.elasticsearch.visitor.match_phrase_prefix"
+                 class="Pucene\Component\Elasticsearch\Compiler\Visitor\FullText\MatchPhrasePrefixVisitor">
+            <tag name="pucene.elasticsearch.visitor"
+                 query="Pucene\Component\QueryBuilder\Query\FullText\MatchPhrasePrefixQuery"/>
+        </service>
         <service id="pucene.elasticsearch.visitor.range"
                  class="Pucene\Component\Elasticsearch\Compiler\Visitor\TermLevel\RangeVisitor">
             <tag name="pucene.elasticsearch.visitor"

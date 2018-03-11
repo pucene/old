@@ -4,9 +4,9 @@ namespace Pucene\Component\QueryBuilder\Query\TermLevel;
 
 use Pucene\Component\QueryBuilder\Query\QueryInterface;
 
-class TermQuery implements QueryInterface
+class PrefixQuery implements QueryInterface
 {
-    const NAME = 'term';
+    const NAME = 'prefix';
 
     /**
      * @var string
@@ -14,14 +14,14 @@ class TermQuery implements QueryInterface
     private $field;
 
     /**
-     * @var mixed
+     * @var string
      */
-    private $term;
+    private $prefix;
 
-    public function __construct(string $field, $term)
+    public function __construct(string $field, string $prefix)
     {
         $this->field = $field;
-        $this->term = $term;
+        $this->prefix = $prefix;
     }
 
     public function getField(): string
@@ -36,14 +36,14 @@ class TermQuery implements QueryInterface
         return $this;
     }
 
-    public function getTerm()
+    public function getPrefix(): string
     {
-        return $this->term;
+        return $this->prefix;
     }
 
-    public function setTerm($term): self
+    public function setPrefix(string $prefix): self
     {
-        $this->term = $term;
+        $this->prefix = $prefix;
 
         return $this;
     }

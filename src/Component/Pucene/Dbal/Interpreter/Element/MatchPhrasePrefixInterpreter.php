@@ -2,15 +2,14 @@
 
 namespace Pucene\Component\Pucene\Dbal\Interpreter\Element;
 
-use Pucene\Component\Mapping\Types;
-use Pucene\Component\Pucene\Compiler\Element\TermElement;
+use Pucene\Component\Pucene\Compiler\Element\MatchPhrasePrefixElement;
 use Pucene\Component\Pucene\Compiler\ElementInterface;
 use Pucene\Component\Pucene\Dbal\Interpreter\InterpreterInterface;
 use Pucene\Component\Pucene\Dbal\Interpreter\PuceneQueryBuilder;
 use Pucene\Component\Pucene\Dbal\ScoringAlgorithm;
 use Pucene\Component\Pucene\Mapping\Mapping;
 
-class TermInterpreter implements InterpreterInterface
+class MatchPhrasePrefixInterpreter implements InterpreterInterface
 {
     /**
      * @var Mapping
@@ -23,32 +22,26 @@ class TermInterpreter implements InterpreterInterface
     }
 
     /**
-     * @param TermElement $element
+     * @param MatchPhrasePrefixElement $element
      */
     public function interpret(ElementInterface $element, PuceneQueryBuilder $queryBuilder, string $index)
     {
         $expr = $queryBuilder->expr();
 
         $type = $this->mapping->getTypeForField($index, $element->getField());
-        if (Types::TEXT === $type) {
-            return $expr->isNotNull($queryBuilder->joinTerm($element->getField(), $element->getTerm()) . '.id');
-        }
-
         $alias = $queryBuilder->joinValue($element->getField(), $type);
 
-        return $expr->eq($alias . '.value', sprintf("'%s'", $element->getTerm()));
+        $prefix = mb_strtolower($element->getPhrase());
+        $field = sprintf('LOWER(%s.value) COLLATE utf8_bin', $alias);
+
+        return $expr->like($field, sprintf("'%s%%'", $prefix));
     }
 
     /**
-     * @param TermElement $element
+     * @param MatchPhrasePrefixElement $element
      */
     public function scoring(ElementInterface $element, ScoringAlgorithm $scoring, string $index)
     {
-        $type = $this->mapping->getTypeForField($index, $element->getField());
-        if (Types::TEXT !== $type) {
-            return $scoring->getQueryBuilder()->math()->value(1);
-        }
-
-        return $scoring->scoreTerm($element, $index);
+        return $scoring->getQueryBuilder()->math()->value($element->getBoost());
     }
 }
