@@ -2,7 +2,7 @@
 
 namespace Pucene\Component\Pucene\Compiler\Element;
 
-class PrefixElement extends BaseElement
+class MatchPhrasePrefixElement extends BaseElement
 {
     /**
      * @var string
@@ -12,14 +12,14 @@ class PrefixElement extends BaseElement
     /**
      * @var string
      */
-    private $prefix;
+    private $phrase;
 
-    public function __construct(string $field, string $prefix, float $boost = 1)
+    public function __construct(string $field, string $phrase, float $boost = 1)
     {
         parent::__construct($boost);
 
         $this->field = $field;
-        $this->prefix = $prefix;
+        $this->phrase = $phrase;
     }
 
     public function getField(): string
@@ -27,8 +27,8 @@ class PrefixElement extends BaseElement
         return $this->field;
     }
 
-    public function getPrefix(): string
+    public function getPhrase(): string
     {
-        return $this->prefix;
+        return $this->phrase;
     }
 }

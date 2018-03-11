@@ -6,7 +6,7 @@ use Pucene\Component\QueryBuilder\Query\TermLevel\PrefixQuery;
 use Pucene\Component\QueryBuilder\Search;
 
 /**
- * This testcase compares elasticsearch with pucene results for the "term" query.
+ * This testcase compares elasticsearch with pucene results for the "prefix" query.
  */
 class PrefixComparisonTest extends ComparisonTestCase
 {
