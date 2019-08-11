@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace Pucene;
 
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
